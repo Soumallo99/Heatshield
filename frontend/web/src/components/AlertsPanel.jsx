@@ -26,15 +26,16 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
 
   return (
     <motion.section
-      className="panel p-5"
+      className="panel mt-5 p-6"
       initial={{ opacity: 0, y: 22 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: EASE, delay: 0.14 }}
     >
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-white/[.07] pb-3">
         <div>
-          <h2 className="text-[14px] font-medium">Early warning queue</h2>
-          <p className="text-[11px] text-white/35">
+          <div className="eyebrow">sms / whatsapp · dry-run</div>
+          <h2 className="display mt-1.5 text-[22px] leading-none">Early warning queue</h2>
+          <p className="mt-2 text-[11px] text-white/35">
             alerts raised only when there is at least <span className="text-white/60">{lead} day</span> of lead time
           </p>
         </div>

@@ -66,15 +66,16 @@ export default function TopWardsTable({ wards = [], selectedId, onSelect, defaul
 
   return (
     <motion.section
-      className="panel mt-5 p-5"
+      className="panel mt-6 p-6"
       initial={{ opacity: 0, y: 22 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: EASE, delay: 0.26 }}
     >
-      <div className="mb-3.5 flex flex-wrap items-start justify-between gap-2">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-2 border-b border-white/[.07] pb-3">
         <div>
-          <h2 className="text-[14px] font-medium">Risk drivers · ranked wards</h2>
-          <p className="text-[11px] leading-snug text-white/35">
+          <div className="eyebrow">why, not just where</div>
+          <h2 className="display mt-1.5 text-[22px] leading-none">Risk drivers</h2>
+          <p className="mt-2 text-[11px] leading-snug text-white/35">
             Sort any column · select a row to drive the map and gauge
           </p>
         </div>

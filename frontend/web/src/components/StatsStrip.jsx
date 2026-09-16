@@ -17,11 +17,11 @@ function Stat({ label, value, hint, raw, decimals = 0, suffix = '', accent, inde
 
   return (
     <motion.div
-      className="relative rounded-xl border border-white/[.09] bg-white/[.03] px-3.5 py-3"
+      className="relative border-t border-white/[.1] px-1 pt-3"
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={t({ duration: 0.6, ease: EASE, delay: index * 0.045 })}
-      whileHover={reduced ? undefined : { y: -2, backgroundColor: 'rgba(255,255,255,.055)' }}
+      whileHover={reduced ? undefined : { y: -2 }}
     >
       <div
         className="truncate text-[10px] uppercase tracking-[0.11em] text-white/35"
@@ -32,7 +32,7 @@ function Stat({ label, value, hint, raw, decimals = 0, suffix = '', accent, inde
 
       <div className="mt-1.5 flex items-baseline gap-1">
         {raw != null ? (
-          <span className="tnum text-[15px] font-semibold" style={{ color: accent }}>
+          <span className="tnum text-[16px] font-semibold" style={{ color: accent }}>
             {raw}
           </span>
         ) : (
@@ -41,7 +41,7 @@ function Stat({ label, value, hint, raw, decimals = 0, suffix = '', accent, inde
               value={value}
               decimals={decimals}
               height={1.15}
-              className="text-[21px] font-semibold"
+              className="text-[23px] font-semibold"
             />
             {suffix && (
               <span className="text-[10.5px] text-white/35">{suffix}</span>
@@ -94,7 +94,7 @@ export default function StatsStrip({ wards = [], bandCounts = {}, mapDate, alert
   return (
     <motion.section
       aria-label="Run summary"
-      className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-7"
+      className="mt-6 grid grid-cols-2 gap-x-5 gap-y-4 sm:grid-cols-4 lg:grid-cols-7"
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}

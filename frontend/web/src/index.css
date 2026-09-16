@@ -52,11 +52,48 @@ body {
 
 .hairline { border: 1px solid var(--hairline); }
 
+/* ---------------------------------------------------------- surfaces
+
+   Blur budget: UI_SPEC allows at most THREE simultaneously blurred elements,
+   because backdrop-filter is the single most expensive thing on this page. The
+   old `.panel` blurred every card — nine on the dashboard at once, i.e. three
+   times the budget, on top of the nav and the map chip.
+
+   So panels are now flat: an opaque-ish gradient plus a one-pixel sheen along
+   the top edge, which reads as "lit from above" for free. Blur is opt-in via
+   `.panel--blur` and is reserved for the chrome that actually floats over
+   moving content (top bar, route switcher, map readout).
+*/
 .panel {
-  background: linear-gradient(165deg, rgba(255,255,255,.055), rgba(255,255,255,.015));
+  position: relative;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.014) 46%,
+      rgba(255, 255, 255, 0.026) 100%);
   border: 1px solid var(--hairline);
-  border-radius: 18px;
-  backdrop-filter: blur(12px);
+  border-radius: 20px;
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: 20px 20px 0 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  pointer-events: none;
+}
+.panel--blur { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+
+/* hairline rule — the separator of choice over nested boxes */
+.rule { border-top: 1px solid var(--hairline); }
+
+/* display-serif figures, for the numbers that carry the page */
+.figure {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
 }
 
 /* ---------------------------------------------------------- grain overlay */

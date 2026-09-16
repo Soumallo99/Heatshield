@@ -92,7 +92,7 @@ export default function App() {
       {route === 'dashboard' && (
         <motion.button
           onClick={() => go('mobile')}
-          className="fixed right-5 top-[68px] z-30 rounded-full border border-white/12 bg-ink-950/80 px-4 py-2 text-[11.5px] backdrop-blur-md transition hover:border-white/30"
+          className="fixed right-5 top-[68px] z-30 rounded-full border border-white/12 bg-ink-900/95 px-4 py-2 text-[11.5px] transition hover:border-white/30"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.7 }}
