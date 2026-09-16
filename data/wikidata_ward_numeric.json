@@ -1,0 +1,4904 @@
+[
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899233",
+  "wardLabel": "Ward No. 67, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "56284"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899233",
+  "wardLabel": "Ward No. 67, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "13631"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899233",
+  "wardLabel": "Ward No. 67, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "27374"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899233",
+  "wardLabel": "Ward No. 67, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "28910"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899233",
+  "wardLabel": "Ward No. 67, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "9531"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899233",
+  "wardLabel": "Ward No. 67, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "46753"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899234",
+  "wardLabel": "Ward No. 68, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "20724"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899234",
+  "wardLabel": "Ward No. 68, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4812"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899234",
+  "wardLabel": "Ward No. 68, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10290"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899234",
+  "wardLabel": "Ward No. 68, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10434"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899234",
+  "wardLabel": "Ward No. 68, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2836"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899234",
+  "wardLabel": "Ward No. 68, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17888"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899235",
+  "wardLabel": "Ward No. 69, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "44111"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899235",
+  "wardLabel": "Ward No. 69, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "9615"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899235",
+  "wardLabel": "Ward No. 69, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "21205"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899235",
+  "wardLabel": "Ward No. 69, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "22906"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899235",
+  "wardLabel": "Ward No. 69, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "8972"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899235",
+  "wardLabel": "Ward No. 69, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "35139"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899236",
+  "wardLabel": "Ward No. 7, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "19180"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899236",
+  "wardLabel": "Ward No. 7, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4240"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899236",
+  "wardLabel": "Ward No. 7, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9238"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899236",
+  "wardLabel": "Ward No. 7, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "9942"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899236",
+  "wardLabel": "Ward No. 7, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3211"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899236",
+  "wardLabel": "Ward No. 7, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "15969"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899237",
+  "wardLabel": "Ward No. 70, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "18618"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899237",
+  "wardLabel": "Ward No. 70, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3879"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899237",
+  "wardLabel": "Ward No. 70, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "8868"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899237",
+  "wardLabel": "Ward No. 70, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "9750"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899237",
+  "wardLabel": "Ward No. 70, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "1961"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899237",
+  "wardLabel": "Ward No. 70, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "16657"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899238",
+  "wardLabel": "Ward No. 71, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "29922"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899238",
+  "wardLabel": "Ward No. 71, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6266"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899238",
+  "wardLabel": "Ward No. 71, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "14372"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899238",
+  "wardLabel": "Ward No. 71, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15550"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899244",
+  "wardLabel": "Ward No. 77, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "21828"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899244",
+  "wardLabel": "Ward No. 77, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "24156"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899244",
+  "wardLabel": "Ward No. 77, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "11177"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899244",
+  "wardLabel": "Ward No. 77, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "34807"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899245",
+  "wardLabel": "Ward No. 8, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "18760"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899245",
+  "wardLabel": "Ward No. 8, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4285"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899245",
+  "wardLabel": "Ward No. 8, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9262"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899245",
+  "wardLabel": "Ward No. 8, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "9498"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899245",
+  "wardLabel": "Ward No. 8, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2151"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899245",
+  "wardLabel": "Ward No. 8, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "16609"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899246",
+  "wardLabel": "Ward No. 9, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "16420"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899246",
+  "wardLabel": "Ward No. 9, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3834"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899246",
+  "wardLabel": "Ward No. 9, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "7847"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899246",
+  "wardLabel": "Ward No. 9, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "8573"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899246",
+  "wardLabel": "Ward No. 9, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2326"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899246",
+  "wardLabel": "Ward No. 9, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "14094"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20020536",
+  "wardLabel": "Ward No. 88, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "23672"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20020536",
+  "wardLabel": "Ward No. 88, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6109"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20020536",
+  "wardLabel": "Ward No. 88, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "11676"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20020536",
+  "wardLabel": "Ward No. 88, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11996"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20020536",
+  "wardLabel": "Ward No. 88, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4934"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20020536",
+  "wardLabel": "Ward No. 88, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "18738"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20164608",
+  "wardLabel": "Ward No. 111, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "38647"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20164608",
+  "wardLabel": "Ward No. 111, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10156"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20164608",
+  "wardLabel": "Ward No. 111, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "18991"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20164608",
+  "wardLabel": "Ward No. 111, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "19656"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20164608",
+  "wardLabel": "Ward No. 111, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4942"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q20164608",
+  "wardLabel": "Ward No. 111, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "33705"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899238",
+  "wardLabel": "Ward No. 71, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3841"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899238",
+  "wardLabel": "Ward No. 71, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "26081"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899239",
+  "wardLabel": "Ward No. 72, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "19167"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899239",
+  "wardLabel": "Ward No. 72, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4306"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899239",
+  "wardLabel": "Ward No. 72, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9007"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899239",
+  "wardLabel": "Ward No. 72, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10160"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899239",
+  "wardLabel": "Ward No. 72, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2801"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899239",
+  "wardLabel": "Ward No. 72, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "16366"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899240",
+  "wardLabel": "Ward No. 73, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "23512"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899240",
+  "wardLabel": "Ward No. 73, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5260"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899240",
+  "wardLabel": "Ward No. 73, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10971"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899240",
+  "wardLabel": "Ward No. 73, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "12541"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899240",
+  "wardLabel": "Ward No. 73, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3707"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899240",
+  "wardLabel": "Ward No. 73, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "19805"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899241",
+  "wardLabel": "Ward No. 74, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "42176"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899241",
+  "wardLabel": "Ward No. 74, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "9189"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899241",
+  "wardLabel": "Ward No. 74, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "18028"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899241",
+  "wardLabel": "Ward No. 74, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "24148"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899241",
+  "wardLabel": "Ward No. 74, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "8772"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899241",
+  "wardLabel": "Ward No. 74, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "33404"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899242",
+  "wardLabel": "Ward No. 75, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "26925"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899242",
+  "wardLabel": "Ward No. 75, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5978"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899242",
+  "wardLabel": "Ward No. 75, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "11555"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899242",
+  "wardLabel": "Ward No. 75, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15370"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899242",
+  "wardLabel": "Ward No. 75, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "7404"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899242",
+  "wardLabel": "Ward No. 75, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "19521"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899243",
+  "wardLabel": "Ward No. 76, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21946"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899243",
+  "wardLabel": "Ward No. 76, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5052"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899243",
+  "wardLabel": "Ward No. 76, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10439"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899243",
+  "wardLabel": "Ward No. 76, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11507"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899243",
+  "wardLabel": "Ward No. 76, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4093"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899243",
+  "wardLabel": "Ward No. 76, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17853"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899244",
+  "wardLabel": "Ward No. 77, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "45984"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899244",
+  "wardLabel": "Ward No. 77, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8829"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906348",
+  "wardLabel": "Ward No. 78, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "54090"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906348",
+  "wardLabel": "Ward No. 78, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10637"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906348",
+  "wardLabel": "Ward No. 78, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "25655"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906348",
+  "wardLabel": "Ward No. 78, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "28435"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906348",
+  "wardLabel": "Ward No. 78, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "13754"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906348",
+  "wardLabel": "Ward No. 78, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "40336"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906356",
+  "wardLabel": "Ward No. 79, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "44303"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906356",
+  "wardLabel": "Ward No. 79, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "9235"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906356",
+  "wardLabel": "Ward No. 79, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "20178"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906356",
+  "wardLabel": "Ward No. 79, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "24125"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906356",
+  "wardLabel": "Ward No. 79, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "11958"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906356",
+  "wardLabel": "Ward No. 79, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "32345"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906359",
+  "wardLabel": "Ward No. 80, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "31094"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906359",
+  "wardLabel": "Ward No. 80, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7124"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906359",
+  "wardLabel": "Ward No. 80, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "13730"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906359",
+  "wardLabel": "Ward No. 80, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "17364"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906359",
+  "wardLabel": "Ward No. 80, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "11336"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906359",
+  "wardLabel": "Ward No. 80, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "19758"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906391",
+  "wardLabel": "Ward No. 81, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "41501"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906391",
+  "wardLabel": "Ward No. 81, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10211"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906391",
+  "wardLabel": "Ward No. 81, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "20370"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906391",
+  "wardLabel": "Ward No. 81, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "21131"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906391",
+  "wardLabel": "Ward No. 81, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "8678"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906391",
+  "wardLabel": "Ward No. 81, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "32823"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906400",
+  "wardLabel": "Ward No. 82, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "38838"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906400",
+  "wardLabel": "Ward No. 82, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "9994"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906400",
+  "wardLabel": "Ward No. 82, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "19056"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906400",
+  "wardLabel": "Ward No. 82, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "19782"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906400",
+  "wardLabel": "Ward No. 82, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "8085"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906400",
+  "wardLabel": "Ward No. 82, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "30753"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906405",
+  "wardLabel": "Ward No. 84, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "19230"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906405",
+  "wardLabel": "Ward No. 84, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4420"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906405",
+  "wardLabel": "Ward No. 84, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9447"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906405",
+  "wardLabel": "Ward No. 84, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "9783"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906405",
+  "wardLabel": "Ward No. 84, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3766"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906405",
+  "wardLabel": "Ward No. 84, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "15464"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906569",
+  "wardLabel": "Ward No. 95, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "26737"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906569",
+  "wardLabel": "Ward No. 95, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7651"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906569",
+  "wardLabel": "Ward No. 95, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "13525"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906569",
+  "wardLabel": "Ward No. 95, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "13212"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906569",
+  "wardLabel": "Ward No. 95, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2431"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906569",
+  "wardLabel": "Ward No. 95, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "24306"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906572",
+  "wardLabel": "Ward No. 96, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "31033"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906572",
+  "wardLabel": "Ward No. 96, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8893"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906572",
+  "wardLabel": "Ward No. 96, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "15676"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906572",
+  "wardLabel": "Ward No. 96, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15357"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906572",
+  "wardLabel": "Ward No. 96, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2500"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906572",
+  "wardLabel": "Ward No. 96, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "28533"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906575",
+  "wardLabel": "Ward No. 97, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "37199"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906575",
+  "wardLabel": "Ward No. 97, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10222"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906575",
+  "wardLabel": "Ward No. 97, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "18586"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906575",
+  "wardLabel": "Ward No. 97, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "18613"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906575",
+  "wardLabel": "Ward No. 97, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3969"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906575",
+  "wardLabel": "Ward No. 97, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "33230"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906609",
+  "wardLabel": "Ward No. 98, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "31708"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906609",
+  "wardLabel": "Ward No. 98, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8904"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906609",
+  "wardLabel": "Ward No. 98, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "16302"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906609",
+  "wardLabel": "Ward No. 98, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15406"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906609",
+  "wardLabel": "Ward No. 98, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2849"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906609",
+  "wardLabel": "Ward No. 98, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "28859"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906615",
+  "wardLabel": "Ward No. 99, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "26739"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906615",
+  "wardLabel": "Ward No. 99, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7222"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906615",
+  "wardLabel": "Ward No. 99, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "13434"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906615",
+  "wardLabel": "Ward No. 99, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "13305"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906615",
+  "wardLabel": "Ward No. 99, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2581"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906615",
+  "wardLabel": "Ward No. 99, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "24158"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906635",
+  "wardLabel": "Ward No. 100, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "25507"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906635",
+  "wardLabel": "Ward No. 100, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7269"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906635",
+  "wardLabel": "Ward No. 100, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "13121"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906635",
+  "wardLabel": "Ward No. 100, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "12386"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906635",
+  "wardLabel": "Ward No. 100, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2312"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906635",
+  "wardLabel": "Ward No. 100, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "23195"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899173",
+  "wardLabel": "Ward No. 13, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "33066"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899173",
+  "wardLabel": "Ward No. 13, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7292"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899173",
+  "wardLabel": "Ward No. 13, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "15433"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899173",
+  "wardLabel": "Ward No. 13, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "17633"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899173",
+  "wardLabel": "Ward No. 13, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "7652"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899173",
+  "wardLabel": "Ward No. 13, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "25414"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899174",
+  "wardLabel": "Ward No. 14, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "53343"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899174",
+  "wardLabel": "Ward No. 14, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "12387"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899174",
+  "wardLabel": "Ward No. 14, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "26279"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899174",
+  "wardLabel": "Ward No. 14, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "27064"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899174",
+  "wardLabel": "Ward No. 14, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "10053"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899174",
+  "wardLabel": "Ward No. 14, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "43290"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899175",
+  "wardLabel": "Ward No. 15, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "23922"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899175",
+  "wardLabel": "Ward No. 15, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5397"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899175",
+  "wardLabel": "Ward No. 15, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "11281"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899175",
+  "wardLabel": "Ward No. 15, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "12641"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899175",
+  "wardLabel": "Ward No. 15, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4110"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899175",
+  "wardLabel": "Ward No. 15, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "19812"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899176",
+  "wardLabel": "Ward No. 16, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "20904"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899176",
+  "wardLabel": "Ward No. 16, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4230"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899176",
+  "wardLabel": "Ward No. 16, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10137"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899176",
+  "wardLabel": "Ward No. 16, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10767"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899176",
+  "wardLabel": "Ward No. 16, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3411"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899176",
+  "wardLabel": "Ward No. 16, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17493"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899177",
+  "wardLabel": "Ward No. 17, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21023"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899177",
+  "wardLabel": "Ward No. 17, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4895"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899177",
+  "wardLabel": "Ward No. 17, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10199"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899177",
+  "wardLabel": "Ward No. 17, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10824"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899177",
+  "wardLabel": "Ward No. 17, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2690"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899177",
+  "wardLabel": "Ward No. 17, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "18333"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899178",
+  "wardLabel": "Ward No. 18, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "22267"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899178",
+  "wardLabel": "Ward No. 18, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5525"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899178",
+  "wardLabel": "Ward No. 18, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "11529"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899178",
+  "wardLabel": "Ward No. 18, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10738"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899178",
+  "wardLabel": "Ward No. 18, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5790"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899178",
+  "wardLabel": "Ward No. 18, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "16477"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19818699",
+  "wardLabel": "Ward No. 33, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "45919"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19818699",
+  "wardLabel": "Ward No. 33, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "11095"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19818699",
+  "wardLabel": "Ward No. 33, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "23101"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19818699",
+  "wardLabel": "Ward No. 33, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "22818"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19818699",
+  "wardLabel": "Ward No. 33, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "6672"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19818699",
+  "wardLabel": "Ward No. 33, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "39247"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899169",
+  "wardLabel": "Ward No. 1, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "53125"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899169",
+  "wardLabel": "Ward No. 1, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "11394"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899169",
+  "wardLabel": "Ward No. 1, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "25180"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899169",
+  "wardLabel": "Ward No. 1, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "27945"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899169",
+  "wardLabel": "Ward No. 1, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P2044",
+  "val": "36"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899169",
+  "wardLabel": "Ward No. 1, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "10848"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899169",
+  "wardLabel": "Ward No. 1, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "42277"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899170",
+  "wardLabel": "Ward No. 10, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "27700"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899170",
+  "wardLabel": "Ward No. 10, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5139"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899170",
+  "wardLabel": "Ward No. 10, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "13187"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899170",
+  "wardLabel": "Ward No. 10, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "14513"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899170",
+  "wardLabel": "Ward No. 10, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3182"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899170",
+  "wardLabel": "Ward No. 10, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "24518"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899171",
+  "wardLabel": "Ward No. 11, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "22152"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899171",
+  "wardLabel": "Ward No. 11, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4715"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899171",
+  "wardLabel": "Ward No. 11, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10066"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899171",
+  "wardLabel": "Ward No. 11, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "12086"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899171",
+  "wardLabel": "Ward No. 11, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3712"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899171",
+  "wardLabel": "Ward No. 11, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "18440"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899172",
+  "wardLabel": "Ward No. 12, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21493"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899172",
+  "wardLabel": "Ward No. 12, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4864"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899172",
+  "wardLabel": "Ward No. 12, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9609"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899172",
+  "wardLabel": "Ward No. 12, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11884"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899172",
+  "wardLabel": "Ward No. 12, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4470"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899172",
+  "wardLabel": "Ward No. 12, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17023"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906807",
+  "wardLabel": "Ward No. 119, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "1932"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906807",
+  "wardLabel": "Ward No. 119, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "14559"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906823",
+  "wardLabel": "Ward No. 120, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "19710"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906823",
+  "wardLabel": "Ward No. 120, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5249"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906823",
+  "wardLabel": "Ward No. 120, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10048"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906823",
+  "wardLabel": "Ward No. 120, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "9662"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906823",
+  "wardLabel": "Ward No. 120, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2608"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906823",
+  "wardLabel": "Ward No. 120, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17102"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906858",
+  "wardLabel": "Ward No. 121, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "29921"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906858",
+  "wardLabel": "Ward No. 121, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7712"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906858",
+  "wardLabel": "Ward No. 121, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "15002"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906858",
+  "wardLabel": "Ward No. 121, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "14919"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906858",
+  "wardLabel": "Ward No. 121, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4294"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906858",
+  "wardLabel": "Ward No. 121, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "25627"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906866",
+  "wardLabel": "Ward No. 122, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "39198"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906866",
+  "wardLabel": "Ward No. 122, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "9977"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906866",
+  "wardLabel": "Ward No. 122, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "19292"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906866",
+  "wardLabel": "Ward No. 122, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "19906"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906866",
+  "wardLabel": "Ward No. 122, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5388"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906866",
+  "wardLabel": "Ward No. 122, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "33810"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907020",
+  "wardLabel": "Ward No. 123, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "35386"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907020",
+  "wardLabel": "Ward No. 123, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "9425"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907020",
+  "wardLabel": "Ward No. 123, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "17659"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907020",
+  "wardLabel": "Ward No. 123, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "17727"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907020",
+  "wardLabel": "Ward No. 123, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4360"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907020",
+  "wardLabel": "Ward No. 123, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "31026"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907026",
+  "wardLabel": "Ward No. 124, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "39179"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907026",
+  "wardLabel": "Ward No. 124, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10128"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907026",
+  "wardLabel": "Ward No. 124, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "19827"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907026",
+  "wardLabel": "Ward No. 124, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "19352"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907026",
+  "wardLabel": "Ward No. 124, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5547"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907026",
+  "wardLabel": "Ward No. 124, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "33632"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907029",
+  "wardLabel": "Ward No. 125, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "44850"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907029",
+  "wardLabel": "Ward No. 125, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "11297"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907029",
+  "wardLabel": "Ward No. 125, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "22239"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907029",
+  "wardLabel": "Ward No. 125, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "22611"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907029",
+  "wardLabel": "Ward No. 125, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "6399"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907029",
+  "wardLabel": "Ward No. 125, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "38451"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907058",
+  "wardLabel": "Ward No. 126, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "31631"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907058",
+  "wardLabel": "Ward No. 126, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8247"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907058",
+  "wardLabel": "Ward No. 126, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "15875"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907058",
+  "wardLabel": "Ward No. 126, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15756"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907058",
+  "wardLabel": "Ward No. 126, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3828"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907058",
+  "wardLabel": "Ward No. 126, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "27803"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907065",
+  "wardLabel": "Ward No. 127, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "43782"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907065",
+  "wardLabel": "Ward No. 127, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "11221"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907065",
+  "wardLabel": "Ward No. 127, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "21862"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907065",
+  "wardLabel": "Ward No. 127, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "21920"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907094",
+  "wardLabel": "Ward No. 128, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "32179"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907094",
+  "wardLabel": "Ward No. 128, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8405"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907094",
+  "wardLabel": "Ward No. 128, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "16138"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907094",
+  "wardLabel": "Ward No. 128, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "16041"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907134",
+  "wardLabel": "Ward No. 129, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "39654"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907134",
+  "wardLabel": "Ward No. 129, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10206"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907134",
+  "wardLabel": "Ward No. 129, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "19857"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907134",
+  "wardLabel": "Ward No. 129, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "19797"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907198",
+  "wardLabel": "Ward No. 130, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "23227"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907198",
+  "wardLabel": "Ward No. 130, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6150"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907198",
+  "wardLabel": "Ward No. 130, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "11900"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907198",
+  "wardLabel": "Ward No. 130, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11327"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907219",
+  "wardLabel": "Ward No. 131, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "30911"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907219",
+  "wardLabel": "Ward No. 131, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8284"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907219",
+  "wardLabel": "Ward No. 131, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "15431"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907219",
+  "wardLabel": "Ward No. 131, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15480"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906705",
+  "wardLabel": "Ward No. 108, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "64777"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906705",
+  "wardLabel": "Ward No. 108, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "15854"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906705",
+  "wardLabel": "Ward No. 108, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "31349"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906705",
+  "wardLabel": "Ward No. 108, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "33428"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906705",
+  "wardLabel": "Ward No. 108, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "18290"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906705",
+  "wardLabel": "Ward No. 108, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "46487"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906707",
+  "wardLabel": "Ward No. 107, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "54260"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906707",
+  "wardLabel": "Ward No. 107, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "13518"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906707",
+  "wardLabel": "Ward No. 107, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "26283"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906707",
+  "wardLabel": "Ward No. 107, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "27977"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906707",
+  "wardLabel": "Ward No. 107, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "9114"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906707",
+  "wardLabel": "Ward No. 107, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "45146"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906710",
+  "wardLabel": "Ward No. 109, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "64567"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906710",
+  "wardLabel": "Ward No. 109, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "16238"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906710",
+  "wardLabel": "Ward No. 109, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "32107"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906710",
+  "wardLabel": "Ward No. 109, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "32460"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906710",
+  "wardLabel": "Ward No. 109, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "14132"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906710",
+  "wardLabel": "Ward No. 109, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "50435"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906720",
+  "wardLabel": "Ward No. 110, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "27470"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906720",
+  "wardLabel": "Ward No. 110, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7628"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906720",
+  "wardLabel": "Ward No. 110, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "13789"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906720",
+  "wardLabel": "Ward No. 110, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "13681"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906720",
+  "wardLabel": "Ward No. 110, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4107"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906720",
+  "wardLabel": "Ward No. 110, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "23363"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906732",
+  "wardLabel": "Ward No. 112, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "32404"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906732",
+  "wardLabel": "Ward No. 112, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8373"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906732",
+  "wardLabel": "Ward No. 112, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "16095"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906732",
+  "wardLabel": "Ward No. 112, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "16309"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906732",
+  "wardLabel": "Ward No. 112, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4600"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906732",
+  "wardLabel": "Ward No. 112, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "27804"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906736",
+  "wardLabel": "Ward No. 113, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "33475"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906736",
+  "wardLabel": "Ward No. 113, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8508"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906736",
+  "wardLabel": "Ward No. 113, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "16754"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906736",
+  "wardLabel": "Ward No. 113, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "16721"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906736",
+  "wardLabel": "Ward No. 113, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4867"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906736",
+  "wardLabel": "Ward No. 113, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "28608"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906666",
+  "wardLabel": "Ward No. 101, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "40208"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906666",
+  "wardLabel": "Ward No. 101, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10934"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906666",
+  "wardLabel": "Ward No. 101, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "20377"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906666",
+  "wardLabel": "Ward No. 101, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "19831"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906666",
+  "wardLabel": "Ward No. 101, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4275"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906666",
+  "wardLabel": "Ward No. 101, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "35933"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906670",
+  "wardLabel": "Ward No. 102, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21503"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906670",
+  "wardLabel": "Ward No. 102, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5867"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906670",
+  "wardLabel": "Ward No. 102, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10879"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906670",
+  "wardLabel": "Ward No. 102, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10624"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906670",
+  "wardLabel": "Ward No. 102, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2626"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906670",
+  "wardLabel": "Ward No. 102, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "18877"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906678",
+  "wardLabel": "Ward No. 104, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "33185"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906678",
+  "wardLabel": "Ward No. 104, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "9224"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906678",
+  "wardLabel": "Ward No. 104, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "16800"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906678",
+  "wardLabel": "Ward No. 104, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "16385"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906678",
+  "wardLabel": "Ward No. 104, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3041"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906678",
+  "wardLabel": "Ward No. 104, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "30144"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906679",
+  "wardLabel": "Ward No. 103, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "25428"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906679",
+  "wardLabel": "Ward No. 103, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7105"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906679",
+  "wardLabel": "Ward No. 103, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "12929"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906679",
+  "wardLabel": "Ward No. 103, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "12499"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906679",
+  "wardLabel": "Ward No. 103, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2622"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906679",
+  "wardLabel": "Ward No. 103, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "22806"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906690",
+  "wardLabel": "Ward No. 105, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21267"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906690",
+  "wardLabel": "Ward No. 105, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5639"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906690",
+  "wardLabel": "Ward No. 105, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10658"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906690",
+  "wardLabel": "Ward No. 105, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10609"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906690",
+  "wardLabel": "Ward No. 105, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2456"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906690",
+  "wardLabel": "Ward No. 105, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "18811"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906696",
+  "wardLabel": "Ward No. 106, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "40618"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906696",
+  "wardLabel": "Ward No. 106, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10558"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906696",
+  "wardLabel": "Ward No. 106, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "20152"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906696",
+  "wardLabel": "Ward No. 106, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "20466"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906696",
+  "wardLabel": "Ward No. 106, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5547"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906696",
+  "wardLabel": "Ward No. 106, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "35071"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906407",
+  "wardLabel": "Ward No. 83, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "22163"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906407",
+  "wardLabel": "Ward No. 83, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5176"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906407",
+  "wardLabel": "Ward No. 83, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "11050"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906407",
+  "wardLabel": "Ward No. 83, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11113"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906407",
+  "wardLabel": "Ward No. 83, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4187"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906407",
+  "wardLabel": "Ward No. 83, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17976"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906437",
+  "wardLabel": "Ward No. 85, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "29566"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906437",
+  "wardLabel": "Ward No. 85, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6402"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906437",
+  "wardLabel": "Ward No. 85, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "14507"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906437",
+  "wardLabel": "Ward No. 85, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15059"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906437",
+  "wardLabel": "Ward No. 85, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4990"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906437",
+  "wardLabel": "Ward No. 85, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "24576"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906448",
+  "wardLabel": "Ward No. 87, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "12675"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906448",
+  "wardLabel": "Ward No. 87, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3227"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906448",
+  "wardLabel": "Ward No. 87, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "6390"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906448",
+  "wardLabel": "Ward No. 87, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "6285"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906448",
+  "wardLabel": "Ward No. 87, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "1725"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906448",
+  "wardLabel": "Ward No. 87, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "10950"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906449",
+  "wardLabel": "Ward No. 86, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "19195"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906449",
+  "wardLabel": "Ward No. 86, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4921"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906449",
+  "wardLabel": "Ward No. 86, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9471"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906449",
+  "wardLabel": "Ward No. 86, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "9724"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906449",
+  "wardLabel": "Ward No. 86, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2936"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906449",
+  "wardLabel": "Ward No. 86, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "16259"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906521",
+  "wardLabel": "Ward No. 89, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "22304"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906521",
+  "wardLabel": "Ward No. 89, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5819"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906521",
+  "wardLabel": "Ward No. 89, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10909"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906521",
+  "wardLabel": "Ward No. 89, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11395"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906521",
+  "wardLabel": "Ward No. 89, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2928"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906521",
+  "wardLabel": "Ward No. 89, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "19376"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906523",
+  "wardLabel": "Ward No. 90, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "18857"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906523",
+  "wardLabel": "Ward No. 90, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4761"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906523",
+  "wardLabel": "Ward No. 90, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9602"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906523",
+  "wardLabel": "Ward No. 90, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "9255"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899179",
+  "wardLabel": "Ward No. 19, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21158"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899179",
+  "wardLabel": "Ward No. 19, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4593"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899179",
+  "wardLabel": "Ward No. 19, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9691"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899179",
+  "wardLabel": "Ward No. 19, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11467"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899179",
+  "wardLabel": "Ward No. 19, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3483"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899179",
+  "wardLabel": "Ward No. 19, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17675"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899180",
+  "wardLabel": "Ward No. 2, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "48190"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899180",
+  "wardLabel": "Ward No. 2, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "11305"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899180",
+  "wardLabel": "Ward No. 2, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "23809"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899180",
+  "wardLabel": "Ward No. 2, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "24381"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899180",
+  "wardLabel": "Ward No. 2, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5204"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899180",
+  "wardLabel": "Ward No. 2, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "42986"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899182",
+  "wardLabel": "Ward No. 20, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21576"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899182",
+  "wardLabel": "Ward No. 20, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4310"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899182",
+  "wardLabel": "Ward No. 20, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9396"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899182",
+  "wardLabel": "Ward No. 20, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "12180"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899182",
+  "wardLabel": "Ward No. 20, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4436"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899182",
+  "wardLabel": "Ward No. 20, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17140"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899183",
+  "wardLabel": "Ward No. 21, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21187"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899183",
+  "wardLabel": "Ward No. 21, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4304"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899183",
+  "wardLabel": "Ward No. 21, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "8060"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899183",
+  "wardLabel": "Ward No. 21, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "13127"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899183",
+  "wardLabel": "Ward No. 21, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5171"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899183",
+  "wardLabel": "Ward No. 21, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "16016"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899184",
+  "wardLabel": "Ward No. 22, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "15730"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899184",
+  "wardLabel": "Ward No. 22, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "2884"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899184",
+  "wardLabel": "Ward No. 22, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "5883"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899184",
+  "wardLabel": "Ward No. 22, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "9847"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899184",
+  "wardLabel": "Ward No. 22, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2973"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899184",
+  "wardLabel": "Ward No. 22, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "12757"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899185",
+  "wardLabel": "Ward No. 23, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "18256"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899185",
+  "wardLabel": "Ward No. 23, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3338"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906523",
+  "wardLabel": "Ward No. 90, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3860"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906523",
+  "wardLabel": "Ward No. 90, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "14997"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906532",
+  "wardLabel": "Ward No. 91, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "38450"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906532",
+  "wardLabel": "Ward No. 91, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "9995"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906532",
+  "wardLabel": "Ward No. 91, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "19483"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906532",
+  "wardLabel": "Ward No. 91, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "18967"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906532",
+  "wardLabel": "Ward No. 91, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5589"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906532",
+  "wardLabel": "Ward No. 91, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "32861"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906551",
+  "wardLabel": "Ward No. 92, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "36450"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906551",
+  "wardLabel": "Ward No. 92, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10177"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906551",
+  "wardLabel": "Ward No. 92, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "18585"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906551",
+  "wardLabel": "Ward No. 92, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "17865"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906551",
+  "wardLabel": "Ward No. 92, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4033"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906551",
+  "wardLabel": "Ward No. 92, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "32417"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906557",
+  "wardLabel": "Ward No. 93, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "44364"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906557",
+  "wardLabel": "Ward No. 93, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "11871"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906557",
+  "wardLabel": "Ward No. 93, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "22188"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906557",
+  "wardLabel": "Ward No. 93, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "22176"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906557",
+  "wardLabel": "Ward No. 93, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "6414"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906557",
+  "wardLabel": "Ward No. 93, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "37950"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906568",
+  "wardLabel": "Ward No. 94, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "27469"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906568",
+  "wardLabel": "Ward No. 94, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7121"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906568",
+  "wardLabel": "Ward No. 94, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "13551"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906568",
+  "wardLabel": "Ward No. 94, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "13918"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906568",
+  "wardLabel": "Ward No. 94, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4638"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906568",
+  "wardLabel": "Ward No. 94, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "22831"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899222",
+  "wardLabel": "Ward No. 57, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "49856"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899222",
+  "wardLabel": "Ward No. 57, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "11051"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899222",
+  "wardLabel": "Ward No. 57, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "23714"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899222",
+  "wardLabel": "Ward No. 57, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "26142"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899222",
+  "wardLabel": "Ward No. 57, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "13412"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899222",
+  "wardLabel": "Ward No. 57, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "36444"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899223",
+  "wardLabel": "Ward No. 58, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "88465"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899223",
+  "wardLabel": "Ward No. 58, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "20093"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899223",
+  "wardLabel": "Ward No. 58, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "42258"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899223",
+  "wardLabel": "Ward No. 58, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "46207"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899223",
+  "wardLabel": "Ward No. 58, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "29592"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899223",
+  "wardLabel": "Ward No. 58, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "58873"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899224",
+  "wardLabel": "Ward No. 59, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "70261"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899224",
+  "wardLabel": "Ward No. 59, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "15157"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899224",
+  "wardLabel": "Ward No. 59, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "33920"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899224",
+  "wardLabel": "Ward No. 59, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "36341"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899224",
+  "wardLabel": "Ward No. 59, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "19129"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899224",
+  "wardLabel": "Ward No. 59, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "51132"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899225",
+  "wardLabel": "Ward No. 6, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "42346"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899225",
+  "wardLabel": "Ward No. 6, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8855"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899225",
+  "wardLabel": "Ward No. 6, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "19369"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899225",
+  "wardLabel": "Ward No. 6, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "22977"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899225",
+  "wardLabel": "Ward No. 6, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "11209"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899225",
+  "wardLabel": "Ward No. 6, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "31137"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899226",
+  "wardLabel": "Ward No. 60, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "35732"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899226",
+  "wardLabel": "Ward No. 60, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6755"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899226",
+  "wardLabel": "Ward No. 60, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "16768"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899226",
+  "wardLabel": "Ward No. 60, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "18964"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899226",
+  "wardLabel": "Ward No. 60, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "9275"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899226",
+  "wardLabel": "Ward No. 60, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "26457"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899227",
+  "wardLabel": "Ward No. 61, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "29704"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899227",
+  "wardLabel": "Ward No. 61, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5447"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899227",
+  "wardLabel": "Ward No. 61, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "13750"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899227",
+  "wardLabel": "Ward No. 61, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15954"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899227",
+  "wardLabel": "Ward No. 61, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "7936"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906748",
+  "wardLabel": "Ward No. 114, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "41913"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906748",
+  "wardLabel": "Ward No. 114, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10958"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906748",
+  "wardLabel": "Ward No. 114, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "20820"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906748",
+  "wardLabel": "Ward No. 114, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "21093"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906748",
+  "wardLabel": "Ward No. 114, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "6521"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906748",
+  "wardLabel": "Ward No. 114, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "35392"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906751",
+  "wardLabel": "Ward No. 115, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "31919"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906751",
+  "wardLabel": "Ward No. 115, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8461"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906751",
+  "wardLabel": "Ward No. 115, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "15918"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906751",
+  "wardLabel": "Ward No. 115, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "16001"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906751",
+  "wardLabel": "Ward No. 115, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3209"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906751",
+  "wardLabel": "Ward No. 115, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "28710"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906777",
+  "wardLabel": "Ward No. 116, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "28338"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906777",
+  "wardLabel": "Ward No. 116, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6897"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906777",
+  "wardLabel": "Ward No. 116, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "13843"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906777",
+  "wardLabel": "Ward No. 116, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "14495"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906777",
+  "wardLabel": "Ward No. 116, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5753"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906777",
+  "wardLabel": "Ward No. 116, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "22585"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906788",
+  "wardLabel": "Ward No. 117, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21824"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906788",
+  "wardLabel": "Ward No. 117, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5226"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906788",
+  "wardLabel": "Ward No. 117, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10703"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906788",
+  "wardLabel": "Ward No. 117, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11121"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906788",
+  "wardLabel": "Ward No. 117, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4448"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906788",
+  "wardLabel": "Ward No. 117, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17376"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906805",
+  "wardLabel": "Ward No. 118, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21810"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906805",
+  "wardLabel": "Ward No. 118, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5433"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906805",
+  "wardLabel": "Ward No. 118, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10913"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906805",
+  "wardLabel": "Ward No. 118, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10897"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906805",
+  "wardLabel": "Ward No. 118, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3495"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906805",
+  "wardLabel": "Ward No. 118, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "18315"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906807",
+  "wardLabel": "Ward No. 119, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "16491"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906807",
+  "wardLabel": "Ward No. 119, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4081"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906807",
+  "wardLabel": "Ward No. 119, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "8172"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24906807",
+  "wardLabel": "Ward No. 119, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "8319"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907443",
+  "wardLabel": "Ward No. 139, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "42014"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907443",
+  "wardLabel": "Ward No. 139, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6937"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907443",
+  "wardLabel": "Ward No. 139, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "19789"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907443",
+  "wardLabel": "Ward No. 139, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "22225"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907478",
+  "wardLabel": "Ward No. 140, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "30504"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907478",
+  "wardLabel": "Ward No. 140, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5004"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907478",
+  "wardLabel": "Ward No. 140, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "14430"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907478",
+  "wardLabel": "Ward No. 140, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "16074"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907482",
+  "wardLabel": "Ward No. 141, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "41152"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907482",
+  "wardLabel": "Ward No. 141, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7755"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907482",
+  "wardLabel": "Ward No. 141, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "19700"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907482",
+  "wardLabel": "Ward No. 141, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "21452"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907231",
+  "wardLabel": "Ward No. 132, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "26274"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907231",
+  "wardLabel": "Ward No. 132, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6722"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907231",
+  "wardLabel": "Ward No. 132, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "12954"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907231",
+  "wardLabel": "Ward No. 132, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "13320"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907289",
+  "wardLabel": "Ward No. 133, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "25588"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907289",
+  "wardLabel": "Ward No. 133, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5306"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907289",
+  "wardLabel": "Ward No. 133, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "12294"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907289",
+  "wardLabel": "Ward No. 133, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "13294"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907346",
+  "wardLabel": "Ward No. 134, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "35780"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907346",
+  "wardLabel": "Ward No. 134, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6281"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907346",
+  "wardLabel": "Ward No. 134, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "17050"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907346",
+  "wardLabel": "Ward No. 134, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "18730"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907385",
+  "wardLabel": "Ward No. 135, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "33258"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907385",
+  "wardLabel": "Ward No. 135, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5911"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907385",
+  "wardLabel": "Ward No. 135, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "15705"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907385",
+  "wardLabel": "Ward No. 135, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "17553"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907390",
+  "wardLabel": "Ward No. 136, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21482"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907390",
+  "wardLabel": "Ward No. 136, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4485"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907390",
+  "wardLabel": "Ward No. 136, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10460"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907390",
+  "wardLabel": "Ward No. 136, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11022"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907414",
+  "wardLabel": "Ward No. 137, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "19385"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907414",
+  "wardLabel": "Ward No. 137, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3373"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907414",
+  "wardLabel": "Ward No. 137, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "8878"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907414",
+  "wardLabel": "Ward No. 137, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10507"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907442",
+  "wardLabel": "Ward No. 138, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "28858"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907442",
+  "wardLabel": "Ward No. 138, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4629"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907442",
+  "wardLabel": "Ward No. 138, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "13277"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q24907442",
+  "wardLabel": "Ward No. 138, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15581"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899211",
+  "wardLabel": "Ward No. 47, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "14684"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899211",
+  "wardLabel": "Ward No. 47, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3271"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899211",
+  "wardLabel": "Ward No. 47, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "6257"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899211",
+  "wardLabel": "Ward No. 47, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "8427"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899211",
+  "wardLabel": "Ward No. 47, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2632"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899211",
+  "wardLabel": "Ward No. 47, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "12052"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899212",
+  "wardLabel": "Ward No. 48, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "20437"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899212",
+  "wardLabel": "Ward No. 48, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4671"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899212",
+  "wardLabel": "Ward No. 48, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9309"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899212",
+  "wardLabel": "Ward No. 48, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11128"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899212",
+  "wardLabel": "Ward No. 48, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4462"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899212",
+  "wardLabel": "Ward No. 48, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "15975"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899213",
+  "wardLabel": "Ward No. 49, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "19416"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899213",
+  "wardLabel": "Ward No. 49, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3965"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899213",
+  "wardLabel": "Ward No. 49, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "5905"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899213",
+  "wardLabel": "Ward No. 49, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "13511"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899213",
+  "wardLabel": "Ward No. 49, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "7133"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899213",
+  "wardLabel": "Ward No. 49, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "12283"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899214",
+  "wardLabel": "Ward No. 5, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "23707"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899214",
+  "wardLabel": "Ward No. 5, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5815"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899214",
+  "wardLabel": "Ward No. 5, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "11464"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899214",
+  "wardLabel": "Ward No. 5, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "12243"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899214",
+  "wardLabel": "Ward No. 5, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3727"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899214",
+  "wardLabel": "Ward No. 5, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "19980"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899215",
+  "wardLabel": "Ward No. 50, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "17251"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899215",
+  "wardLabel": "Ward No. 50, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3791"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899215",
+  "wardLabel": "Ward No. 50, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "8164"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899215",
+  "wardLabel": "Ward No. 50, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "9087"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899215",
+  "wardLabel": "Ward No. 50, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2738"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899215",
+  "wardLabel": "Ward No. 50, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "14513"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899191",
+  "wardLabel": "Ward No. 29, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "53782"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899191",
+  "wardLabel": "Ward No. 29, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "9047"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899191",
+  "wardLabel": "Ward No. 29, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "24840"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899191",
+  "wardLabel": "Ward No. 29, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "28942"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899191",
+  "wardLabel": "Ward No. 29, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "19688"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899191",
+  "wardLabel": "Ward No. 29, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "34094"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899192",
+  "wardLabel": "Ward No. 3, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "53855"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899192",
+  "wardLabel": "Ward No. 3, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "11617"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899192",
+  "wardLabel": "Ward No. 3, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "26219"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899192",
+  "wardLabel": "Ward No. 3, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "27636"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899192",
+  "wardLabel": "Ward No. 3, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "10922"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899192",
+  "wardLabel": "Ward No. 3, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "42933"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899193",
+  "wardLabel": "Ward No. 30, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "30050"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899193",
+  "wardLabel": "Ward No. 30, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6747"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899193",
+  "wardLabel": "Ward No. 30, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "14401"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899193",
+  "wardLabel": "Ward No. 30, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15649"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899193",
+  "wardLabel": "Ward No. 30, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5201"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899193",
+  "wardLabel": "Ward No. 30, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "24849"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899194",
+  "wardLabel": "Ward No. 31, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "39025"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899194",
+  "wardLabel": "Ward No. 31, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8800"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899194",
+  "wardLabel": "Ward No. 31, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "18030"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899194",
+  "wardLabel": "Ward No. 31, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "20995"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899194",
+  "wardLabel": "Ward No. 31, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "7387"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899194",
+  "wardLabel": "Ward No. 31, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "31638"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899195",
+  "wardLabel": "Ward No. 32, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "45636"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899195",
+  "wardLabel": "Ward No. 32, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "10708"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899195",
+  "wardLabel": "Ward No. 32, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "22705"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899195",
+  "wardLabel": "Ward No. 32, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "22931"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899195",
+  "wardLabel": "Ward No. 32, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "13491"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899195",
+  "wardLabel": "Ward No. 32, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "32145"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899196",
+  "wardLabel": "Ward No. 34, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "29773"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899196",
+  "wardLabel": "Ward No. 34, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7611"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899196",
+  "wardLabel": "Ward No. 34, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "14976"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899196",
+  "wardLabel": "Ward No. 34, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "14797"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899196",
+  "wardLabel": "Ward No. 34, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3694"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899196",
+  "wardLabel": "Ward No. 34, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "26079"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899216",
+  "wardLabel": "Ward No. 51, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "13556"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899216",
+  "wardLabel": "Ward No. 51, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3273"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899216",
+  "wardLabel": "Ward No. 51, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "6392"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899216",
+  "wardLabel": "Ward No. 51, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "7164"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899216",
+  "wardLabel": "Ward No. 51, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "1615"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899216",
+  "wardLabel": "Ward No. 51, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "11941"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899217",
+  "wardLabel": "Ward No. 52, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "16869"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899217",
+  "wardLabel": "Ward No. 52, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3304"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899217",
+  "wardLabel": "Ward No. 52, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "6664"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899217",
+  "wardLabel": "Ward No. 52, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10205"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899217",
+  "wardLabel": "Ward No. 52, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3442"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899217",
+  "wardLabel": "Ward No. 52, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "13427"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899218",
+  "wardLabel": "Ward No. 53, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "25598"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899218",
+  "wardLabel": "Ward No. 53, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5405"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899218",
+  "wardLabel": "Ward No. 53, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "11736"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899218",
+  "wardLabel": "Ward No. 53, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "13862"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899218",
+  "wardLabel": "Ward No. 53, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4186"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899218",
+  "wardLabel": "Ward No. 53, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "21412"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899219",
+  "wardLabel": "Ward No. 54, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "36235"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899219",
+  "wardLabel": "Ward No. 54, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6666"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899219",
+  "wardLabel": "Ward No. 54, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "17298"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899219",
+  "wardLabel": "Ward No. 54, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "18937"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899219",
+  "wardLabel": "Ward No. 54, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "9249"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899219",
+  "wardLabel": "Ward No. 54, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "26986"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899220",
+  "wardLabel": "Ward No. 55, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "32254"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899220",
+  "wardLabel": "Ward No. 55, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6745"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899220",
+  "wardLabel": "Ward No. 55, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "14804"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899220",
+  "wardLabel": "Ward No. 55, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "17450"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899220",
+  "wardLabel": "Ward No. 55, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "7011"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899220",
+  "wardLabel": "Ward No. 55, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "25243"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899221",
+  "wardLabel": "Ward No. 56, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "43622"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899221",
+  "wardLabel": "Ward No. 56, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8941"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899221",
+  "wardLabel": "Ward No. 56, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "20604"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899221",
+  "wardLabel": "Ward No. 56, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "23018"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899221",
+  "wardLabel": "Ward No. 56, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "9243"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899221",
+  "wardLabel": "Ward No. 56, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "34379"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899203",
+  "wardLabel": "Ward No. 4, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "34476"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899203",
+  "wardLabel": "Ward No. 4, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8558"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899203",
+  "wardLabel": "Ward No. 4, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "17073"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899203",
+  "wardLabel": "Ward No. 4, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "17403"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899203",
+  "wardLabel": "Ward No. 4, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5612"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899203",
+  "wardLabel": "Ward No. 4, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "28864"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899204",
+  "wardLabel": "Ward No. 40, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "20549"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899204",
+  "wardLabel": "Ward No. 40, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4733"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899204",
+  "wardLabel": "Ward No. 40, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "8778"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899204",
+  "wardLabel": "Ward No. 40, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11771"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899204",
+  "wardLabel": "Ward No. 40, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3204"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899204",
+  "wardLabel": "Ward No. 40, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17345"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899205",
+  "wardLabel": "Ward No. 41, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "19946"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899205",
+  "wardLabel": "Ward No. 41, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3425"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899205",
+  "wardLabel": "Ward No. 41, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "8406"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899205",
+  "wardLabel": "Ward No. 41, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "11540"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899205",
+  "wardLabel": "Ward No. 41, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4463"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899205",
+  "wardLabel": "Ward No. 41, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "15483"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899206",
+  "wardLabel": "Ward No. 42, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21746"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899206",
+  "wardLabel": "Ward No. 42, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3749"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899206",
+  "wardLabel": "Ward No. 42, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "5919"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899206",
+  "wardLabel": "Ward No. 42, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "15827"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899206",
+  "wardLabel": "Ward No. 42, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "6196"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899206",
+  "wardLabel": "Ward No. 42, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "15550"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899207",
+  "wardLabel": "Ward No. 43, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "17677"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899207",
+  "wardLabel": "Ward No. 43, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "2878"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899207",
+  "wardLabel": "Ward No. 43, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "6778"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899207",
+  "wardLabel": "Ward No. 43, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10899"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899207",
+  "wardLabel": "Ward No. 43, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4757"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899207",
+  "wardLabel": "Ward No. 43, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "12920"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899208",
+  "wardLabel": "Ward No. 44, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "29600"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899208",
+  "wardLabel": "Ward No. 44, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5043"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899208",
+  "wardLabel": "Ward No. 44, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "11873"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899208",
+  "wardLabel": "Ward No. 44, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "17727"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899208",
+  "wardLabel": "Ward No. 44, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "8075"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899208",
+  "wardLabel": "Ward No. 44, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "21525"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899197",
+  "wardLabel": "Ward No. 35, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "35024"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899197",
+  "wardLabel": "Ward No. 35, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "8524"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899197",
+  "wardLabel": "Ward No. 35, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "17543"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899197",
+  "wardLabel": "Ward No. 35, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "17481"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899197",
+  "wardLabel": "Ward No. 35, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4780"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899197",
+  "wardLabel": "Ward No. 35, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "30244"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899198",
+  "wardLabel": "Ward No. 36, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "27238"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899198",
+  "wardLabel": "Ward No. 36, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4574"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899198",
+  "wardLabel": "Ward No. 36, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10495"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899198",
+  "wardLabel": "Ward No. 36, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "16743"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899198",
+  "wardLabel": "Ward No. 36, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "10590"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899198",
+  "wardLabel": "Ward No. 36, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "16648"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899200",
+  "wardLabel": "Ward No. 37, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "24020"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899200",
+  "wardLabel": "Ward No. 37, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4688"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899200",
+  "wardLabel": "Ward No. 37, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9963"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899200",
+  "wardLabel": "Ward No. 37, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "14057"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899200",
+  "wardLabel": "Ward No. 37, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "6303"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899200",
+  "wardLabel": "Ward No. 37, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "17717"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899201",
+  "wardLabel": "Ward No. 38, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "28791"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899201",
+  "wardLabel": "Ward No. 38, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6500"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899201",
+  "wardLabel": "Ward No. 38, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "12595"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899201",
+  "wardLabel": "Ward No. 38, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "16196"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899201",
+  "wardLabel": "Ward No. 38, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5694"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899201",
+  "wardLabel": "Ward No. 38, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "23097"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899202",
+  "wardLabel": "Ward No. 39, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "21296"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899202",
+  "wardLabel": "Ward No. 39, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3716"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899202",
+  "wardLabel": "Ward No. 39, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9131"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899202",
+  "wardLabel": "Ward No. 39, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "12165"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899202",
+  "wardLabel": "Ward No. 39, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "7218"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899202",
+  "wardLabel": "Ward No. 39, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "14078"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899185",
+  "wardLabel": "Ward No. 23, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "7355"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899185",
+  "wardLabel": "Ward No. 23, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10901"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899185",
+  "wardLabel": "Ward No. 23, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4797"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899185",
+  "wardLabel": "Ward No. 23, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "13459"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899186",
+  "wardLabel": "Ward No. 24, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "19824"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899186",
+  "wardLabel": "Ward No. 24, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "3842"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899186",
+  "wardLabel": "Ward No. 24, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "7560"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899186",
+  "wardLabel": "Ward No. 24, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "12264"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899186",
+  "wardLabel": "Ward No. 24, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "6105"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899186",
+  "wardLabel": "Ward No. 24, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "13719"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899187",
+  "wardLabel": "Ward No. 25, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "27484"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899187",
+  "wardLabel": "Ward No. 25, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5838"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899187",
+  "wardLabel": "Ward No. 25, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "12492"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899187",
+  "wardLabel": "Ward No. 25, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "14992"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899187",
+  "wardLabel": "Ward No. 25, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5317"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899187",
+  "wardLabel": "Ward No. 25, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "22167"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899188",
+  "wardLabel": "Ward No. 26, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "25371"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899188",
+  "wardLabel": "Ward No. 26, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "5659"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899188",
+  "wardLabel": "Ward No. 26, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "11679"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899188",
+  "wardLabel": "Ward No. 26, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "13692"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899188",
+  "wardLabel": "Ward No. 26, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "5858"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899188",
+  "wardLabel": "Ward No. 26, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "19513"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899189",
+  "wardLabel": "Ward No. 27, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "19350"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899189",
+  "wardLabel": "Ward No. 27, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4352"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899189",
+  "wardLabel": "Ward No. 27, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "9079"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899189",
+  "wardLabel": "Ward No. 27, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "10271"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899189",
+  "wardLabel": "Ward No. 27, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "3206"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899189",
+  "wardLabel": "Ward No. 27, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "16144"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899190",
+  "wardLabel": "Ward No. 28, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "38110"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899190",
+  "wardLabel": "Ward No. 28, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "7223"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899190",
+  "wardLabel": "Ward No. 28, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "17322"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899190",
+  "wardLabel": "Ward No. 28, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "20788"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899190",
+  "wardLabel": "Ward No. 28, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "10372"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899190",
+  "wardLabel": "Ward No. 28, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "27738"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899227",
+  "wardLabel": "Ward No. 61, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "21768"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899228",
+  "wardLabel": "Ward No. 62, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "34832"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899228",
+  "wardLabel": "Ward No. 62, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6400"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899228",
+  "wardLabel": "Ward No. 62, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "16096"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899228",
+  "wardLabel": "Ward No. 62, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "18736"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899228",
+  "wardLabel": "Ward No. 62, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "7783"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899228",
+  "wardLabel": "Ward No. 62, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "27049"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899229",
+  "wardLabel": "Ward No. 63, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "24387"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899229",
+  "wardLabel": "Ward No. 63, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "4674"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899229",
+  "wardLabel": "Ward No. 63, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "10095"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899229",
+  "wardLabel": "Ward No. 63, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "14292"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899229",
+  "wardLabel": "Ward No. 63, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "4968"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899229",
+  "wardLabel": "Ward No. 63, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "19419"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899230",
+  "wardLabel": "Ward No. 64, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "31280"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899230",
+  "wardLabel": "Ward No. 64, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "6342"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899230",
+  "wardLabel": "Ward No. 64, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "14628"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899230",
+  "wardLabel": "Ward No. 64, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "16652"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899230",
+  "wardLabel": "Ward No. 64, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "6973"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899230",
+  "wardLabel": "Ward No. 64, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "24307"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899231",
+  "wardLabel": "Ward No. 65, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "72427"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899231",
+  "wardLabel": "Ward No. 65, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "14092"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899231",
+  "wardLabel": "Ward No. 65, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "34110"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899231",
+  "wardLabel": "Ward No. 65, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "38317"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899231",
+  "wardLabel": "Ward No. 65, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "18683"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899231",
+  "wardLabel": "Ward No. 65, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "53744"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899232",
+  "wardLabel": "Ward No. 66, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "98024"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899232",
+  "wardLabel": "Ward No. 66, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "20797"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899232",
+  "wardLabel": "Ward No. 66, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "46886"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899232",
+  "wardLabel": "Ward No. 66, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "51138"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899232",
+  "wardLabel": "Ward No. 66, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "28003"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899232",
+  "wardLabel": "Ward No. 66, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "70021"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899209",
+  "wardLabel": "Ward No. 45, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "8394"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899209",
+  "wardLabel": "Ward No. 45, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "1704"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899209",
+  "wardLabel": "Ward No. 45, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "2571"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899209",
+  "wardLabel": "Ward No. 45, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "5823"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899209",
+  "wardLabel": "Ward No. 45, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2506"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899209",
+  "wardLabel": "Ward No. 45, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "5888"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899210",
+  "wardLabel": "Ward No. 46, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1082",
+  "val": "12823"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899210",
+  "wardLabel": "Ward No. 46, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1538",
+  "val": "2316"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899210",
+  "wardLabel": "Ward No. 46, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1539",
+  "val": "5139"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899210",
+  "wardLabel": "Ward No. 46, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P1540",
+  "val": "7684"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899210",
+  "wardLabel": "Ward No. 46, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6498",
+  "val": "2691"
+ },
+ {
+  "ward": "http://www.wikidata.org/entity/Q19899210",
+  "wardLabel": "Ward No. 46, Kolkata Municipal Corporation",
+  "p": "http://www.wikidata.org/prop/direct/P6499",
+  "val": "10132"
+ }
+]

@@ -1,0 +1,16 @@
+{
+  "//": "Verified against the Open VSX registry (the marketplace Antigravity uses). Pylance (ms-python.vscode-pylance) and Dev Containers (ms-vscode-remote.remote-containers) are Microsoft-proprietary and are NOT on Open VSX — they are deliberately absent here. basedpyright is the drop-in open-source replacement for Pylance.",
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.debugpy",
+    "detachhead.basedpyright",
+    "ms-python.black-formatter",
+    "charliermarsh.ruff",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "christian-kohler.path-intellisense",
+    "eamodio.gitlens",
+    "streetsidesoftware.code-spell-checker"
+  ],
+  "unwantedRecommendations": []
+}

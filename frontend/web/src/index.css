@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   HeatShield — global type & surface system
+   ============================================================ */
+:root {
+  --font-display: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --surface: rgba(255, 255, 255, 0.035);
+  --surface-hi: rgba(255, 255, 255, 0.06);
+  --hairline: rgba(255, 255, 255, 0.09);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: #07080d;
+  color: #eef1f7;
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01';   /* Inter: single-storey a, open apertures */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ---------------------------------------------------------- typography scale */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+.display em { font-style: italic; }
+
+/* Numbers always tabular so they don't jitter while animating */
+.tnum { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: #8b93a7;
+}
+
+.hairline { border: 1px solid var(--hairline); }
+
+.panel {
+  background: linear-gradient(165deg, rgba(255,255,255,.055), rgba(255,255,255,.015));
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  backdrop-filter: blur(12px);
+}
+
+/* ---------------------------------------------------------- grain overlay */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------------------------------------------------------- scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 99px; border: 3px solid #07080d; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.2); }
+
+::selection { background: rgba(249,115,22,.35); }
+
+:focus-visible { outline: 2px solid #22d3ee; outline-offset: 3px; border-radius: 4px; }
+
+/* ---------------------------------------------------------- a11y */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ============================================================
+   Leaflet + map animations
+   ============================================================ */
+.leaflet-container {
+  background: #0a0c14;
+  font-family: var(--font-sans);
+  outline: none;
+}
+
+/* Colour is information — animate it slowly enough to read, and let the GPU
+   handle 141 polygons at once instead of re-styling in JS. */
+.leaflet-interactive {
+  transition: fill 0.55s ease, fill-opacity 0.3s ease, stroke 0.4s ease,
+              stroke-width 0.25s ease, stroke-opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.leaflet-container a.leaflet-popup-close-button { color: #fff; }
+
+/* pulsing marker for Critical / Extreme wards (HTML, so CSS keyframes are cheap) */
+.ward-pulse { position: relative; }
+.ward-pulse .pulse-core {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 9px; height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: var(--pc);
+  box-shadow: 0 0 10px 2px var(--pc);
+  z-index: 2;
+}
+.ward-pulse .pulse-ring {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 9px; height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  border: 2px solid var(--pc);
+  animation: wardPulse 2.4s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+}
+@keyframes wardPulse {
+  0%   { transform: scale(1);   opacity: 0.85; }
+  70%  { transform: scale(3.4); opacity: 0; }
+  100% { transform: scale(3.4); opacity: 0; }
+}
+
+/* dark-popup styling */
+.leaflet-tooltip {
+  background: rgba(10, 12, 20, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #eef1f7;
+  font-size: 11px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.leaflet-tooltip-top::before { border-top-color: rgba(255, 255, 255, 0.12); }

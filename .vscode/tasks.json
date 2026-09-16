@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start API (background)",
+      "type": "shell",
+      "command": "python -m uvicorn app.main:app --host 0.0.0.0 --port 8000",
+      "windows": {
+        "command": "python -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*)$",
+          "severity": 0,
+          "message": 1
+        },
+        "background": {
+          "beginsPattern": "^(.*)Starting server process|Uvicorn running(.*)$",
+          "endsPattern": "^(.*)Application startup complete|Uvicorn running(.*)$"
+        }
+      }
+    },
+    {
+      "label": "Start Web (Vite)",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": { "cwd": "${workspaceFolder}/frontend/web" },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*)$",
+          "severity": 0,
+          "message": 1
+        },
+        "background": {
+          "beginsPattern": "^(.*)VITE v(.*)$",
+          "endsPattern": "^(.*)ready in(.*)$"
+        }
+      }
+    },
+    {
+      "label": "Start everything",
+      "dependsOn": ["Start API (background)", "Start Web (Vite)"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Refresh forecast data",
+      "type": "shell",
+      "command": "python -m scripts.refresh",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run scheduler once",
+      "type": "shell",
+      "command": "python -m scripts.schedule --once",
+      "problemMatcher": []
+    },
+    {
+      "label": "Hindcast (30 days)",
+      "type": "shell",
+      "command": "python -m scripts.hindcast --days 30",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run tests",
+      "type": "shell",
+      "command": "python -m pytest tests -q",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build frontend",
+      "type": "shell",
+      "command": "npm run build",
+      "options": { "cwd": "${workspaceFolder}/frontend/web" },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Seed demo subscribers",
+      "type": "shell",
+      "command": "python -m core.subscribers --seed",
+      "problemMatcher": []
+    }
+  ]
+}

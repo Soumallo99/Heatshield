@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HeatShield — Thermal Stress Ops (UI Concept)</title>
+<style>
+  /* ============================================================
+     HeatShield animated UI concept — zero dependencies, zero network.
+     Everything inline so it renders inside a sandboxed iframe.
+     ============================================================ */
+  :root{
+    --bg:#07080d; --panel:rgba(255,255,255,.035); --line:rgba(255,255,255,.09);
+    --txt:#eef1f7; --dim:#8b93a7;
+    --green:#22c55e; --yellow:#eab308; --orange:#f97316; --red:#ef4444; --cyan:#22d3ee;
+    --hot1:#ff5f6d; --hot2:#ffc371; --hot3:#7c3aed;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--txt); min-height:100vh; overflow-x:hidden;
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ---------- ambient animated heat field ---------- */
+  .bg-field{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.28;mix-blend-mode:screen}
+  .b1{width:52vw;height:52vw;left:-12vw;top:-14vw;background:radial-gradient(circle,#ff4d4d,transparent 65%);animation:drift1 26s ease-in-out infinite}
+  .b2{width:46vw;height:46vw;right:-10vw;top:8vh;background:radial-gradient(circle,#ff9f43,transparent 65%);animation:drift2 32s ease-in-out infinite}
+  .b3{width:40vw;height:40vw;left:26vw;bottom:-16vw;background:radial-gradient(circle,#7c3aed,transparent 65%);animation:drift3 38s ease-in-out infinite}
+  @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(12vw,8vh) scale(1.18)}}
+  @keyframes drift2{0%,100%{transform:translate(0,0) scale(1.1)}50%{transform:translate(-14vw,14vh) scale(.9)}}
+  @keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(10vw,-10vh) scale(1.15)}66%{transform:translate(-8vw,4vh) scale(.95)}}
+  .grid-lines{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35;
+    background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+    background-size:48px 48px;
+    mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 78%);
+    animation:gridflow 24s linear infinite}
+  @keyframes gridflow{to{background-position:48px 48px,48px 48px}}
+  .scan{position:fixed;left:0;right:0;height:180px;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg,transparent,rgba(34,211,238,.055),transparent);
+    animation:scandown 9s linear infinite}
+  @keyframes scandown{0%{top:-180px}100%{top:100%}}
+
+  .wrap{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:22px 20px 60px}
+
+  /* ---------- entrance choreography ---------- */
+  .rise{opacity:0;transform:translateY(22px);animation:riseIn .85s cubic-bezier(.16,1,.3,1) forwards}
+  @keyframes riseIn{to{opacity:1;transform:none}}
+
+  /* ---------- header ---------- */
+  header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:6px 0 20px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .sigil{width:42px;height:42px;position:relative;flex:none}
+  .sigil .ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;
+    background:conic-gradient(from 0deg,var(--hot1),var(--hot2),var(--cyan),var(--hot1)) border-box;
+    -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;animation:spin 4.5s linear infinite}
+  .sigil .core{position:absolute;inset:9px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff6,#ff5f6d 60%,#7f1d1d);
+    animation:throb 2.4s ease-in-out infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes throb{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.12);filter:brightness(1.35)}}
+  h1{font-size:26px;line-height:1;margin:0;letter-spacing:-.5px;
+     background:linear-gradient(92deg,#fff,var(--hot2) 40%,var(--hot1) 60%,#fff);
+     background-size:280% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+     animation:shimmer 6s linear infinite}
+  @keyframes shimmer{to{background-position:-280% 0}}
+  .tag{font-size:11px;color:var(--dim);letter-spacing:.16em;text-transform:uppercase;margin-top:5px}
+  .spacer{flex:1}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+    font-size:12px;font-weight:700;letter-spacing:.06em;border:1px solid var(--line);
+    background:var(--panel);backdrop-filter:blur(8px)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--red);position:relative}
+  .dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--red);
+    animation:ping 1.6s cubic-bezier(0,.2,.8,1) infinite}
+  @keyframes ping{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.2);opacity:0}}
+  .clock{font-variant-numeric:tabular-nums;color:var(--dim);font-size:12px}
+
+  /* ---------- alert banner ---------- */
+  .alert{margin:0 0 18px;border-radius:14px;overflow:hidden;position:relative;
+    border:1px solid rgba(239,68,68,.45);background:rgba(239,68,68,.1)}
+  .alert::before{content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(135deg,rgba(239,68,68,.14) 0 14px,transparent 14px 28px);
+    animation:slide 1.1s linear infinite}
+  @keyframes slide{to{background-position:39.6px 0}}
+  .alert-in{position:relative;display:flex;gap:12px;align-items:center;padding:13px 16px;font-size:13.5px;font-weight:600}
+  .alert b{color:#ffb4b4}
+
+  /* ---------- KPI row ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+  .kpi{position:relative;padding:16px 18px;border-radius:16px;border:1px solid var(--line);
+    background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));overflow:hidden;
+    transition:transform .35s cubic-bezier(.16,1,.3,1),border-color .35s}
+  .kpi:hover{transform:translateY(-5px);border-color:rgba(255,255,255,.22)}
+  .kpi::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);
+    animation:sheen 5.5s ease-in-out infinite}
+  @keyframes sheen{0%{left:-60%}55%,100%{left:125%}}
+  .kpi .lbl{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .kpi .val{font-size:34px;font-weight:800;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;
+    margin-top:8px;line-height:1}
+  .kpi .sub{font-size:11.5px;color:var(--dim);margin-top:7px}
+  .bar{height:3px;border-radius:2px;background:rgba(255,255,255,.09);margin-top:11px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:2px;width:0;transition:width 1.4s cubic-bezier(.16,1,.3,1)}
+
+  /* ---------- main grid ---------- */
+  .grid{display:grid;grid-template-columns:1.45fr 1fr;gap:16px}
+  .card{border:1px solid var(--line);border-radius:18px;padding:18px;
+    background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.015));
+    backdrop-filter:blur(10px);position:relative;overflow:hidden}
+  .card h3{margin:0 0 4px;font-size:14px;letter-spacing:.02em}
+  .card .hint{font-size:11px;color:var(--dim);margin:0 0 14px}
+
+  /* ---------- map ---------- */
+  .mapbox{position:relative;border-radius:14px;overflow:hidden;background:
+    radial-gradient(ellipse at 50% 40%,rgba(124,58,237,.14),transparent 70%),#0a0c14;
+    border:1px solid var(--line)}
+  .sweep{position:absolute;left:50%;top:50%;width:150%;aspect-ratio:1;transform-origin:0 0;
+    background:conic-gradient(from 0deg,rgba(34,211,238,.30),rgba(34,211,238,.05) 18%,transparent 34%);
+    animation:spin 5.5s linear infinite;pointer-events:none;mix-blend-mode:screen}
+  .sweep::after{content:"";position:absolute;inset:0;border-radius:50%;
+    box-shadow:inset 0 0 90px 30px #0a0c14}
+  svg{display:block;width:100%;height:auto}
+  .ward{cursor:pointer;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+  .ward:hover{transform:scale(1.28)}
+  .ward circle.halo{animation:halo 2.8s ease-out infinite}
+  @keyframes halo{0%{r:6;opacity:.55}100%{r:24;opacity:0}}
+  .ward text{font-size:7px;fill:#c9d1e0;pointer-events:none;font-weight:600}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--dim)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+  /* ---------- gauge ---------- */
+  .gaugewrap{display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 0 2px}
+  .g-val{font-size:46px;font-weight:800;letter-spacing:-2px;font-variant-numeric:tabular-nums;margin-top:-46px}
+  .g-band{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+  .track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:14;stroke-linecap:round}
+  .prog{fill:none;stroke-width:14;stroke-linecap:round;
+    transition:stroke-dashoffset 1.5s cubic-bezier(.16,1,.3,1),stroke .6s}
+  .needle{transform-origin:100px 100px;transition:transform 1.5s cubic-bezier(.16,1,.3,1)}
+
+  /* ---------- chart ---------- */
+  .chart path.line{fill:none;stroke:url(#cg);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;
+    filter:drop-shadow(0 0 8px rgba(249,115,22,.55));
+    stroke-dasharray:1200;stroke-dashoffset:1200;animation:draw 2.1s cubic-bezier(.22,1,.36,1) forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .chart path.area{fill:url(#ag);opacity:0;animation:fadein 1.2s .8s ease forwards}
+  @keyframes fadein{to{opacity:1}}
+  .dotnow{animation:throb 2s ease-in-out infinite;transform-origin:center}
+
+  /* ---------- ward strip ---------- */
+  .strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:16px}
+  .wcard{padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:var(--panel);
+    cursor:pointer;transition:transform .3s cubic-bezier(.16,1,.3,1),border-color .3s,background .3s;
+    position:relative;overflow:hidden}
+  .wcard:hover{transform:translateY(-4px) scale(1.02);border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.07)}
+  .wcard.on{border-color:var(--cyan);background:rgba(34,211,238,.09)}
+  .wcard .wn{font-size:12.5px;font-weight:700}
+  .wcard .wr{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:3px}
+  .wcard .wb{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+  .spark{height:22px;margin-top:7px}
+
+  /* ---------- ticker ---------- */
+  .ticker{margin-top:18px;border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    background:rgba(255,255,255,.03);display:flex;align-items:center}
+  .ticker .lab{background:rgba(239,68,68,.18);color:#ffb4b4;font-size:10.5px;font-weight:800;
+    letter-spacing:.14em;padding:11px 14px;flex:none;border-right:1px solid var(--line)}
+  .ticker .track2{display:flex;white-space:nowrap;animation:marquee 26s linear infinite}
+  .ticker .track2 span{padding:11px 26px;font-size:12.5px;color:var(--dim)}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  footer{margin-top:22px;font-size:11px;color:#5b6478;text-align:center}
+
+  @media (max-width:900px){
+    .grid{grid-template-columns:1fr}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+  }
+</style>
+</head>
+<body>
+<div class="bg-field"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="grid-lines"></div>
+<div class="scan"></div>
+
+<div class="wrap">
+  <header class="rise" style="animation-delay:.05s">
+    <div class="brand">
+      <div class="sigil"><div class="ring"></div><div class="core"></div></div>
+      <div>
+        <h1>HeatShield</h1>
+        <div class="tag">Extreme Heat · Human Thermal Stress Index</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="pill"><span class="dot"></span><span id="alertLvl">CRITICAL · WARD 14</span></div>
+    <div class="pill clock" id="clock">--:--:--</div>
+  </header>
+
+  <div class="alert rise" style="animation-delay:.12s">
+    <div class="alert-in">
+      <span>🚨</span>
+      <span><b>HEATWAVE WARNING</b> — Howrah &amp; Jorasanko exceed WBGT 30.0 °C for 3 consecutive days.
+      Outdoor work <b>stop 12:00–15:00</b>. 1.2 lakh outdoor workers exposed. SMS alert dispatched.</span>
+    </div>
+  </div>
+
+  <section class="kpis">
+    <div class="kpi rise" style="animation-delay:.18s">
+      <div class="lbl">Peak Tmax</div><div class="val"><span data-count="33.2" data-dec="1">0</span>°</div>
+      <div class="sub">+4.6 °C vs seasonal normal</div>
+      <div class="bar"><i style="background:linear-gradient(90deg,#f97316,#ef4444)" data-w="82"></i></div>
+    </div>
+    <div class="kpi rise" style="animation-delay:.24s">
+      <div class="lbl">Peak WBGT</div><div class="val"><span data-count="30.4" data-dec="1">0</span>°</div>
+      <div class="sub">ISO 7243 · full-sun outdoor</div>
+      <div class="bar"><i style="background:linear-gradient(90deg,#eab308,#ef4444)" data-w="88"></i></div>
+    </div>
+    <div class="kpi rise" style="animation-delay:.30s">
+      <div class="lbl">Heat Index</div><div class="val"><span data-count="41.6" data-dec="1">0</span>°</div>
+      <div class="sub">RH 70% · feels-like</div>
+      <div class="bar"><i style="background:linear-gradient(90deg,#f97316,#ef4444)" data-w="79"></i></div>
+    </div>
+    <div class="kpi rise" style="animation-delay:.36s">
+      <div class="lbl">Pop. at Risk</div><div class="val" id="popVal">0</div>
+      <div class="sub">across 14 wards</div>
+      <div class="bar"><i style="background:linear-gradient(90deg,#22c55e,#f97316)" data-w="64"></i></div>
+    </div>
+  </section>
+
+  <section class="grid" style="margin-top:16px">
+    <!-- ============ MAP ============ -->
+    <div class="card rise" style="animation-delay:.42s">
+      <h3>Ward Risk Layer</h3>
+      <p class="hint">Live risk score 0–100 · click a ward to inspect</p>
+      <div class="mapbox">
+        <div class="sweep"></div>
+        <svg id="map" viewBox="0 0 400 260" aria-label="Ward risk map"></svg>
+      </div>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--green)"></i>Normal 0–49</span>
+        <span><i class="sw" style="background:var(--yellow)"></i>Caution 50–64</span>
+        <span><i class="sw" style="background:var(--orange)"></i>Danger 65–77</span>
+        <span><i class="sw" style="background:var(--red)"></i>Critical 78+</span>
+      </div>
+    </div>
+
+    <!-- ============ GAUGE + CHART ============ -->
+    <div class="card rise" style="animation-delay:.48s">
+      <h3 id="gTitle">Citywide Risk</h3>
+      <p class="hint" id="gHint">Composite · thermal stress × vulnerability</p>
+      <div class="gaugewrap">
+        <svg viewBox="0 0 200 130" style="width:100%;max-width:270px">
+          <defs>
+            <linearGradient id="gg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#22c55e"/><stop offset="40%" stop-color="#eab308"/>
+              <stop offset="72%" stop-color="#f97316"/><stop offset="100%" stop-color="#ef4444"/>
+            </linearGradient>
+          </defs>
+          <path class="track" d="M20 105 A80 80 0 0 1 180 105"/>
+          <path class="prog" id="prog" d="M20 105 A80 80 0 0 1 180 105" stroke="url(#gg)" stroke-dasharray="251" stroke-dashoffset="251"/>
+          <line class="needle" id="needle" x1="100" y1="105" x2="100" y2="38" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".9"/>
+          <circle cx="100" cy="105" r="5" fill="#fff"/>
+        </svg>
+        <div class="g-val" id="gVal">0</div>
+        <div class="g-band" id="gBand">—</div>
+      </div>
+      <div class="chart" style="margin-top:6px">
+        <svg id="chart" viewBox="0 0 320 96" style="width:100%"></svg>
+        <div class="legend" style="margin-top:2px"><span>24 h temperature curve · peak flagged</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip" id="strip"></div>
+
+  <div class="ticker rise" style="animation-delay:.54s">
+    <div class="lab">LIVE FEED</div>
+    <div class="track2" id="ticker"></div>
+  </div>
+
+  <footer>UI concept · mock values for design review · data pipeline live via FastAPI <b>/forecast</b></footer>
+</div>
+
+<script>
+/* ================= mock model (real ward coords from data/wards.csv) ================= */
+const WARDS = [
+  {id:1,  n:"Cossipore",    lat:22.6310, lon:88.3720, risk:54, pop:118000, hi:39.2},
+  {id:2,  n:"Shyambazar",   lat:22.6000, lon:88.3750, risk:66, pop:96000,  hi:40.5},
+  {id:3,  n:"Jorasanko",    lat:22.5830, lon:88.3610, risk:78, pop:88000,  hi:41.8},
+  {id:4,  n:"BBD Bagh",     lat:22.5740, lon:88.3550, risk:71, pop:42000,  hi:41.1},
+  {id:5,  n:"Park Street",  lat:22.5530, lon:88.3510, risk:58, pop:61000,  hi:39.6},
+  {id:6,  n:"Alipore",      lat:22.5350, lon:88.3370, risk:49, pop:74000,  hi:38.4},
+  {id:7,  n:"Ballygunge",   lat:22.5250, lon:88.3650, risk:52, pop:102000, hi:38.9},
+  {id:8,  n:"Tollygunge",   lat:22.5000, lon:88.3450, risk:61, pop:134000, hi:40.0},
+  {id:9,  n:"Behala",       lat:22.5050, lon:88.3100, risk:69, pop:158000, hi:40.8},
+  {id:10, n:"Garia",        lat:22.4650, lon:88.3800, risk:57, pop:142000, hi:39.5},
+  {id:11, n:"Salt Lake",    lat:22.5800, lon:88.4100, risk:44, pop:126000, hi:37.9},
+  {id:12, n:"Dum Dum",      lat:22.6200, lon:88.4000, risk:73, pop:149000, hi:41.3},
+  {id:13, n:"Rajarhat",     lat:22.5900, lon:88.4800, risk:41, pop:97000,  hi:37.4},
+  {id:14, n:"Howrah",       lat:22.5958, lon:88.2639, risk:84, pop:168000, hi:42.6}
+];
+const color = r => r>=78?"#ef4444": r>=65?"#f97316": r>=50?"#eab308":"#22c55e";
+const band  = r => r>=78?"CRITICAL": r>=65?"DANGER": r>=50?"CAUTION":"NORMAL";
+const SVGNS = "http://www.w3.org/2000/svg";
+
+/* ================= animated counters ================= */
+function countTo(el, to, dec=0, dur=1100){
+  const from = parseFloat(el.textContent.replace(/,/g,"")) || 0;
+  const t0 = performance.now();
+  function step(t){
+    const p = Math.min(1,(t-t0)/dur), e = 1-Math.pow(1-p,3);
+    const v = from + (to-from)*e;
+    el.textContent = dec ? v.toFixed(dec) : Math.round(v).toLocaleString("en-US");
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ================= map ================= */
+function buildMap(){
+  const svg = document.getElementById("map");
+  const lats = WARDS.map(w=>w.lat), lons = WARDS.map(w=>w.lon);
+  const [laMin,laMax] = [Math.min(...lats),Math.max(...lats)];
+  const [loMin,loMax] = [Math.min(...lons),Math.max(...lons)];
+  const pad = 26;
+  const x = w => pad + (w.lon-loMin)/(loMax-loMin||1)*(400-2*pad);
+  const y = w => (260-pad) - (w.lat-laMin)/(laMax-laMin||1)*(260-2*pad);
+
+  WARDS.forEach((w,i)=>{
+    const g = document.createElementNS(SVGNS,"g");
+    g.setAttribute("class","ward");
+    g.style.transformOrigin = x(w)+"px "+y(w)+"px";
+    g.style.animation = `riseIn .6s ${.6+i*.05}s cubic-bezier(.16,1,.3,1) both`;
+
+    if(w.risk>=65){                                  // pulsing halo on hot wards
+      const halo = document.createElementNS(SVGNS,"circle");
+      halo.setAttribute("class","halo"); halo.setAttribute("cx",x(w)); halo.setAttribute("cy",y(w));
+      halo.setAttribute("fill","none"); halo.setAttribute("stroke",color(w.risk)); halo.setAttribute("stroke-width","2");
+      halo.setAttribute("r","6"); halo.style.animationDelay = (i*.22)+"s";
+      g.appendChild(halo);
+    }
+    const c = document.createElementNS(SVGNS,"circle");
+    const r = 4 + (w.pop/168000)*5;
+    c.setAttribute("cx",x(w)); c.setAttribute("cy",y(w)); c.setAttribute("r",r);
+    c.setAttribute("fill",color(w.risk)); c.setAttribute("fill-opacity",".85");
+    c.setAttribute("stroke","#0a0c14"); c.setAttribute("stroke-width","1.5");
+    g.appendChild(c);
+
+    const t = document.createElementNS(SVGNS,"text");
+    t.setAttribute("x",x(w)+r+3); t.setAttribute("y",y(w)+2.6); t.textContent = w.n;
+    g.appendChild(t);
+
+    g.addEventListener("click",()=>select(w));
+    svg.appendChild(g);
+  });
+}
+
+/* ================= gauge + chart ================= */
+function setGauge(v){
+  const prog = document.getElementById("prog");
+  prog.setAttribute("stroke-dashoffset", String(251 - (v/100)*251));
+  document.getElementById("needle").style.transform = `rotate(${-90 + (v/100)*180}deg)`;
+  countTo(document.getElementById("gVal"), v, 0);
+  const b = document.getElementById("gBand");
+  b.textContent = band(v); b.style.color = color(v);
+}
+
+function tempCurve(peak){
+  const out=[]; for(let h=0;h<24;h++){
+    const v = peak - 6.4*Math.cos((h-14)/24*2*Math.PI);   // diurnal wave, peak ~14:00
+    out.push(v);
+  } return out;
+}
+function drawChart(vals, peak){
+  const svg = document.getElementById("chart");
+  svg.innerHTML = `<defs>
+      <linearGradient id="cg" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#22d3ee"/><stop offset="55%" stop-color="#f97316"/><stop offset="100%" stop-color="#ef4444"/>
+      </linearGradient>
+      <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(249,115,22,.42)"/><stop offset="100%" stop-color="rgba(249,115,22,0)"/>
+      </linearGradient></defs>`;
+  const W=320,H=96,P=8, mn=Math.min(...vals)-1, mx=Math.max(...vals)+1;
+  const px = i => P + i/(vals.length-1)*(W-2*P);
+  const py = v => H-P - (v-mn)/(mx-mn)*(H-2*P-14);
+  const line = vals.map((v,i)=>`${i?"L":"M"}${px(i).toFixed(1)} ${py(v).toFixed(1)}`).join(" ");
+  const area = line + ` L${px(vals.length-1)} ${H-P} L${px(0)} ${H-P} Z`;
+
+  svg.insertAdjacentHTML("beforeend",`<path class="area" d="${area}"/>`);
+  svg.insertAdjacentHTML("beforeend",`<path class="line" d="${line}"/>`);
+
+  const pi = vals.indexOf(Math.max(...vals));
+  svg.insertAdjacentHTML("beforeend",
+    `<circle class="dotnow" cx="${px(pi).toFixed(1)}" cy="${py(vals[pi]).toFixed(1)}" r="4" fill="#fff" stroke="#ef4444" stroke-width="2.5"/>`);
+  svg.insertAdjacentHTML("beforeend",
+    `<text x="${px(pi).toFixed(1)}" y="${(py(vals[pi])-8).toFixed(1)}" font-size="9" fill="#ffb4b4" text-anchor="middle" font-weight="700">${peak.toFixed(1)}°</text>`);
+}
+
+/* ================= ward selection ================= */
+function select(w){
+  document.querySelectorAll(".wcard").forEach(c=>c.classList.toggle("on", c.dataset.id==w.id));
+  document.getElementById("gTitle").textContent = w.n;
+  document.getElementById("gHint").textContent  = `WBGT-weighted · pop ${w.pop.toLocaleString("en-US")}`;
+  setGauge(w.risk);
+  drawChart(tempCurve(25 + w.hi/6), w.hi);
+  document.getElementById("alertLvl").textContent = `${band(w.risk)} · WARD ${w.id}`;
+}
+
+/* ================= ward strip ================= */
+function buildStrip(){
+  const strip = document.getElementById("strip");
+  WARDS.sort((a,b)=>b.risk-a.risk).forEach((w,i)=>{
+    const d = document.createElement("div");
+    d.className="wcard rise"; d.dataset.id=w.id; d.style.animationDelay=(.6+i*.035)+"s";
+    const spark = tempCurve(w.hi-6).map((v,i)=>`${i?"L":"M"}${i*11} ${20-(v-24)*2.4}`).join(" ");
+    d.innerHTML = `<div class="wn">${w.n}</div>
+      <div class="wr" style="color:${color(w.risk)}">${w.risk}</div>
+      <div class="wb" style="color:${color(w.risk)}">${band(w.risk)}</div>
+      <svg class="spark" viewBox="0 0 240 22" preserveAspectRatio="none">
+        <path d="${spark}" fill="none" stroke="${color(w.risk)}" stroke-width="1.6" opacity=".8"/></svg>`;
+    d.addEventListener("click",()=>select(w));
+    strip.appendChild(d);
+  });
+}
+
+/* ================= ticker ================= */
+function buildTicker(){
+  const items = [
+    "HOWRAH · WBGT 30.9 °C · CRITICAL · SMS dispatched to 4,120 outdoor workers",
+    "JORASANKO · WBGT 30.2 °C · DANGER · cooling centres activated",
+    "DUM DUM · Tmax 33.8 °C · DANGER · IMD heatwave threshold exceeded",
+    "BEHALA · Heat Index 40.8 °C · CAUTION · advisory issued",
+    "SALT LAKE · green cover buffer holding · NORMAL",
+    "FORECAST · +4.6 °C anomaly persists through D+3"
+  ];
+  const t = document.getElementById("ticker");
+  const html = items.map(s=>`<span>◉ ${s}</span>`).join("");
+  t.innerHTML = html + html;                 // duplicate for seamless loop
+}
+
+/* ================= boot ================= */
+function boot(){
+  buildMap(); buildStrip(); buildTicker();
+  document.querySelectorAll("[data-count]").forEach((el,i)=>
+    setTimeout(()=>countTo(el, parseFloat(el.dataset.count), +el.dataset.dec||0), 200+i*90));
+  document.querySelectorAll(".bar i").forEach((el,i)=>
+    setTimeout(()=>el.style.width = el.dataset.w+"%", 400+i*90));
+  countTo(document.getElementById("popVal"), 812000, 0, 1600);
+  select(WARDS.find(w=>w.id===14));
+  setInterval(()=>{
+    document.getElementById("clock").textContent =
+      new Date().toLocaleTimeString("en-IN",{hour12:false});
+  },1000);
+}
+document.addEventListener("DOMContentLoaded", boot);
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+# ---- Phase 1 (now) ----
+fastapi
+uvicorn[standard]
+requests
+pandas
+
+# ---- Phase 2-3 ----
+numpy
+scikit-learn
+joblib
+
+# ---- Phase 4 (dashboard + GIS) ----
+streamlit
+folium
+streamlit-folium
+plotly
+
+# ---- Phase 5 (alerts) ----
+twilio
+python-dotenv
+
+# ---- Phase 6 (demographics + refresh) ----
+openpyxl        # reads the Census 2011 PCA .xlsx
+
+# ---- optional ----
+# pyarrow          # optional: enables the parquet forecast cache instead of pickle.
+#                  # The bundled data/cache/forecast_5d.parquet is only used when
+#                  # pyarrow is installed; without it HeatShield falls back to
+#                  # forecast_5d.pkl and simply refetches from Open-Meteo. Neither is
+#                  # required - the dashboard renders from data/processed/*.csv either way.
+
+# ---- runtime deps picked up by scripts/ (installed automatically, listed for clarity) ----
+shapely           # ward geometry centroids
+pyproj            # CRS handling
+
+# ---- tests (run with: python -m pytest tests -q) ----
+pytest

@@ -1,0 +1,25 @@
+phone,name,ward_id,role,opted_out,created_at,notes
++919900000000,KMC Duty Officer,0,official,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++919900000001,Health Dept Control Room,0,health_worker,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000100,Demo resident 24-1,24,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000101,Demo resident 24-2,24,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000102,Demo resident 23-1,23,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000103,Demo resident 23-2,23,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000104,Demo resident 39-1,39,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000105,Demo resident 39-2,39,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000106,Demo resident 18-1,18,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000107,Demo resident 18-2,18,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000108,Demo resident 42-1,42,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000109,Demo resident 42-2,42,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000110,Demo resident 48-1,48,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000111,Demo resident 48-2,48,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000112,Demo resident 49-1,49,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000113,Demo resident 49-2,49,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000114,Demo resident 29-1,29,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000115,Demo resident 29-2,29,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000116,Demo resident 66-1,66,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000117,Demo resident 66-2,66,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000118,Demo resident 1-1,1,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000119,Demo resident 1-2,1,resident,False,2026-09-04T16:56:20,DEMO PLACEHOLDER — replace with a real number before live send
++910000000120,Demo resident (STOPPED),24,resident,True,2026-09-04T16:56:20,DEMO — replied STOP; must never be messaged
++919876543210,Test Resident,24,resident,True,2026-09-04T16:58:12,

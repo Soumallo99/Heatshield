@@ -1,0 +1,2828 @@
+{
+  "head" : {
+    "vars" : [ "w", "wLabel", "pop", "boroughLabel" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899234"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "20724"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 68, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899235"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "44111"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 69, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899236"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "19180"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 7, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 1, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899237"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "18618"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 70, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899238"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "29922"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 71, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 9, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899239"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "19167"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 72, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899240"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "23512"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 73, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 9, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899241"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "42176"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 74, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 9, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899242"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "26925"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 75, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 9, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899243"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21946"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 76, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 9, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899244"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "45984"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 77, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 9, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899245"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "18760"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 8, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 1, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899246"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "16420"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 9, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 1, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q20020536"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "23672"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 88, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q20164608"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "38647"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 111, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 11, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899195"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "45636"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 32, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 3, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899196"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "29773"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 34, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 3, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899197"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "35024"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 35, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 3, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899198"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "27238"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 36, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899200"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "24020"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 37, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899201"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "28791"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 38, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 4, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899202"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21296"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 39, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 4, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899203"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "34476"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 4, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 1, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899204"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "20549"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 40, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899205"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "19946"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 41, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899206"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21746"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 42, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899207"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "17677"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 43, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899208"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "29600"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 44, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899209"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "8394"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 45, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899210"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "12823"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 46, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 6, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899211"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "14684"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 47, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 6, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899212"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "20437"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 48, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899213"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "19416"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 49, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899214"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "23707"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 5, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 1, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899215"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "17251"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 50, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 5, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899216"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "13556"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 51, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 6, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899217"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "16869"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 52, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 6, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899218"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "25598"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 53, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 6, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899219"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "36235"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 54, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 6, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899220"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "32254"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 55, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 6, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899221"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "43622"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 56, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 7, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899222"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "49856"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 57, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 7, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899223"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "88465"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 58, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 7, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899224"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "70261"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 59, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 7, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899225"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "42346"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 6, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 1, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899226"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "35732"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 60, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 6, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899227"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "29704"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 61, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 6, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899228"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "34832"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 62, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 6, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899229"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "24387"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 63, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 7, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899230"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "31280"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 64, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 7, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899231"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "72427"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 65, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 7, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899232"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "98024"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 66, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 7, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899233"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "56284"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 67, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 7, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19818699"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "45919"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 33, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 3, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899169"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "53125"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 1, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 1, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899170"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "27700"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 10, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 2, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899171"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "22152"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 11, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 2, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899172"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21493"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 12, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 2, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899173"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "33066"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 13, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 3, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899174"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "53343"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 14, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 3, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899175"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "23922"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 15, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 2, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899176"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "20904"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 16, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 2, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899177"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21023"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 17, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 2, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899178"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "22267"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 18, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 2, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899179"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21158"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 19, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 2, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899180"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "48190"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 2, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 1, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899182"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21576"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 20, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 2, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899183"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21187"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 21, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 4, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899184"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "15730"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 22, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 4, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899185"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "18256"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 23, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 4, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899186"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "19824"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 24, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 4, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899187"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "27484"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 25, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 4, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899188"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "25371"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 26, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 4, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899189"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "19350"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 27, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 4, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899190"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "38110"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 28, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 4, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899191"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "53782"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 29, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 3, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899192"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "53855"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 3, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 1, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899193"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "30050"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 30, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 3, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q19899194"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "39025"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 31, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 3, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907026"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "39179"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 124, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 16, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907029"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "44850"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 125, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 16, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907058"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "31631"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 126, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 16, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907065"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "43782"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 127, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 14, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907094"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "32179"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 128, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 14, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907134"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "39654"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 129, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 14, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907198"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "23227"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 130, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 14, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907219"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "30911"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 131, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 14, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907231"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "26274"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 132, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 14, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907289"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "25588"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 133, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 15, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907346"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "35780"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 134, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 15, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907385"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "33258"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 135, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 15, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907390"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21482"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 136, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 15, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907414"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "19385"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 137, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 15, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907442"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "28858"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 138, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 15, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907443"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "42014"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 139, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 15, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907478"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "30504"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 140, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 15, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907482"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "41152"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 141, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 15, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906348"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "54090"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 78, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 9, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906356"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "44303"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 79, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 9, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906359"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "31094"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 80, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 9, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906391"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "41501"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 81, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906400"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "38838"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 82, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 9, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906405"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "19230"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 84, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906407"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "22163"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 83, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906437"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "29566"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 85, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906448"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "12675"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 87, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906449"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "19195"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 86, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906521"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "22304"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 89, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906523"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "18857"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 90, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 8, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906532"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "38450"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 91, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906551"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "36450"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 92, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906557"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "44364"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 93, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906568"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "27469"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 94, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906569"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "26737"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 95, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906572"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "31033"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 96, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906575"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "37199"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 97, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906609"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "31708"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 98, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906615"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "26739"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 99, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906635"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "25507"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 100, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 10, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906666"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "40208"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 101, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 12, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906670"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21503"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 102, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 12, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906678"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "33185"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 104, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 11, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906679"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "25428"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 103, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 11, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906690"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21267"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 105, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 12, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906696"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "40618"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 106, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 12, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906705"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "64777"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 108, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 12, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906707"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "54260"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 107, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 12, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906710"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "64567"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 109, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 12, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906720"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "27470"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 110, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 11, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906732"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "32404"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 112, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 11, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906736"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "33475"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 113, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 11, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906748"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "41913"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 114, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 11, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906751"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "31919"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 115, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 13, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906777"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "28338"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 116, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 13, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906788"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21824"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 117, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 13, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906805"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "21810"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 118, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 13, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906807"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "16491"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 119, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 13, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906823"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "19710"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 120, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 13, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906858"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "29921"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 121, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 14, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24906866"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "39198"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 122, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 13, Kolkata Municipal Corporation"
+      }
+    }, {
+      "w" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q24907020"
+      },
+      "pop" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#decimal",
+        "type" : "literal",
+        "value" : "35386"
+      },
+      "wLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Ward No. 123, Kolkata Municipal Corporation"
+      },
+      "boroughLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Borough No. 16, Kolkata Municipal Corporation"
+      }
+    } ]
+  }
+}

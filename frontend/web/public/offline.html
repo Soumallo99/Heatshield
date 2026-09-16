@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offline · HeatShield</title>
+<!--
+  Fully self-contained: no external CSS, fonts, scripts or images. The service
+  worker serves this when there is no network, so anything fetched from the
+  network here would defeat the point.
+-->
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:#07080d;color:rgba(255,255,255,.92);
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:24px;
+  }
+  .card{max-width:420px;text-align:center}
+  .dot{
+    width:46px;height:46px;border-radius:50%;margin:0 auto 22px;
+    background:linear-gradient(135deg,#ff5f6d,#ffc371);
+    animation:pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.12);opacity:.85}}
+  h1{font-size:21px;margin:0 0 10px;font-weight:600;letter-spacing:-.01em}
+  p{font-size:13.5px;line-height:1.65;color:rgba(255,255,255,.55);margin:0 0 22px}
+  button{
+    font:inherit;font-size:13px;padding:9px 20px;border-radius:999px;cursor:pointer;
+    background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);
+    border:1px solid rgba(255,255,255,.15);transition:border-color .2s,background .2s;
+  }
+  button:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.11)}
+  .hint{margin-top:20px;font-size:11px;color:rgba(255,255,255,.3);line-height:1.6}
+  @media (prefers-reduced-motion:reduce){.dot{animation:none}}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="dot"></div>
+    <h1>You're offline</h1>
+    <p>
+      HeatShield can't reach the forecast service right now. Ward risk scores you
+      already loaded are still available — go back and the last known values will
+      be shown.
+    </p>
+    <button onclick="location.reload()">Try again</button>
+    <div class="hint">
+      Alerts already delivered to your phone keep working.<br>
+      Heat risk data refreshes automatically when you're back online.
+    </div>
+  </div>
+</body>
+</html>

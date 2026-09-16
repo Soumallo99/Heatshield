@@ -1,0 +1,64 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": ["tests"],
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.analysis.extraPaths": ["${workspaceFolder}"],
+  "basedpyright.analysis.extraPaths": ["${workspaceFolder}"],
+  "basedpyright.analysis.typeCheckingMode": "basic",
+
+  "//1": "Antigravity reads this file the same way VS Code does. The platform blocks below exist because a Windows venv puts its interpreter at .venv/Scripts/python.exe, not .venv/bin/python — without them, Antigravity on Windows picks the wrong interpreter and every `python -m ...` task fails.",
+  "windows": {
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe"
+  },
+  "osx": {
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python"
+  },
+  "linux": {
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python"
+  },
+
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+  "editor.formatOnSave": true,
+  "editor.rulers": [100],
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/.pytest_cache": true,
+    "**/node_modules": true,
+    "**/.venv": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.venv": true,
+    "**/data/processed": true,
+    "**/data/archive": true,
+    "**/frontend/web/dist": true
+  },
+
+  "tailwindCSS.includeLanguages": {
+    "javascript": "javascript",
+    "javascriptreact": "javascriptreact"
+  },
+
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+
+  "files.associations": {
+    "*.jsonl": "jsonl"
+  }
+}

@@ -1,0 +1,847 @@
+ward_id,ward_name,date,tmax_c,tmin_c,rh_mean_pct,wbgt_peak_c,wbgt_mean_c,hi_peak_c,solar_max_wm2,wind_mean_kmh,stress_band,stress_colour,work_rest,normal_tmax_c,departure_c,is_heatwave,is_severe,heatwave_label
+1,Ward 1,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+2,Ward 2,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+3,Ward 3,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+4,Ward 4,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+5,Ward 5,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+6,Ward 6,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+7,Ward 7,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+8,Ward 8,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+9,Ward 9,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+10,Ward 10,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+11,Ward 11,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+12,Ward 12,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+13,Ward 13,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+14,Ward 14,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+15,Ward 15,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+16,Ward 16,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+17,Ward 17,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+18,Ward 18,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+19,Ward 19,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+20,Ward 20,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+21,Ward 21,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+22,Ward 22,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+23,Ward 23,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+24,Ward 24,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+25,Ward 25,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+26,Ward 26,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+27,Ward 27,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+28,Ward 28,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+29,Ward 29,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+30,Ward 30,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+31,Ward 31,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+32,Ward 32,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+33,Ward 33,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+34,Ward 34,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+35,Ward 35,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+36,Ward 36,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+37,Ward 37,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+38,Ward 38,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+39,Ward 39,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+40,Ward 40,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+41,Ward 41,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+42,Ward 42,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+43,Ward 43,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+44,Ward 44,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+45,Ward 45,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+46,Ward 46,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+47,Ward 47,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+48,Ward 48,2026-09-15,34.1,27.4,74.0,31.42,28.5,39.44,859.0,4.02,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+49,Ward 49,2026-09-15,34.1,27.5,73.62,31.58,28.53,39.81,864.0,4.33,Critical,#ef4444,No work — suspend all physical activity,32.6,1.5,False,False,None
+50,Ward 50,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+51,Ward 51,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+52,Ward 52,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+53,Ward 53,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+54,Ward 54,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+55,Ward 55,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+56,Ward 56,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+57,Ward 57,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+58,Ward 58,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+59,Ward 59,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+60,Ward 60,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+61,Ward 61,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+62,Ward 62,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+63,Ward 63,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+64,Ward 64,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+65,Ward 65,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+66,Ward 66,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+67,Ward 67,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+68,Ward 68,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+69,Ward 69,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+70,Ward 70,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+71,Ward 71,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+72,Ward 72,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+73,Ward 73,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+74,Ward 74,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+75,Ward 75,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+76,Ward 76,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+77,Ward 77,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+78,Ward 78,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+79,Ward 79,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+80,Ward 80,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+81,Ward 81,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+82,Ward 82,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+83,Ward 83,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+84,Ward 84,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+85,Ward 85,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+86,Ward 86,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+87,Ward 87,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+88,Ward 88,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+89,Ward 89,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+90,Ward 90,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+91,Ward 91,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+92,Ward 92,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+93,Ward 93,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+94,Ward 94,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+95,Ward 95,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+96,Ward 96,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+97,Ward 97,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+98,Ward 98,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+99,Ward 99,2026-09-15,33.9,26.6,76.42,31.11,28.2,39.57,864.0,5.38,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+100,Ward 100,2026-09-15,33.9,26.6,76.42,31.11,28.2,39.57,864.0,5.38,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+101,Ward 101,2026-09-15,33.9,26.6,76.42,31.11,28.2,39.57,864.0,5.38,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+102,Ward 102,2026-09-15,33.9,26.6,76.42,31.11,28.2,39.57,864.0,5.38,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+103,Ward 103,2026-09-15,33.9,26.6,76.42,31.11,28.2,39.57,864.0,5.38,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+104,Ward 104,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+105,Ward 105,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+106,Ward 106,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+107,Ward 107,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+108,Ward 108,2026-09-15,34.1,27.1,74.83,31.31,28.33,39.81,859.0,4.99,Critical,#ef4444,No work — suspend all physical activity,32.5,1.6,False,False,None
+109,Ward 109,2026-09-15,33.9,26.6,76.42,31.11,28.2,39.57,864.0,5.38,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+110,Ward 110,2026-09-15,33.9,26.6,76.42,31.11,28.2,39.57,864.0,5.38,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+111,Ward 111,2026-09-15,33.9,26.6,76.42,31.11,28.2,39.57,864.0,5.38,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+112,Ward 112,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+113,Ward 113,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+114,Ward 114,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+115,Ward 115,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+116,Ward 116,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+117,Ward 117,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+118,Ward 118,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+119,Ward 119,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+120,Ward 120,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+121,Ward 121,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+122,Ward 122,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+123,Ward 123,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+124,Ward 124,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+125,Ward 125,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+126,Ward 126,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+127,Ward 127,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+128,Ward 128,2026-09-15,33.9,26.8,75.54,31.1,28.2,39.73,861.0,4.72,Critical,#ef4444,No work — suspend all physical activity,32.4,1.5,False,False,None
+129,Ward 129,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+130,Ward 130,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+131,Ward 131,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+132,Ward 132,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+133,Ward 133,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+134,Ward 134,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+135,Ward 135,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+136,Ward 136,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+137,Ward 137,2026-09-15,34.0,27.3,74.17,31.24,28.35,39.44,862.0,4.61,Critical,#ef4444,No work — suspend all physical activity,32.5,1.5,False,False,None
+138,Ward 138,2026-09-15,33.8,27.0,77.67,31.24,28.48,39.69,859.0,4.67,Critical,#ef4444,No work — suspend all physical activity,32.3,1.5,False,False,None
+139,Ward 139,2026-09-15,33.8,27.0,77.67,31.24,28.48,39.69,859.0,4.67,Critical,#ef4444,No work — suspend all physical activity,32.3,1.5,False,False,None
+140,Ward 140,2026-09-15,33.8,27.0,77.67,31.24,28.48,39.69,859.0,4.67,Critical,#ef4444,No work — suspend all physical activity,32.3,1.5,False,False,None
+141,Ward 141,2026-09-15,33.8,27.0,77.67,31.24,28.48,39.69,859.0,4.67,Critical,#ef4444,No work — suspend all physical activity,32.3,1.5,False,False,None
+1,Ward 1,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+2,Ward 2,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+3,Ward 3,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+4,Ward 4,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+5,Ward 5,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+6,Ward 6,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+7,Ward 7,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+8,Ward 8,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+9,Ward 9,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+10,Ward 10,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+11,Ward 11,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+12,Ward 12,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+13,Ward 13,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+14,Ward 14,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+15,Ward 15,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+16,Ward 16,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+17,Ward 17,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+18,Ward 18,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+19,Ward 19,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+20,Ward 20,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+21,Ward 21,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+22,Ward 22,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+23,Ward 23,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+24,Ward 24,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+25,Ward 25,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+26,Ward 26,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+27,Ward 27,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+28,Ward 28,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+29,Ward 29,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+30,Ward 30,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+31,Ward 31,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+32,Ward 32,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+33,Ward 33,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+34,Ward 34,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+35,Ward 35,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+36,Ward 36,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+37,Ward 37,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+38,Ward 38,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+39,Ward 39,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+40,Ward 40,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+41,Ward 41,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+42,Ward 42,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+43,Ward 43,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+44,Ward 44,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+45,Ward 45,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+46,Ward 46,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+47,Ward 47,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+48,Ward 48,2026-09-16,33.1,26.7,78.25,31.07,27.91,40.52,853.0,6.57,Critical,#ef4444,No work — suspend all physical activity,32.5,0.6,False,False,None
+49,Ward 49,2026-09-16,33.3,27.0,77.75,31.04,27.93,40.29,853.0,6.84,Critical,#ef4444,No work — suspend all physical activity,32.6,0.7,False,False,None
+50,Ward 50,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+51,Ward 51,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+52,Ward 52,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+53,Ward 53,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+54,Ward 54,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+55,Ward 55,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+56,Ward 56,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+57,Ward 57,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+58,Ward 58,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+59,Ward 59,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+60,Ward 60,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+61,Ward 61,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+62,Ward 62,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+63,Ward 63,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+64,Ward 64,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+65,Ward 65,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+66,Ward 66,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+67,Ward 67,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+68,Ward 68,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+69,Ward 69,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+70,Ward 70,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+71,Ward 71,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+72,Ward 72,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+73,Ward 73,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+74,Ward 74,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+75,Ward 75,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+76,Ward 76,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+77,Ward 77,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+78,Ward 78,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+79,Ward 79,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+80,Ward 80,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+81,Ward 81,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+82,Ward 82,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+83,Ward 83,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+84,Ward 84,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+85,Ward 85,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+86,Ward 86,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+87,Ward 87,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+88,Ward 88,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+89,Ward 89,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+90,Ward 90,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+91,Ward 91,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+92,Ward 92,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+93,Ward 93,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+94,Ward 94,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+95,Ward 95,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+96,Ward 96,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+97,Ward 97,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+98,Ward 98,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+99,Ward 99,2026-09-16,33.0,26.4,79.58,30.81,27.71,39.88,842.0,7.56,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.6,False,False,None
+100,Ward 100,2026-09-16,33.0,26.4,79.58,30.81,27.71,39.88,842.0,7.56,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.6,False,False,None
+101,Ward 101,2026-09-16,33.0,26.4,79.58,30.81,27.71,39.88,842.0,7.56,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.6,False,False,None
+102,Ward 102,2026-09-16,33.0,26.4,79.58,30.81,27.71,39.88,842.0,7.56,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.6,False,False,None
+103,Ward 103,2026-09-16,33.0,26.4,79.58,30.81,27.71,39.88,842.0,7.56,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.6,False,False,None
+104,Ward 104,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+105,Ward 105,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+106,Ward 106,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+107,Ward 107,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+108,Ward 108,2026-09-16,33.3,26.7,78.67,30.95,27.84,40.29,845.0,7.02,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.8,False,False,None
+109,Ward 109,2026-09-16,33.0,26.4,79.58,30.81,27.71,39.88,842.0,7.56,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.6,False,False,None
+110,Ward 110,2026-09-16,33.0,26.4,79.58,30.81,27.71,39.88,842.0,7.56,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.6,False,False,None
+111,Ward 111,2026-09-16,33.0,26.4,79.58,30.81,27.71,39.88,842.0,7.56,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.6,False,False,None
+112,Ward 112,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+113,Ward 113,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+114,Ward 114,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+115,Ward 115,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+116,Ward 116,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+117,Ward 117,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+118,Ward 118,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+119,Ward 119,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+120,Ward 120,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+121,Ward 121,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+122,Ward 122,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+123,Ward 123,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+124,Ward 124,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+125,Ward 125,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+126,Ward 126,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+127,Ward 127,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+128,Ward 128,2026-09-16,32.9,26.6,79.17,30.89,27.74,39.98,843.0,6.86,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.5,False,False,None
+129,Ward 129,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+130,Ward 130,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+131,Ward 131,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+132,Ward 132,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+133,Ward 133,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+134,Ward 134,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+135,Ward 135,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+136,Ward 136,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+137,Ward 137,2026-09-16,33.1,26.7,78.12,30.82,27.82,39.77,847.0,6.68,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.6,False,False,None
+138,Ward 138,2026-09-16,32.7,26.6,81.04,30.81,27.89,39.73,843.0,7.06,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.3,0.4,False,False,None
+139,Ward 139,2026-09-16,32.7,26.6,81.04,30.81,27.89,39.73,843.0,7.06,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.3,0.4,False,False,None
+140,Ward 140,2026-09-16,32.7,26.6,81.04,30.81,27.89,39.73,843.0,7.06,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.3,0.4,False,False,None
+141,Ward 141,2026-09-16,32.7,26.6,81.04,30.81,27.89,39.73,843.0,7.06,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.3,0.4,False,False,None
+1,Ward 1,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+2,Ward 2,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+3,Ward 3,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+4,Ward 4,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+5,Ward 5,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+6,Ward 6,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+7,Ward 7,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+8,Ward 8,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+9,Ward 9,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+10,Ward 10,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+11,Ward 11,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+12,Ward 12,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+13,Ward 13,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+14,Ward 14,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+15,Ward 15,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+16,Ward 16,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+17,Ward 17,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+18,Ward 18,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+19,Ward 19,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+20,Ward 20,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+21,Ward 21,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+22,Ward 22,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+23,Ward 23,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+24,Ward 24,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+25,Ward 25,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+26,Ward 26,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+27,Ward 27,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+28,Ward 28,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+29,Ward 29,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+30,Ward 30,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+31,Ward 31,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+32,Ward 32,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+33,Ward 33,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+34,Ward 34,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+35,Ward 35,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+36,Ward 36,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+37,Ward 37,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+38,Ward 38,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+39,Ward 39,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+40,Ward 40,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+41,Ward 41,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+42,Ward 42,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+43,Ward 43,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+44,Ward 44,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+45,Ward 45,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+46,Ward 46,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+47,Ward 47,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+48,Ward 48,2026-09-17,32.2,26.7,87.21,31.7,27.61,41.38,804.0,4.5,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+49,Ward 49,2026-09-17,32.5,26.5,87.38,31.67,27.56,41.13,802.0,4.4,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+50,Ward 50,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+51,Ward 51,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+52,Ward 52,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+53,Ward 53,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+54,Ward 54,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+55,Ward 55,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+56,Ward 56,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+57,Ward 57,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+58,Ward 58,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+59,Ward 59,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+60,Ward 60,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+61,Ward 61,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+62,Ward 62,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+63,Ward 63,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+64,Ward 64,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+65,Ward 65,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+66,Ward 66,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+67,Ward 67,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+68,Ward 68,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+69,Ward 69,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+70,Ward 70,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+71,Ward 71,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+72,Ward 72,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+73,Ward 73,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+74,Ward 74,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+75,Ward 75,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+76,Ward 76,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+77,Ward 77,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+78,Ward 78,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+79,Ward 79,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+80,Ward 80,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+81,Ward 81,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+82,Ward 82,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+83,Ward 83,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+84,Ward 84,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+85,Ward 85,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+86,Ward 86,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+87,Ward 87,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+88,Ward 88,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+89,Ward 89,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+90,Ward 90,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+91,Ward 91,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+92,Ward 92,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+93,Ward 93,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+94,Ward 94,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+95,Ward 95,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+96,Ward 96,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+97,Ward 97,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+98,Ward 98,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+99,Ward 99,2026-09-17,32.4,26.1,89.71,32.16,27.6,43.64,814.0,4.67,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+100,Ward 100,2026-09-17,32.4,26.1,89.71,32.16,27.6,43.64,814.0,4.67,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+101,Ward 101,2026-09-17,32.4,26.1,89.71,32.16,27.6,43.64,814.0,4.67,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+102,Ward 102,2026-09-17,32.4,26.1,89.71,32.16,27.6,43.64,814.0,4.67,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+103,Ward 103,2026-09-17,32.4,26.1,89.71,32.16,27.6,43.64,814.0,4.67,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+104,Ward 104,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+105,Ward 105,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+106,Ward 106,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+107,Ward 107,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+108,Ward 108,2026-09-17,32.4,26.4,88.33,31.82,27.53,42.4,807.0,4.75,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+109,Ward 109,2026-09-17,32.4,26.1,89.71,32.16,27.6,43.64,814.0,4.67,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+110,Ward 110,2026-09-17,32.4,26.1,89.71,32.16,27.6,43.64,814.0,4.67,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+111,Ward 111,2026-09-17,32.4,26.1,89.71,32.16,27.6,43.64,814.0,4.67,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+112,Ward 112,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+113,Ward 113,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+114,Ward 114,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+115,Ward 115,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+116,Ward 116,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+117,Ward 117,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+118,Ward 118,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+119,Ward 119,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+120,Ward 120,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+121,Ward 121,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+122,Ward 122,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+123,Ward 123,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+124,Ward 124,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+125,Ward 125,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+126,Ward 126,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+127,Ward 127,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+128,Ward 128,2026-09-17,32.4,26.2,88.88,32.29,27.67,43.64,812.0,4.04,Extreme,#a21caf,No work — suspend all physical activity,32.4,0.0,False,False,None
+129,Ward 129,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+130,Ward 130,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+131,Ward 131,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+132,Ward 132,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+133,Ward 133,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+134,Ward 134,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+135,Ward 135,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+136,Ward 136,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+137,Ward 137,2026-09-17,32.4,26.7,87.12,31.5,27.61,41.3,811.0,4.52,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+138,Ward 138,2026-09-17,32.2,26.6,90.5,32.08,27.79,42.97,807.0,4.62,Extreme,#a21caf,No work — suspend all physical activity,32.3,-0.1,False,False,None
+139,Ward 139,2026-09-17,32.2,26.6,90.5,32.08,27.79,42.97,807.0,4.62,Extreme,#a21caf,No work — suspend all physical activity,32.3,-0.1,False,False,None
+140,Ward 140,2026-09-17,32.2,26.6,90.5,32.08,27.79,42.97,807.0,4.62,Extreme,#a21caf,No work — suspend all physical activity,32.3,-0.1,False,False,None
+141,Ward 141,2026-09-17,32.2,26.6,90.5,32.08,27.79,42.97,807.0,4.62,Extreme,#a21caf,No work — suspend all physical activity,32.3,-0.1,False,False,None
+1,Ward 1,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+2,Ward 2,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+3,Ward 3,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+4,Ward 4,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+5,Ward 5,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+6,Ward 6,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+7,Ward 7,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+8,Ward 8,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+9,Ward 9,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+10,Ward 10,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+11,Ward 11,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+12,Ward 12,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+13,Ward 13,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+14,Ward 14,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+15,Ward 15,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+16,Ward 16,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+17,Ward 17,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+18,Ward 18,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+19,Ward 19,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+20,Ward 20,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+21,Ward 21,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+22,Ward 22,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+23,Ward 23,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+24,Ward 24,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+25,Ward 25,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+26,Ward 26,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+27,Ward 27,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+28,Ward 28,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+29,Ward 29,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+30,Ward 30,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+31,Ward 31,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+32,Ward 32,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+33,Ward 33,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+34,Ward 34,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+35,Ward 35,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+36,Ward 36,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+37,Ward 37,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+38,Ward 38,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+39,Ward 39,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+40,Ward 40,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+41,Ward 41,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+42,Ward 42,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+43,Ward 43,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+44,Ward 44,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+45,Ward 45,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+46,Ward 46,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+47,Ward 47,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+48,Ward 48,2026-09-18,32.2,25.8,87.42,31.53,27.59,41.38,808.0,3.22,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+49,Ward 49,2026-09-18,32.4,26.4,87.46,31.52,27.71,41.53,783.0,3.2,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.2,False,False,None
+50,Ward 50,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+51,Ward 51,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+52,Ward 52,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+53,Ward 53,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+54,Ward 54,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+55,Ward 55,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+56,Ward 56,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+57,Ward 57,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+58,Ward 58,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+59,Ward 59,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+60,Ward 60,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+61,Ward 61,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+62,Ward 62,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+63,Ward 63,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+64,Ward 64,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+65,Ward 65,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+66,Ward 66,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+67,Ward 67,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+68,Ward 68,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+69,Ward 69,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+70,Ward 70,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+71,Ward 71,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+72,Ward 72,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+73,Ward 73,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+74,Ward 74,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+75,Ward 75,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+76,Ward 76,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+77,Ward 77,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+78,Ward 78,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+79,Ward 79,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+80,Ward 80,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+81,Ward 81,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+82,Ward 82,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+83,Ward 83,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+84,Ward 84,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+85,Ward 85,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+86,Ward 86,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+87,Ward 87,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+88,Ward 88,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+89,Ward 89,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+90,Ward 90,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+91,Ward 91,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+92,Ward 92,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+93,Ward 93,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+94,Ward 94,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+95,Ward 95,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+96,Ward 96,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+97,Ward 97,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+98,Ward 98,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+99,Ward 99,2026-09-18,31.9,25.6,91.04,32.3,27.59,42.1,809.0,3.97,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.5,False,False,None
+100,Ward 100,2026-09-18,31.9,25.6,91.04,32.3,27.59,42.1,809.0,3.97,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.5,False,False,None
+101,Ward 101,2026-09-18,31.9,25.6,91.04,32.3,27.59,42.1,809.0,3.97,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.5,False,False,None
+102,Ward 102,2026-09-18,31.9,25.6,91.04,32.3,27.59,42.1,809.0,3.97,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.5,False,False,None
+103,Ward 103,2026-09-18,31.9,25.6,91.04,32.3,27.59,42.1,809.0,3.97,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.5,False,False,None
+104,Ward 104,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+105,Ward 105,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+106,Ward 106,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+107,Ward 107,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+108,Ward 108,2026-09-18,32.1,26.0,89.29,31.73,27.65,42.24,792.0,3.73,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.4,False,False,None
+109,Ward 109,2026-09-18,31.9,25.6,91.04,32.3,27.59,42.1,809.0,3.97,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.5,False,False,None
+110,Ward 110,2026-09-18,31.9,25.6,91.04,32.3,27.59,42.1,809.0,3.97,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.5,False,False,None
+111,Ward 111,2026-09-18,31.9,25.6,91.04,32.3,27.59,42.1,809.0,3.97,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.5,False,False,None
+112,Ward 112,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+113,Ward 113,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+114,Ward 114,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+115,Ward 115,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+116,Ward 116,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+117,Ward 117,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+118,Ward 118,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+119,Ward 119,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+120,Ward 120,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+121,Ward 121,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+122,Ward 122,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+123,Ward 123,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+124,Ward 124,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+125,Ward 125,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+126,Ward 126,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+127,Ward 127,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+128,Ward 128,2026-09-18,31.8,25.8,91.33,32.2,27.57,42.84,816.0,3.26,Extreme,#a21caf,No work — suspend all physical activity,32.4,-0.6,False,False,None
+129,Ward 129,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+130,Ward 130,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+131,Ward 131,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+132,Ward 132,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+133,Ward 133,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+134,Ward 134,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+135,Ward 135,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+136,Ward 136,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+137,Ward 137,2026-09-18,32.2,25.4,88.67,31.69,27.55,41.38,814.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.3,False,False,None
+138,Ward 138,2026-09-18,32.0,24.9,91.54,32.32,27.62,41.92,825.0,3.06,Extreme,#a21caf,No work — suspend all physical activity,32.3,-0.3,False,False,None
+139,Ward 139,2026-09-18,32.0,24.9,91.54,32.32,27.62,41.92,825.0,3.06,Extreme,#a21caf,No work — suspend all physical activity,32.3,-0.3,False,False,None
+140,Ward 140,2026-09-18,32.0,24.9,91.54,32.32,27.62,41.92,825.0,3.06,Extreme,#a21caf,No work — suspend all physical activity,32.3,-0.3,False,False,None
+141,Ward 141,2026-09-18,32.0,24.9,91.54,32.32,27.62,41.92,825.0,3.06,Extreme,#a21caf,No work — suspend all physical activity,32.3,-0.3,False,False,None
+1,Ward 1,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+2,Ward 2,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+3,Ward 3,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+4,Ward 4,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+5,Ward 5,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+6,Ward 6,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+7,Ward 7,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+8,Ward 8,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+9,Ward 9,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+10,Ward 10,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+11,Ward 11,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+12,Ward 12,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+13,Ward 13,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+14,Ward 14,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+15,Ward 15,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+16,Ward 16,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+17,Ward 17,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+18,Ward 18,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+19,Ward 19,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+20,Ward 20,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+21,Ward 21,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+22,Ward 22,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+23,Ward 23,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+24,Ward 24,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+25,Ward 25,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+26,Ward 26,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+27,Ward 27,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+28,Ward 28,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+29,Ward 29,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+30,Ward 30,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+31,Ward 31,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+32,Ward 32,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+33,Ward 33,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+34,Ward 34,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+35,Ward 35,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+36,Ward 36,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+37,Ward 37,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+38,Ward 38,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+39,Ward 39,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+40,Ward 40,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+41,Ward 41,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+42,Ward 42,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+43,Ward 43,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+44,Ward 44,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+45,Ward 45,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+46,Ward 46,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+47,Ward 47,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+48,Ward 48,2026-09-19,32.5,26.2,84.58,31.55,27.65,41.13,795.0,2.99,Critical,#ef4444,No work — suspend all physical activity,32.5,0.0,False,False,None
+49,Ward 49,2026-09-19,32.5,26.1,83.38,31.21,27.78,40.37,807.0,3.24,Critical,#ef4444,No work — suspend all physical activity,32.6,-0.1,False,False,None
+50,Ward 50,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+51,Ward 51,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+52,Ward 52,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+53,Ward 53,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+54,Ward 54,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+55,Ward 55,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+56,Ward 56,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+57,Ward 57,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+58,Ward 58,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+59,Ward 59,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+60,Ward 60,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+61,Ward 61,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+62,Ward 62,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+63,Ward 63,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+64,Ward 64,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+65,Ward 65,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+66,Ward 66,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+67,Ward 67,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+68,Ward 68,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+69,Ward 69,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+70,Ward 70,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+71,Ward 71,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+72,Ward 72,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+73,Ward 73,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+74,Ward 74,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+75,Ward 75,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+76,Ward 76,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+77,Ward 77,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+78,Ward 78,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+79,Ward 79,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+80,Ward 80,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+81,Ward 81,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+82,Ward 82,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+83,Ward 83,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+84,Ward 84,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+85,Ward 85,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+86,Ward 86,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+87,Ward 87,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+88,Ward 88,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+89,Ward 89,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+90,Ward 90,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+91,Ward 91,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+92,Ward 92,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+93,Ward 93,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+94,Ward 94,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+95,Ward 95,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+96,Ward 96,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+97,Ward 97,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+98,Ward 98,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+99,Ward 99,2026-09-19,32.6,25.3,84.21,30.9,27.73,40.0,811.0,3.74,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.2,False,False,None
+100,Ward 100,2026-09-19,32.6,25.3,84.21,30.9,27.73,40.0,811.0,3.74,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.2,False,False,None
+101,Ward 101,2026-09-19,32.6,25.3,84.21,30.9,27.73,40.0,811.0,3.74,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.2,False,False,None
+102,Ward 102,2026-09-19,32.6,25.3,84.21,30.9,27.73,40.0,811.0,3.74,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.2,False,False,None
+103,Ward 103,2026-09-19,32.6,25.3,84.21,30.9,27.73,40.0,811.0,3.74,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.2,False,False,None
+104,Ward 104,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+105,Ward 105,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+106,Ward 106,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+107,Ward 107,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+108,Ward 108,2026-09-19,32.5,25.7,83.83,30.95,27.78,40.0,807.0,3.62,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,0.0,False,False,None
+109,Ward 109,2026-09-19,32.6,25.3,84.21,30.9,27.73,40.0,811.0,3.74,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.2,False,False,None
+110,Ward 110,2026-09-19,32.6,25.3,84.21,30.9,27.73,40.0,811.0,3.74,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.2,False,False,None
+111,Ward 111,2026-09-19,32.6,25.3,84.21,30.9,27.73,40.0,811.0,3.74,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,0.2,False,False,None
+112,Ward 112,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+113,Ward 113,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+114,Ward 114,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+115,Ward 115,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+116,Ward 116,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+117,Ward 117,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+118,Ward 118,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+119,Ward 119,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+120,Ward 120,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+121,Ward 121,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+122,Ward 122,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+123,Ward 123,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+124,Ward 124,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+125,Ward 125,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+126,Ward 126,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+127,Ward 127,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+128,Ward 128,2026-09-19,32.4,25.8,84.46,31.07,27.7,40.09,792.0,3.33,Critical,#ef4444,No work — suspend all physical activity,32.4,0.0,False,False,None
+129,Ward 129,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+130,Ward 130,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+131,Ward 131,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+132,Ward 132,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+133,Ward 133,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+134,Ward 134,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+135,Ward 135,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+136,Ward 136,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+137,Ward 137,2026-09-19,32.4,26.1,83.71,31.19,27.67,40.26,796.0,3.18,Critical,#ef4444,No work — suspend all physical activity,32.5,-0.1,False,False,None
+138,Ward 138,2026-09-19,32.2,26.0,88.25,31.83,27.69,41.38,782.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.3,-0.1,False,False,None
+139,Ward 139,2026-09-19,32.2,26.0,88.25,31.83,27.69,41.38,782.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.3,-0.1,False,False,None
+140,Ward 140,2026-09-19,32.2,26.0,88.25,31.83,27.69,41.38,782.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.3,-0.1,False,False,None
+141,Ward 141,2026-09-19,32.2,26.0,88.25,31.83,27.69,41.38,782.0,3.3,Critical,#ef4444,No work — suspend all physical activity,32.3,-0.1,False,False,None
+1,Ward 1,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+2,Ward 2,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+3,Ward 3,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+4,Ward 4,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+5,Ward 5,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+6,Ward 6,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+7,Ward 7,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+8,Ward 8,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+9,Ward 9,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+10,Ward 10,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+11,Ward 11,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+12,Ward 12,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+13,Ward 13,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+14,Ward 14,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+15,Ward 15,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+16,Ward 16,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+17,Ward 17,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+18,Ward 18,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+19,Ward 19,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+20,Ward 20,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+21,Ward 21,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+22,Ward 22,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+23,Ward 23,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+24,Ward 24,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+25,Ward 25,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+26,Ward 26,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+27,Ward 27,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+28,Ward 28,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+29,Ward 29,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+30,Ward 30,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+31,Ward 31,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+32,Ward 32,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+33,Ward 33,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+34,Ward 34,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+35,Ward 35,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+36,Ward 36,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+37,Ward 37,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+38,Ward 38,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+39,Ward 39,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+40,Ward 40,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+41,Ward 41,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+42,Ward 42,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+43,Ward 43,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+44,Ward 44,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+45,Ward 45,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+46,Ward 46,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+47,Ward 47,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+48,Ward 48,2026-09-20,30.8,25.3,89.96,29.94,27.0,37.96,644.0,2.71,Danger,#f97316,30 min work : 30 min rest per hour (moderate),32.5,-1.7,False,False,None
+49,Ward 49,2026-09-20,30.6,25.4,90.62,30.08,27.18,38.6,561.0,2.6,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.6,-2.0,False,False,None
+50,Ward 50,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+51,Ward 51,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+52,Ward 52,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+53,Ward 53,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+54,Ward 54,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+55,Ward 55,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+56,Ward 56,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+57,Ward 57,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+58,Ward 58,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+59,Ward 59,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+60,Ward 60,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+61,Ward 61,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+62,Ward 62,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+63,Ward 63,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+64,Ward 64,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+65,Ward 65,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+66,Ward 66,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+67,Ward 67,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+68,Ward 68,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+69,Ward 69,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+70,Ward 70,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+71,Ward 71,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+72,Ward 72,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+73,Ward 73,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+74,Ward 74,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+75,Ward 75,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+76,Ward 76,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+77,Ward 77,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+78,Ward 78,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+79,Ward 79,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+80,Ward 80,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+81,Ward 81,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+82,Ward 82,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+83,Ward 83,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+84,Ward 84,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+85,Ward 85,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+86,Ward 86,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+87,Ward 87,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+88,Ward 88,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+89,Ward 89,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+90,Ward 90,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+91,Ward 91,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+92,Ward 92,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+93,Ward 93,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+94,Ward 94,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+95,Ward 95,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+96,Ward 96,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+97,Ward 97,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+98,Ward 98,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+99,Ward 99,2026-09-20,30.6,25.5,92.12,30.1,27.14,38.92,559.0,3.19,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.8,False,False,None
+100,Ward 100,2026-09-20,30.6,25.5,92.12,30.1,27.14,38.92,559.0,3.19,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.8,False,False,None
+101,Ward 101,2026-09-20,30.6,25.5,92.12,30.1,27.14,38.92,559.0,3.19,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.8,False,False,None
+102,Ward 102,2026-09-20,30.6,25.5,92.12,30.1,27.14,38.92,559.0,3.19,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.8,False,False,None
+103,Ward 103,2026-09-20,30.6,25.5,92.12,30.1,27.14,38.92,559.0,3.19,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.8,False,False,None
+104,Ward 104,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+105,Ward 105,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+106,Ward 106,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+107,Ward 107,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+108,Ward 108,2026-09-20,30.7,25.5,90.88,30.14,27.28,38.91,554.0,2.71,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+109,Ward 109,2026-09-20,30.6,25.5,92.12,30.1,27.14,38.92,559.0,3.19,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.8,False,False,None
+110,Ward 110,2026-09-20,30.6,25.5,92.12,30.1,27.14,38.92,559.0,3.19,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.8,False,False,None
+111,Ward 111,2026-09-20,30.6,25.5,92.12,30.1,27.14,38.92,559.0,3.19,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.8,False,False,None
+112,Ward 112,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+113,Ward 113,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+114,Ward 114,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+115,Ward 115,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+116,Ward 116,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+117,Ward 117,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+118,Ward 118,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+119,Ward 119,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+120,Ward 120,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+121,Ward 121,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+122,Ward 122,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+123,Ward 123,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+124,Ward 124,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+125,Ward 125,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+126,Ward 126,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+127,Ward 127,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+128,Ward 128,2026-09-20,30.7,25.5,91.25,30.22,27.09,38.91,574.0,2.75,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.4,-1.7,False,False,None
+129,Ward 129,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+130,Ward 130,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+131,Ward 131,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+132,Ward 132,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+133,Ward 133,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+134,Ward 134,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+135,Ward 135,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+136,Ward 136,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+137,Ward 137,2026-09-20,30.7,25.5,89.92,30.17,27.13,38.59,607.0,2.82,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.5,-1.8,False,False,None
+138,Ward 138,2026-09-20,30.7,25.2,92.17,30.13,26.96,38.28,690.0,3.49,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.3,-1.6,False,False,None
+139,Ward 139,2026-09-20,30.7,25.2,92.17,30.13,26.96,38.28,690.0,3.49,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.3,-1.6,False,False,None
+140,Ward 140,2026-09-20,30.7,25.2,92.17,30.13,26.96,38.28,690.0,3.49,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.3,-1.6,False,False,None
+141,Ward 141,2026-09-20,30.7,25.2,92.17,30.13,26.96,38.28,690.0,3.49,Danger,#f97316,15 min work : 45 min rest per hour (moderate),32.3,-1.6,False,False,None

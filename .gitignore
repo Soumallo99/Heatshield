@@ -1,0 +1,49 @@
+# ---------------------------------------------------------------------------
+# IMPORTANT: git accepts ONE pattern per line. A line like ".venv/ venv/ env/"
+# is a single pattern containing spaces and matches nothing - which is exactly
+# how the 851 MB virtualenv nearly ended up in this repo. Keep one per line.
+# ---------------------------------------------------------------------------
+
+# ---------------- python ----------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---------------- node ----------------
+node_modules/
+frontend/web/dist/
+frontend/web/.vite/
+*.local
+
+# ---------------- secrets ----------------
+.env
+.env.*
+!.env.example
+
+# ---------------- regenerable data ----------------
+data/raw/*.json
+data/cache/*
+!data/cache/.gitkeep
+# keep the 36 kB forecast cache: it is what lets a fresh clone render a full
+# dashboard on the very first run with no internet connection.
+!data/cache/forecast_5d.parquet
+data/processed/*.bak.csv
+
+# ---------------- runtime output ----------------
+logs/
+*.log
+
+# ---------------- editors / os ----------------
+.DS_Store
+Thumbs.db
+.idea/
+# NB: .vscode/ is NOT ignored - launch.json and tasks.json are project assets
+# (F5 runs the whole stack). Do not add it back.

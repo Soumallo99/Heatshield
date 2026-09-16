@@ -1,0 +1,28 @@
+HeatShield bundle
+built: 2026-09-16T05:20:12
+files: 110
+python: 3.13.14
+
+bundled forecast window : 2026-09-15 -> 2026-09-20
+peak ward-day risk      : 62.8 (Ward 24 on 2026-09-17)
+alert threshold         : 60
+
+QUICK START: unzip, then open the guide for your editor -
+  ANTIGRAVITY.md   (Google Antigravity - Open VSX marketplace)
+  VSCODE.md        (Microsoft Visual Studio Code)
+  The code is identical in both editors. They differ only in
+  the extension marketplace (Open VSX vs Microsoft) and the
+  Windows venv path - both already patched in .vscode/settings.json.
+
+  ./start.sh     (macOS/Linux)   or   start.bat   (Windows)
+  dashboard -> http://localhost:5173
+    To put it on GitHub:  ./push-to-github.sh
+                          (Windows: double-click push-to-github.bat)
+
+Runs offline on first boot: the last forecast is bundled in
+data/processed/ and data/cache/. With a connection it pulls a live
+one from Open-Meteo (keyless) via:  python -m scripts.refresh
+
+The alert queue is EMPTY when no ward is forecast to reach risk 60.
+That is the weather, not a fault - run scripts.hindcast to see how
+often the threshold is actually crossed.
