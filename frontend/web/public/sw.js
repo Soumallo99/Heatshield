@@ -17,7 +17,7 @@
  * In Vite, put it in /public/sw.js.
  */
 
-const VERSION = 'heatshield-v2';
+const VERSION = 'heatshield-v3';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 

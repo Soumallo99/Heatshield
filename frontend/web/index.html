@@ -31,10 +31,26 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
-      // Register the service worker from the site ROOT so its scope is '/'.
+      // sw.js must only control PRODUCTION builds. In dev it fights Vite's HMR
+      // and serves stale modules — which is how a perfectly good route "stops
+      // opening" on a real client while the dev server looks healthy.
+      // %MODE% is substituted by Vite at serve/build time.
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+          if ('%MODE%' === 'production') {
+            // From the site ROOT so its scope is '/'.
+            navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+          } else {
+            // A worker an earlier dev session registered keeps serving stale
+            // bundles. Evict it and its caches so nobody sits on old modules.
+            navigator.serviceWorker
+              .getRegistrations()
+              .then((rs) => rs.forEach((r) => r.unregister()))
+              .catch(() => {});
+            if ('caches' in window) {
+              caches.keys().then((ks) => ks.forEach((k) => caches.delete(k))).catch(() => {});
+            }
+          }
         });
       }
     </script>

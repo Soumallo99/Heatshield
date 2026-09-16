@@ -22,7 +22,13 @@ const ROUTES = { '': 'landing', dashboard: 'dashboard', mobile: 'mobile' }
 function useRoute() {
   const [route, setRoute] = useState(() => window.location.hash.replace('#/', '') || '')
   useEffect(() => {
-    const onChange = () => setRoute(window.location.hash.replace('#/', '') || '')
+    const onChange = () => {
+      setRoute(window.location.hash.replace('#/', '') || '')
+      // Each page starts at its own top. Without this, clicking Citizen from
+      // the bottom of the long dashboard lands you in the new page's empty
+      // scroll tail, which reads as "the tab didn't open".
+      window.scrollTo(0, 0)
+    }
     window.addEventListener('hashchange', onChange)
     return () => window.removeEventListener('hashchange', onChange)
   }, [])
