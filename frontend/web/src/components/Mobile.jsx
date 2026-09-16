@@ -3,7 +3,9 @@ import { motion } from 'framer-motion'
 import Odometer from './Odometer'
 import Gauge from './Gauge'
 import HourlyChart from './HourlyChart'
-import { bandColour, bandText, EASE, spring } from '../motion'
+import { ConnectionNotice, RefreshButton } from './LiveStatus'
+import { bandColour, bandText, EASE, spring, useMotionSafe } from '../motion'
+import { useLive, useRefreshShortcut } from '../live'
 import { fetchHourly, fetchRanking, fetchWardRisk } from '../api'
 
 const WORK_REST = {
@@ -22,19 +24,19 @@ const WORK_REST = {
  * on desktop without needing a real device.
  */
 export default function Mobile({ onExit }) {
-  const [rows, setRows] = useState([])
+  const { reduced } = useMotionSafe()
   const [selectedId, setSelectedId] = useState(null)
-  const [ward, setWard] = useState(null)
-  const [hourly, setHourly] = useState([])
   const [installable, setInstallable] = useState(false)
   const [prompt, setPrompt] = useState(null)
+  const [epoch, setEpoch] = useState(0)
+
+  const refreshAll = () => setEpoch((e) => e + 1)
+  useRefreshShortcut(refreshAll)
+
+  const ranking = useLive(() => fetchRanking(0), [epoch])
+  const rows = ranking.data?.data || []
 
   useEffect(() => {
-    fetchRanking().then((d) => {
-      const r = d?.data || []
-      setRows(r)
-      if (r.length) setSelectedId(r[0].ward_id)
-    })
     const onBeforeInstall = (e) => {
       e.preventDefault()
       setPrompt(e)
@@ -45,28 +47,42 @@ export default function Mobile({ onExit }) {
   }, [])
 
   const selected = rows.find((r) => r.ward_id === selectedId) || rows[0]
+  const wardId = selected?.ward_id ?? null
 
-  useEffect(() => {
-    if (!selected) return
-    fetchWardRisk(selected.ward_id).then(setWard)
-    fetchHourly(selected.ward_id).then((d) => setHourly(d?.data || []))
-  }, [selected])
+  const wardLive = useLive(
+    () => (wardId == null ? null : fetchWardRisk(wardId, 0)),
+    [wardId, epoch]
+  )
+  const hourlyLive = useLive(
+    () => (wardId == null ? null : fetchHourly(wardId, 0)),
+    [wardId, epoch]
+  )
+  const ward = wardLive.data
+  const hourly = hourlyLive.data?.data || []
 
   const colour = bandColour[selected?.risk_band] || '#22c55e'
 
   return (
     <div className="mx-auto max-w-[1400px] px-6 py-10">
-      <div className="mb-7 flex items-center justify-between">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="display text-[26px]">Citizen view</h1>
-          <p className="mt-1 text-[12px] text-white/40">The screen an alert link opens. Installable, works offline.</p>
+          <h1 className="display text-[30px] leading-none">Citizen view</h1>
+          <p className="mt-2 text-[12px] text-white/40">
+            The screen an alert link opens. Installable, works offline from the last known run.
+          </p>
         </div>
         <div className="flex items-center gap-3">
+          <RefreshButton
+            onRefresh={refreshAll}
+            busy={ranking.refreshing || ranking.loading}
+            lastUpdated={ranking.lastUpdated}
+            error={ranking.error}
+          />
           {installable && (
             <motion.button
               className="rounded-full border border-white/20 bg-white/[.06] px-4 py-2 text-[12px]"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={reduced ? undefined : { scale: 1.03 }}
+              whileTap={reduced ? undefined : { scale: 0.97 }}
               transition={spring.snappy}
               onClick={async () => {
                 prompt?.prompt()
@@ -83,6 +99,13 @@ export default function Mobile({ onExit }) {
         </div>
       </div>
 
+      <ConnectionNotice
+        error={ranking.error}
+        lastUpdated={ranking.lastUpdated}
+        onRetry={refreshAll}
+        busy={ranking.loading}
+      />
+
       <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-start lg:gap-14">
         {/* ------------------------------------------------- device frame */}
         <motion.div
@@ -90,7 +113,7 @@ export default function Mobile({ onExit }) {
           style={{ background: 'linear-gradient(165deg,rgba(255,255,255,.07),rgba(255,255,255,.02))', boxShadow: '0 40px 90px -20px rgba(0,0,0,.85)' }}
           initial={{ opacity: 0, y: 40, rotateX: 8 }}
           animate={{ opacity: 1, y: 0, rotateX: 0 }}
-          transition={{ duration: 1, ease: EASE }}
+          transition={reduced ? { duration: 0 } : { duration: 1, ease: EASE }}
         >
           <div className="relative overflow-hidden rounded-[34px] bg-ink-950" style={{ height: 620 }}>
             {/* status bar */}
@@ -121,20 +144,25 @@ export default function Mobile({ onExit }) {
                     heat risk
                   </div>
                   <div className="mt-1 flex items-baseline">
-                    <Odometer value={selected?.risk_score || 0} decimals={0} height={1.05} className="text-[54px] font-bold" />
+                    {selected ? (
+                      <Odometer value={selected.risk_score || 0} decimals={0} height={1.05} className="text-[54px] font-bold" />
+                    ) : (
+                      <span className="figure text-[54px] text-white/20">—</span>
+                    )}
                     <span className="ml-1 text-[14px] text-white/35">/100</span>
                   </div>
                 </div>
                 <motion.div
                   className="rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider"
-                  animate={{ backgroundColor: colour, color: '#07080d' }}
+                  animate={reduced ? {} : { backgroundColor: colour, color: '#07080d' }}
+                  style={reduced ? { backgroundColor: colour, color: '#07080d' } : undefined}
                   transition={{ duration: 0.4 }}
                 >
-                  {selected?.risk_band}
+                  {selected?.risk_band || 'no data'}
                 </motion.div>
               </div>
               <p className="mt-3 text-[11.5px] leading-relaxed text-white/60">
-                {bandText[selected?.risk_band]}
+                {selected ? bandText[selected.risk_band] : 'Waiting for the live forecast.'}
               </p>
             </motion.div>
 
@@ -186,6 +214,13 @@ export default function Mobile({ onExit }) {
         {/* ------------------------------------------------- ward switcher */}
         <div className="w-full max-w-[520px]">
           <div className="eyebrow mb-3">switch ward</div>
+          {!rows.length && (
+            <div className="rounded-xl border border-white/[.09] bg-white/[.02] px-4 py-6 text-center text-[12px] leading-relaxed text-white/40">
+              {ranking.error
+                ? 'No ward list — the API is unreachable. Nothing here is placeholder data; press Refresh once the API is up.'
+                : 'Loading the live ward list…'}
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-2">
             {rows.map((w, i) => {
               const c = bandColour[w.risk_band] || '#22c55e'

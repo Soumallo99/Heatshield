@@ -12,29 +12,59 @@ more than one day of lead time -- which is exactly the requirement.
 
 Run this after restoring a snapshot, or whenever you want current numbers:
 
-    python scripts/refresh.py
+    python scripts/refresh.py             # live: forces a new Open-Meteo fetch
+    python scripts/refresh.py --offline   # no network: re-scores the cached fetch
+
+`--offline` exists for network-restricted environments (air-gapped CI, a demo
+laptop with no signal). It replays the *real* forecast already on disk in
+`data/cache/` and says so loudly, including when that fetch was made -- it never
+synthesises weather. Physics, scoring and CSV writes are identical either way,
+so it is also a regression harness: same inputs must give the same 846 rows.
 """
 from __future__ import annotations
 
+import argparse
 import time
 
 import pandas as pd
 
 from core.risk import daily_risk
 from core.thermal import compute_thermal, daily_thermal, heatwave_flags
-from core.weather import get_forecast, load_wards
+from core.weather import get_forecast, load_cache, load_wards
 
 PROC = "data/processed"
 
 
-def main() -> None:
+def _cached_forecast() -> pd.DataFrame:
+    """The last real Open-Meteo fetch on disk, TTL ignored on purpose."""
+    df = load_cache(max_age_min=10**9)
+    if df is None or df.empty:
+        raise SystemExit(
+            "--offline needs a cached forecast in data/cache/, and there is none.\n"
+            "Run `python -m scripts.refresh` once on a machine with network access."
+        )
+    return df
+
+
+def main(offline: bool = False) -> None:
     pd.set_option("display.width", 180)
     wards = load_wards()
     print(f"Loaded {len(wards)} wards")
 
-    # 1. Weather -- bypass the cache entirely so we truly hit the network.
+    # 1. Weather -- live mode bypasses the cache entirely so we truly hit the
+    #    network; --offline replays the cached fetch instead.
     t0 = time.time()
-    df = get_forecast(wards, use_cache=False)
+    if offline:
+        df = _cached_forecast()
+        fetched = df["fetched_at"].iloc[0]
+        print("OFFLINE : no network call -- replaying the cached Open-Meteo fetch")
+        print(f"          cached at {fetched} (NOT a live pull; re-run without "
+              f"--offline for current weather)")
+        # Keep data/processed in step with the rows scored below, exactly as
+        # get_forecast(save=True) would in live mode.
+        df.to_csv(f"{PROC}/forecast_hourly.csv", index=False)
+    else:
+        df = get_forecast(wards, use_cache=False)
     print(f"Weather : {len(df):,} ward-hours in {time.time() - t0:.1f}s")
     print(f"Window  : {df.timestamp_local.min()}  ->  {df.timestamp_local.max()}")
 
@@ -80,4 +110,11 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    ap = argparse.ArgumentParser(description="Re-fetch the forecast and re-score every ward.")
+    ap.add_argument(
+        "--offline",
+        action="store_true",
+        help="skip the network and replay the cached Open-Meteo fetch from data/cache/",
+    )
+    args = ap.parse_args()
+    main(offline=args.offline)

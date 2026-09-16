@@ -23,6 +23,8 @@ die()  { printf "\n  ${RED}ERROR${OFF} %s\n" "$1"; exit 1; }
 API_PORT="${HS_API_PORT:-8000}"
 WEB_PORT="${HS_WEB_PORT:-5173}"
 PWA_PORT="${HS_PWA_PORT:-4173}"
+# Vite reads this to aim its /api proxy at the right backend port.
+export HS_API_PORT="$API_PORT"
 WITH_PWA=0
 [ "${1:-}" = "--pwa" ] && WITH_PWA=1
 
@@ -73,13 +75,17 @@ fi
 ok "node_modules present"
 
 # ---------------------------------------------------------------- 3. Data
+# Always try a live refresh at boot (idempotent, ~5 s when online). Offline it
+# fails soft: the API then serves the last scored run instead of erroring.
 step "Forecast data"
-if [ ! -f data/processed/risk_daily.csv ]; then
-  warn "no scored data — running the pipeline once"
-  "$PY" -m scripts.refresh || die "pipeline failed"
-  ok "pipeline ran"
+if "$PY" -m scripts.refresh >"$LOGDIR/refresh.log" 2>&1; then
+  ok "forecast refreshed"
 else
-  ok "existing data found (run: $PY -m scripts.refresh  # to force a live update)"
+  if [ -f data/processed/risk_daily.csv ]; then
+    warn "live refresh failed (offline?) — serving last scored run; see $LOGDIR/refresh.log"
+  else
+    die "no scored data and the live refresh failed; see $LOGDIR/refresh.log"
+  fi
 fi
 
 # ---------------------------------------------------------------- 4. API

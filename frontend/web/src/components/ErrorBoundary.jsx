@@ -17,8 +17,34 @@ export default class ErrorBoundary extends Component {
     return { error }
   }
 
+  componentDidMount() {
+    // A healthy mount re-arms the one-shot auto-reload below.
+    try {
+      sessionStorage.removeItem('hs-autoreload')
+    } catch {
+      /* storage unavailable — fine */
+    }
+  }
+
   componentDidCatch(error, info) {
     console.error('[HeatShield]', error, info?.componentStack)
+
+    // A page left open across a dev-server restart can end up with two React
+    // copies in one tab; hooks then run through a dispatcher that was never
+    // attached and throw "Cannot read properties of null (reading 'useState')".
+    // The only cure is a reload, so do it once, unattended, instead of making
+    // the user stare at a runtime card. The sessionStorage flag keeps a truly
+    // broken build from reload-looping.
+    if (error && /Cannot read properties of null \(reading 'use\w+'\)/.test(String(error.message))) {
+      try {
+        if (!sessionStorage.getItem('hs-autoreload')) {
+          sessionStorage.setItem('hs-autoreload', '1')
+          window.location.reload()
+        }
+      } catch {
+        /* ignore */
+      }
+    }
   }
 
   render() {
