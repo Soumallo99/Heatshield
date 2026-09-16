@@ -1,6 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// The API port is overridable (HS_API_PORT) so a laptop with :8000 taken can
+// move the whole stack. The proxy must follow the same value, or /api/* would
+// keep pointing at a dead port while the API runs elsewhere.
+const API_TARGET = `http://127.0.0.1:${process.env.HS_API_PORT || 8000}`
+
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -10,9 +15,9 @@ export default defineConfig({
     // allow the sandbox preview host (https://{port}-{id}.e2b.app)
     allowedHosts: true,
     proxy: {
-      // browser calls /api/... -> FastAPI on :8000 (never call localhost from the client)
+      // browser calls /api/... -> FastAPI (never call localhost from the client)
       '/api': {
-        target: 'http://127.0.0.1:8000',
+        target: API_TARGET,
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api/, ''),
       },
@@ -26,7 +31,7 @@ export default defineConfig({
     allowedHosts: true,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8000',
+        target: API_TARGET,
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api/, ''),
       },

@@ -11,6 +11,9 @@ setlocal enabledelayedexpansion
 set API_PORT=8000
 set WEB_PORT=5173
 set PWA_PORT=4173
+if defined HS_API_PORT set API_PORT=%HS_API_PORT%
+if defined HS_WEB_PORT set WEB_PORT=%HS_WEB_PORT%
+if defined HS_PWA_PORT set PWA_PORT=%HS_PWA_PORT%
 set WITH_PWA=0
 if "%1"=="--pwa" set WITH_PWA=1
 
@@ -53,13 +56,17 @@ if not exist "frontend\web\node_modules" (
 echo   OK    node_modules present
 
 REM ---------------------------------------------------------------- 3. Data
-if not exist "data\processed\risk_daily.csv" (
-  echo   !!    no scored data - running the pipeline once
-  python -m scripts.refresh
-)
-echo   OK    forecast data present
-
+REM Always try a live refresh at boot (it is idempotent, ~5 s when online).
+REM Offline it fails soft: the API then serves the last scored run instead.
+echo   ==^>  Refreshing forecast (live; falls back to last run if offline)
 if not exist logs mkdir logs
+python -m scripts.refresh > logs\refresh.log 2>&1
+if errorlevel 1 (
+  echo   !!    live refresh failed (offline or API blocked^) - serving last scored run
+  echo         see logs\refresh.log
+) else (
+  echo   OK    forecast refreshed
+)
 
 REM ---------------------------------------------------------------- 4. API
 echo   ==^>  Starting API on :%API_PORT%
