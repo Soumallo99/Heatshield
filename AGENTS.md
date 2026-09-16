@@ -148,7 +148,11 @@ tests/         test_thermal (11) · test_alerts (15) · test_operations (26) = 5
 6. **Offline-first matters.** The dashboard must render from `data/processed/*.csv` with no
    network. Don't make a live fetch a hard dependency of first paint. "No network" means *no
    internet* — the browser still talks to the local FastAPI, which serves those CSVs. It never
-   means "the frontend invents numbers" (see rule 8).
+   means "the frontend invents numbers" (see rule 8). On the API side, `get_forecast()` mirrors
+   this: when the cache is stale *and* the live pull fails, it serves the last real fetch (up to
+   7 days old, `STALE_FALLBACK_MIN`) instead of a 500, and re-probes the network at most every
+   120 s (`FETCH_FAIL_COOLDOWN_S`). `fetched_at` travels with the data so age is always visible.
+   `scripts/refresh` live mode still fails loudly — refreshing is the operator's explicit act.
 7. **`scripts/refresh.py` must stay idempotent** and safe to run repeatedly. Re-scoring the same
    cached forecast must reproduce the committed `data/processed/*.csv` byte for byte.
 8. **No demo data in the UI — live-first.** `frontend/web/src/api.js` throws when the API is

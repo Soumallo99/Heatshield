@@ -57,6 +57,17 @@ export function useLive(load, deps = []) {
 
   const refresh = useCallback(() => setToken((t) => t + 1), [])
 
+  // Self-heal: while every endpoint is failing, keep knocking. This is what
+  // makes "start the dashboard first, the API second" just work on a laptop —
+  // the notice clears itself the moment the API answers. Capped, and always
+  // cancelable by a manual refresh; never polls when the last fetch was OK
+  // (the user's decision: real time = manual refresh, this only covers faults).
+  useEffect(() => {
+    if (error == null) return undefined
+    const id = setTimeout(() => setToken((t) => t + 1), 6000)
+    return () => clearTimeout(id)
+  }, [error, token])
+
   return {
     data,
     error,

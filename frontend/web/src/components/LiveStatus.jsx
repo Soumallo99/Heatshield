@@ -154,6 +154,11 @@ export function ConnectionNotice({ error, lastUpdated, onRetry, busy = false }) 
             python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
           </code>
         )}
+        {' '}
+        <span className="text-white/40">
+          Retrying automatically every few seconds — this clears itself the moment the API answers
+          (R retries now).
+        </span>
       </div>
       <motion.button
         onClick={onRetry}

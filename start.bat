@@ -24,6 +24,12 @@ if errorlevel 1 (
   echo   ERROR Python not found. Run setup.bat first.
   exit /b 1
 )
+REM Prefer the virtualenv setup.bat created: deps live in .venv, not in the
+REM system Python, so running the bare interpreter would report them missing.
+if exist .venv\Scripts\activate.bat (
+  call .venv\Scripts\activate.bat
+  echo   OK    using .venv
+)
 python -c "import uvicorn, fastapi, pandas" >nul 2>&1
 if errorlevel 1 (
   echo   ERROR Python dependencies missing.

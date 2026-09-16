@@ -162,6 +162,20 @@ def save_cache(df: pd.DataFrame, raw: list[dict] | None = None) -> None:
         (config.RAW_DIR / f"open_meteo_{stamp}.json").write_text(json.dumps(raw))
 
 
+# How old a cached fetch may be when we fall back to it after a FAILED live
+# pull. A week: beyond that a "forecast" is a history lesson, and serving it
+# silently would mislead. A failed fetch + no cache still raises.
+STALE_FALLBACK_MIN = 60 * 24 * 7
+
+# After a failed live pull, don't re-attempt the network on every request for
+# this long (the retry/backoff in fetch_raw costs ~10 s; a dashboard refresh
+# fires several endpoints at once). The stale cache serves instantly meanwhile,
+# and we still re-probe the network every couple of minutes so recovery is
+# automatic when connectivity returns.
+FETCH_FAIL_COOLDOWN_S = 120.0
+_fetch_fail_until = 0.0
+
+
 def load_cache(max_age_min: int = config.CACHE_TTL_MIN) -> pd.DataFrame | None:
     p = _cache_path()
     if not p.exists():
@@ -189,17 +203,39 @@ def get_forecast(
         temp_c, rh_pct, dewpoint_c, wind_kmh, solar_wm2, dni_wm2,
         cloud_pct, apparent_temp_c, fetched_at
     """
+    global _fetch_fail_until
+
     if use_cache:
         cached = load_cache()
         if cached is not None:
             return cached
+        # Inside the failure cooldown, skip the slow doomed fetch entirely.
+        if time.time() < _fetch_fail_until:
+            stale = load_cache(max_age_min=STALE_FALLBACK_MIN)
+            if stale is not None and not stale.empty:
+                return stale
 
     wards = load_wards() if wards is None else wards
-    raw = fetch_raw(
-        wards["lat"].tolist(),
-        wards["lon"].tolist(),
-        forecast_days=forecast_days,
-    )
+    try:
+        raw = fetch_raw(
+            wards["lat"].tolist(),
+            wards["lon"].tolist(),
+            forecast_days=forecast_days,
+        )
+    except Exception:
+        if not use_cache:
+            raise  # scripts.refresh (live) must fail loudly, never serve stale
+        _fetch_fail_until = time.time() + FETCH_FAIL_COOLDOWN_S
+        # Offline-first: a warning system that 500s the moment the network
+        # drops is useless exactly when it is needed. Serve the last REAL
+        # fetch, however old, instead of an error. `fetched_at` rides along
+        # in the frame, so the UI can still say how old the data is — and
+        # scripts.refresh (live mode) remains the way to get current weather.
+        stale = load_cache(max_age_min=STALE_FALLBACK_MIN)
+        if stale is None or stale.empty:
+            raise
+        return stale
+
     df = to_dataframe(raw, wards)
     df = df.dropna(subset=["temp_c", "rh_pct"]).reset_index(drop=True)
 
