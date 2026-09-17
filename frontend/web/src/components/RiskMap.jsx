@@ -31,10 +31,18 @@ function FitBounds({ geo }) {
 function FlyTo({ ward, geo }) {
   const map = useMap()
   const last = useRef(null)
+  const hasSkippedInitialSelection = useRef(false)
   useEffect(() => {
     if (!ward || !geo) return
     if (last.current === ward.ward_id) return
     last.current = ward.ward_id
+    // Dashboard data auto-selects the highest-risk ward on first load. Let
+    // FitBounds establish the city-wide view; only user selections should
+    // zoom the map into an individual ward.
+    if (!hasSkippedInitialSelection.current) {
+      hasSkippedInitialSelection.current = true
+      return
+    }
     const layer = L.geoJSON(geo)
     let target = null
     layer.eachLayer((l) => {
