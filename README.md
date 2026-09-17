@@ -491,9 +491,9 @@ are all relative (`./`), which keeps a project deployed at
 `https://<owner>.github.io/Heatshield/` inside its own path. The current budget
 gate limits the actual phone cold-open set (entry + React + motion + phone chunk
 + CSS, never Leaflet) to **120 KiB gzip** and the initial citizen snapshot to
-**45 KiB uncompressed**. The checked snapshot is currently about **105 KiB
-gzip** and **22 KiB** respectively. Full hourly detail exports load only after
-the initial brief.
+**45 KiB uncompressed**. The checked snapshot is currently **104,963 gzip
+bytes** and **28,356 bytes** respectively. Full hourly detail exports load
+only after the initial brief.
 
 ### NCR heatwave method and skill reporting
 
@@ -533,7 +533,10 @@ The NCR hourly air source is Open-Meteo's CAMS atmospheric-composition forecast.
 concentration index: HeatShield does **not** quietly increase AQI just because
 it is hot. `heat_aqi_load` is a separate, capped heat multiplier intended for
 plain-language simultaneous-exposure communication, and is explicitly marked
-**parameterised, not a calibrated pollutant or mortality prediction**.
+**parameterised, not a calibrated pollutant or mortality prediction**. Its
+unfitted rule is `min(500, AQI × min(1.15, 1 + 0.015 × max(T − 35 °C, 0)))`.
+That makes the 35 °C onset, 1.5%/°C increment, 15% cap and 500 cap inspectable
+assumptions—not fitted claims.
 
 Validate the concentration source against a named CPCB/CAAQMS station export,
 not by changing coefficients until a graph feels plausible:
@@ -548,7 +551,25 @@ python -m scripts.validate_coupled_aqi \
 The reproducible report at `data/validation/coupled_aqi_validation.json` pairs
 daily observed PM2.5 with the corresponding CAMS archive series and reports
 MAE, RMSE, mean bias, Pearson *r*, CSI and HSS against a yesterday-observed
-persistence baseline. It records the station, period and source URL. It does
-**not** claim to validate the heat multiplier, health outcomes, all NCR
-locations, or a lead-time forecast retrospectively. `/ncr/validation` serves
-that exact boundary rather than a flattering chart.
+persistence baseline. It records the station, period and source URL. The
+committed run is a **limited, observed station comparison**:
+
+| Comparison | Samples | Result at 90 µg/m³ daily PM2.5 |
+|---|---:|---|
+| CAMS archive vs. Anand Vihar DPCC CAAQMS | 47 paired days, 1 Oct–25 Nov 2025 | MAE 103.26 µg/m³, bias −102.73 µg/m³, *r* = 0.722; 17 hits, 20 misses, 0 false alarms; CSI 0.459, HSS 0.266 |
+| Yesterday-observed persistence | 41 **adjacent** paired days after coverage gaps | MAE 36.45 µg/m³, bias −4.56 µg/m³, *r* = 0.889; CSI 0.853, HSS 0.658 |
+
+The station export is a SHA-256-checked, pinned public historical DPCC CAAQMS
+extract; its exact retrieval URL, hash, daily range and quality screen are in
+the report and the `Validate observed NCR PM2.5` workflow. Of 54 days with an
+observation, 47 passed the transparent 18-valid-hour (75%) daily coverage
+screen. The seven sparse days were excluded; this screen is a quality filter,
+not a regulatory certificate. The archive series substantially underestimates
+this short, high-pollution station sample and is worse than the persistence
+reference. That is a useful validation result—not a reason to tune the heat
+multiplier or to claim an operational forecast skill score.
+
+It does **not** claim to validate the heat multiplier, health outcomes, all NCR
+locations, the station export's regulatory status, or a lead-time forecast
+retrospectively. `/ncr/validation` serves that exact boundary rather than a
+flattering chart.
