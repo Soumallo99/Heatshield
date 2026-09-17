@@ -77,6 +77,8 @@ function normaliseZone(row) {
   return {
     zone_id: text(raw.zone_id, ''),
     zone_name: text(raw.zone_name, 'Location unavailable'),
+    lat: finiteNumber(raw.lat),
+    lon: finiteNumber(raw.lon),
     timestamp_local: text(raw.timestamp_local, ''),
     temp_c: finiteNumber(raw.temp_c),
     rh_pct: finiteNumber(raw.rh_pct),
@@ -87,6 +89,7 @@ function normaliseZone(row) {
     heat_multiplier: finiteNumber(raw.heat_multiplier),
     heat_aqi_load: finiteNumber(raw.heat_aqi_load),
     heat_aqi_load_band: text(raw.heat_aqi_load_band, 'Unknown'),
+    is_synthetic: raw.is_synthetic === true,
   }
 }
 
@@ -165,3 +168,74 @@ export const EMPTY_PHONE_PAYLOAD = normalisePhonePayload({
   alerts: { rows: 0, data: [], climatology: {} },
   daily: [],
 })
+
+/* ------------------------------------------------- personal heat-risk alerts */
+
+/* Advice wording mirrors the Safety screen — one clear instruction per band,
+   never colour-only, never implying a medical diagnosis. */
+export const PERSONAL_ALERT_ADVICE = {
+  Severe: 'Stay in the coolest room you can. Confusion, fainting or hot dry skin is an emergency — seek medical help now.',
+  'Very Poor': 'Avoid the sun 12:00–15:00. Drink water every hour; use a cooling centre if your home is unbearable.',
+  Poor: 'Plan outdoor work for morning or evening. Carry water and check on elderly neighbours.',
+}
+
+/* Notify from this load band upward, or on absolute heat regardless of band. */
+export const PERSONAL_ALERT_TRIGGER_TEMP_C = 40
+
+/**
+ * Build ONE honest personal heat-risk notification for a zone, or null when
+ * conditions do not warrant interrupting the resident. Synthetic payloads are
+ * labelled inside the message body — a practice alert must never read like a
+ * live one.
+ */
+export function heatAlertFor(zone, meta = {}) {
+  if (!zone || typeof zone !== 'object') return null
+  const band = typeof zone.heat_aqi_load_band === 'string' ? zone.heat_aqi_load_band : ''
+  const advice = PERSONAL_ALERT_ADVICE[band]
+  const temp = finiteNumber(zone.temp_c)
+  const hot = temp !== null && temp >= PERSONAL_ALERT_TRIGGER_TEMP_C
+  if (!advice && !hot) return null
+  const synthetic = meta.isSynthetic === true || zone.is_synthetic === true
+  const label = synthetic
+    ? 'Practice data (provider outage or snapshot) — not a live forecast'
+    : 'Live forecast'
+  const load = formatNumber(zone.heat_aqi_load, 0)
+  const tempText = temp === null ? '—' : `${temp.toFixed(1)} °C`
+  const name = text(zone.zone_name, 'your locality')
+  return {
+    id: `${text(zone.zone_id, 'zone')}|${text(zone.timestamp_local, '')}|${band}|${synthetic ? 'syn' : 'live'}`,
+    title: `HeatShield · ${name}`,
+    body: `${label} — combined heat+air load ${load} (${band || 'Unknown'}) · ${tempText}. `
+      + (advice || 'Heat is high today: hydrate hourly, stay in shade during peak sun, and check on neighbours.'),
+  }
+}
+
+/** Great-circle distance in km — used only to pick the nearest zone label. */
+export function haversineKm(lat1, lon1, lat2, lon2) {
+  const toRad = (deg) => (deg * Math.PI) / 180
+  const dLat = toRad(lat2 - lat1)
+  const dLon = toRad(lon2 - lon1)
+  const a = Math.sin(dLat / 2) ** 2
+    + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2
+  return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+/**
+ * Nearest zone to a GPS fix, from the payload's own coordinates (the same
+ * Delhi-NCR zone registry the demo map uses — no geocoding API key needed).
+ * Returns null when nothing has coordinates yet.
+ */
+export function nearestZone(zones, lat, lon) {
+  const fromLat = finiteNumber(lat)
+  const fromLon = finiteNumber(lon)
+  if (fromLat === null || fromLon === null) return null
+  let best = null
+  for (const zone of asArray(zones)) {
+    const zoneLat = finiteNumber(zone.lat)
+    const zoneLon = finiteNumber(zone.lon)
+    if (zoneLat === null || zoneLon === null) continue
+    const km = haversineKm(fromLat, fromLon, zoneLat, zoneLon)
+    if (!best || km < best.km) best = { zone_id: zone.zone_id, zone_name: zone.zone_name, km }
+  }
+  return best
+}

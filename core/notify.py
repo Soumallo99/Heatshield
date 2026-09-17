@@ -28,6 +28,7 @@ from __future__ import annotations
 
 from datetime import datetime
 import math
+import os
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -37,7 +38,8 @@ from core import config
 from core.alerts import live_send_allowed, send_twilio
 from core.warnings import ACTION_MATRIX, DEMO_DISCLAIMER
 
-DRY_RUN_LOG_PATH = config.PROCESSED_DIR / "notification_dry_run_log.csv"
+# Env override keeps tests and one-off rehearsals away from the real log file.
+DRY_RUN_LOG_PATH = Path(os.getenv("HS_DRY_RUN_LOG", "") or config.PROCESSED_DIR / "notification_dry_run_log.csv")
 
 LIVE_SEND_LOCK_NOTE = (
     "live sending is DISABLED by default — it requires HS_ALLOW_LIVE_SEND=1 plus "

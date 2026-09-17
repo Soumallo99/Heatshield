@@ -11,6 +11,8 @@ import {
   EMPTY_PHONE_PAYLOAD,
   READS_BY_SCREEN,
   SCREEN_IDS,
+  heatAlertFor,
+  nearestZone,
   normalisePhonePayload,
 } from '../../frontend/web/src/mobile/contract.js'
 import { MobileScreen } from '../../frontend/web/src/mobile/screens.js'
@@ -59,10 +61,35 @@ const badOutput = Object.entries(renders)
     .filter(([, html]) => forbidden.test(html))
     .map(([state]) => `${screen}/${state}`))
 
+/* Personal heat-alert helper checks — the same pure functions PhoneApp.jsx
+ * uses for the opt-in 🔔 notifications and the 📍 nearest-locality button. */
+const alertSamples = payload.summary.data
+  .map((zone) => heatAlertFor(zone, { isSynthetic: payload.summary.is_synthetic }))
+  .filter(Boolean)
+const cleanProbe = heatAlertFor(
+  { zone_id: 'probe', zone_name: 'Probe', heat_aqi_load_band: 'Good', temp_c: 29 },
+  { isSynthetic: false },
+)
+const syntheticProbe = heatAlertFor(
+  { zone_id: 'probe2', zone_name: 'Probe', heat_aqi_load_band: 'Severe', heat_aqi_load: 401, temp_c: 41.2, timestamp_local: '2026-05-19T19:00' },
+  { isSynthetic: true },
+)
+const nearestCentral = nearestZone(payload.summary.data, 28.6139, 77.209)   // Central Delhi grid point
+const nearestNoida = nearestZone(payload.summary.data, 28.5355, 77.391)     // Noida grid point
+const personalAlerts = {
+  risky: alertSamples.length,
+  allLabelled: alertSamples.every((alert) => /Practice data|Live forecast/.test(alert.body)),
+  cleanIsNull: cleanProbe === null,
+  syntheticProbeLabelled: Boolean(syntheticProbe) && syntheticProbe.body.includes('Practice data'),
+  nearestZoneId: nearestCentral ? nearestCentral.zone_id : '',
+  nearestFarZoneId: nearestNoida ? nearestNoida.zone_id : '',
+}
+
 console.log(JSON.stringify({
   missingFields,
   badOutput,
   renders,
+  personalAlerts,
   summary: {
     zones: payload.summary.data.length,
     daily: payload.daily.length,

@@ -35,7 +35,7 @@ cd frontend/web && npm install && cd ../..
 
 python -m scripts.refresh          # re-fetch live forecast + re-score all wards
 python -m scripts.refresh --offline # no network: replay the cached fetch (says so loudly)
-HS_FORECAST_DAYS=5 python -m pytest -q   # expect: 160 passed
+HS_FORECAST_DAYS=5 python -m pytest -q   # expect: 164 passed
 ```
 
 Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
@@ -53,7 +53,7 @@ Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
 | Ward-hours fetched per cycle | **20,304** (141 × 144 h) |
 | Ward-days scored | **846** (141 × 6 days) — see the window note below |
 | Open-Meteo requests per cycle | **4** (batched 40 coords/request) |
-| Tests | **160 passed** (`HS_FORECAST_DAYS=5`) |
+| Tests | **164 passed** (`HS_FORECAST_DAYS=5`) |
 | `/zones` count | **141** |
 | Alert threshold | **60.0** (`DEFAULT_RISK_THRESHOLD` in `core/alerts.py`) |
 | Default min lead | **1 day** (`DEFAULT_MIN_LEAD_DAYS`) |
@@ -125,12 +125,12 @@ core/          weather · thermal · risk · alerts · subscribers · config    
 app/main.py    FastAPI: /health /zones /risk/ranking /alerts/* /subscribers* /ncr/*
                /heatwave/advance /warnings/advance /notifications/* /demo/* /docs
 scripts/       refresh · schedule · hindcast · build_wards · build_demographics · package
-               build_climatology · validate_coupled_aqi · export_static
+               build_climatology · validate_coupled_aqi · export_static · dispatch_notifications
 frontend/web/  Vite + React + Framer Motion + Tailwind dashboard
                src/mobile (citizen phone PWA) · src/demo (Heat Risk Demo)
 data/          wards, census, processed outputs, cache, subscribers.csv,
                climatology_normals.json, validation/
-tests/         160 test cases, incl. the SSR harnesses tests/mobile/render_mobile.mjs
+tests/         164 test cases, incl. the SSR harnesses tests/mobile/render_mobile.mjs
                and tests/demo/render_demo.mjs (react-dom/server, no browser)
 ```
 
@@ -143,7 +143,10 @@ tests/         160 test cases, incl. the SSR harnesses tests/mobile/render_mobil
    urban form and socioeconomic deprivation — *not* physiological frailty. Do not invent numbers
    to fill the gap, and do not quietly add a proxy that implies otherwise.
 2. **PWA only. No APK, no Capacitor, no Android Studio.** Do not add `npx cap`, Gradle, or Java
-   requirements. `frontend/web/public/sw.js` (`heatshield-v2`) is the offline story.
+   requirements. `frontend/web/public/sw.js` (`heatshield-v2`) is the offline story. A store-style
+   Android APK/AAB is still available **without touching this rule**: package the *deployed* PWA
+   through PWABuilder (TWA) — documented in README → "Install on Android". Packaging happens
+   outside the repo, so a clone still needs only Python + Node.
 3. **Both metrics are intentional.** WBGT drives the model; Heat Index appears in public/SMS copy.
    Do not collapse them into one.
 4. **FastAPI is the backend; don't rewrite it** for frontend convenience. The API is stateless on
@@ -243,7 +246,7 @@ Full detail in `DATA.md`.
 ## 10. Before you open a PR
 
 ```bash
-HS_FORECAST_DAYS=5 python -m pytest -q                    # must be 160 passed
+HS_FORECAST_DAYS=5 python -m pytest -q                    # must be 164 passed
 python -m scripts.refresh                                 # must still print 20,304 / 846
 HS_FORECAST_DAYS=5 python -m scripts.export_static --check # catalogue == FastAPI routes
 HS_FORECAST_DAYS=5 python -m scripts.export_static        # refresh public/static-api/

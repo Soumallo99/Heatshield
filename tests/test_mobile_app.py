@@ -55,6 +55,23 @@ def test_every_phone_screen_server_renders_real_payload_and_empty_state():
         assert "Invalid Date" not in rich + empty
 
 
+def test_personal_heat_alerts_are_labelled_and_location_maps_to_zones():
+    """The opt-in 🔔 helper must stay honest, and 📍 must resolve to the same
+    Delhi-NCR zone registry the payload (and demo map) uses."""
+    result = _render()
+    alerts = result["personalAlerts"]
+    # A comfortable zone never interrupts the resident...
+    assert alerts["cleanIsNull"] is True
+    # ...a synthetic risky zone is labelled as practice data inside the body...
+    assert alerts["syntheticProbeLabelled"] is True
+    # ...and every alert built from the real payload carries a provenance label.
+    if alerts["risky"]:
+        assert alerts["allLabelled"] is True
+    # Nearest-zone lookup hits the exact grid points (no geocoding key needed).
+    assert alerts["nearestZoneId"] == "central-delhi"
+    assert alerts["nearestFarZoneId"] == "noida"
+
+
 def test_phone_contract_tracks_the_real_exported_payload_shape():
     """The static snapshot must stay a valid replacement for the live endpoints."""
     raw = json.loads(PAYLOAD.read_text())

@@ -499,7 +499,7 @@ are all relative (`./`), which keeps a project deployed at
 gate limits the actual phone cold-open set (entry + React + motion + phone chunk
 + CSS, never Leaflet, never the demo chunk) to **120 KiB gzip** and the initial
 citizen snapshot to **45 KiB uncompressed**. The checked build is currently
-**106,781 gzip bytes** and **27,181 bytes** respectively. Full hourly detail exports load
+**108,913 gzip bytes** and **27,181 bytes** respectively. Full hourly detail exports load
 only after the initial brief.
 
 ### NCR heatwave method and skill reporting
@@ -785,7 +785,7 @@ Pages deployment under `https://<owner>.github.io/Heatshield/`.
 ### Running the tests
 
 ```bash
-HS_FORECAST_DAYS=5 .venv/bin/python -m pytest -q     # 160 passed
+HS_FORECAST_DAYS=5 .venv/bin/python -m pytest -q     # 164 passed
 ```
 
 The demo-relevant suites: `tests/test_demo_scenarios.py` (determinism, fixed clock, band/level
@@ -797,3 +797,132 @@ dry-run locks, demo-row refusal), and `tests/test_demo_app.py` — which **serve
 demo screen through `react-dom/server` against the real exported payloads** for all four
 scenarios plus the empty state, rejecting `NaN`/`undefined`/`Invalid Date`, today's date, a
 missing disclaimer, colour-only legends and non-composite motion.
+
+---
+
+## Map API keys, installability & notification automation
+
+### Map API keys — optional, the maps work keyless
+
+Every map (operations dashboard and the Heat Risk Demo) renders out of the box with keyless
+CARTO/ESRI/OpenTopoMap tiles. If you want the higher-detail commercial basemaps, the **exact
+lines that read the keys** are in `frontend/web/src/basemaps.js`:
+
+```js
+// frontend/web/src/basemaps.js — lines 23–24
+const MAPTILER_KEY = import.meta.env?.VITE_MAPTILER_KEY || ''
+const THUNDERFOREST_KEY = import.meta.env?.VITE_THUNDERFOREST_KEY || ''
+```
+
+You do **not** edit those lines — you supply the value through the environment:
+
+```bash
+cp frontend/web/.env.example frontend/web/.env    # gitignored
+# put your key in frontend/web/.env:
+#   VITE_MAPTILER_KEY=pk.xxxxxxxxxxxxxxxx
+npm run build                                      # or restart npm run dev
+```
+
+**Which key:** a free **MapTiler** API key — sign up at <https://cloud.maptiler.com> →
+*Account → Keys* (no billing required for the free tier). With it set, the dashboard's basemap
+picker automatically upgrades to MapTiler Streets / Satellite / Hybrid (wired at
+`basemaps.js` lines ~90–115). A **Thunderforest** key (<https://www.thunderforest.com>) is an
+optional extra street style. Never commit the `.env` file.
+
+### Using Google tiles (and why there is no Google key field)
+
+There is deliberately **no `VITE_GOOGLE_*` key slot**: the only licensed way to render Google
+basemaps in a web app is the **Google Maps Tile API**, which requires a GCP project with
+**billing enabled** and a session-token handshake per tile session — not a static key in a URL.
+Scraping `mt{n}.google.com/vt` violates Google's Terms of Service and stays excluded (see the
+comment at the top of `basemaps.js`). If you hold a billing-enabled key, the supported paths are:
+
+1. Keep the keyless CARTO/ESRI basemaps (visually very close, zero cost), or
+2. Take the MapTiler upgrade above (free tier), or
+3. Add a `google` entry to the `keyless`/keyed registry in `basemaps.js` using the official
+   Map Tiles API with its session flow — a self-contained change to that one file.
+
+**For *location* ("find me on the map") no Google key is needed at all:** the citizen tab's 📍
+button uses the browser's built-in **Geolocation API** and matches your GPS fix to the nearest
+Delhi-NCR zone with the payload's own coordinates (same 8-zone registry as the demo map —
+verified identical lat/lon). Nothing leaves the device; no account, no key, no geocoding bill.
+
+### Install on Android (PWA one-tap, or a real APK)
+
+The citizen tab is an installable PWA (`manifest.webmanifest`: standalone display, 192/512 +
+maskable icons; service worker caches everything for offline use).
+
+- **One tap:** open the Citizen tab in Chrome/Edge on Android → the header shows an
+  **Install** button (it appears whenever the browser offers the install prompt) → HeatShield
+  lands on the home screen, runs full-screen and works offline.
+- **iPhone/iPad:** Safari → Share → **Add to Home Screen** (Apple does not expose the install
+  prompt to web apps).
+- **A real, store-style APK/AAB:** package the deployed PWA with **PWABuilder** —
+  1. Deploy the site (GitHub Pages works: `scripts/export_static` + `npm run build`, relative
+     paths already configured).
+  2. Go to <https://www.pwabuilder.com>, enter your deployed URL (e.g.
+     `https://<owner>.github.io/Heatshield/#/phone`).
+  3. *Package For Stores → Android → Generate* → download the **signed APK** (or the AAB for
+     Play Store submission). The output is a Trusted Web Activity wrapping this exact PWA —
+     it installs, launches full-screen and works offline.
+
+  This keeps the repository's hard constraint (**AGENTS.md rule 2: PWA only — no Capacitor, no
+  Gradle, no Android Studio**): the APK is generated *outside* the repo from the deployed site,
+  so a clone still needs nothing but Python + Node.
+
+### Personal heat-risk notifications (per user, on their own device)
+
+The citizen tab's 🔔 button opts the device into **individual thermal-risk notifications**:
+
+- Built from the payload the app already loaded — the resident's selected locality, its
+  combined heat+air load index and band, temperature, and **one clear protective action**
+  (band-specific advice mirrors the Safety screen).
+- Fires only when conditions warrant interrupting someone: load band **Poor / Very Poor /
+  Severe**, or temperature ≥ **40 °C**. A comfortable day sends nothing.
+- **Honesty preserved:** when the payload is a synthetic outage fallback or a static snapshot
+  exercise, the notification body starts with *"Practice data … not a live forecast"* — a
+  rehearsal can never masquerade as a live warning (enforced by the render-harness test).
+- One notification per zone × timestamp × band × data-quality state (de-duplicated in
+  `localStorage`), permission is opt-in and revocable, and nothing is transmitted anywhere —
+  these are local browser notifications, no account and no key.
+- Limitation, stated plainly: browser notifications need the app open (tab or installed PWA).
+  For alerts that reach a **closed** app / basic phone, use the WhatsApp–SMS channel below.
+
+### Automating warnings on WhatsApp (Twilio) — opt-in, dry-run by default
+
+The pipeline already composes real alert messages; sending them is a deliberate, double-locked
+act.
+
+1. **Get credentials (free to start):** Twilio Console → Messaging → **WhatsApp Sandbox** —
+   join the sandbox by sending its join code from your WhatsApp, then copy:
+   ```ini
+   # .env  (repo root — gitignored; never commit, never paste into chat)
+   TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxx
+   TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxx
+   TWILIO_FROM_NUMBER=whatsapp:+14155238886
+   ALERT_TO_NUMBERS=whatsapp:+91xxxxxxxxxx,+91xxxxxxxxxx
+   HS_ALLOW_LIVE_SEND=1        # second lock — without it, live sending is refused
+   ```
+   (A production WhatsApp sender needs Meta template approval via Twilio; the sandbox is for
+   testing with joined numbers only. Plain SMS works with the same variables minus the
+   `whatsapp:` prefixes.)
+2. **Rehearse (default — sends nothing, logs everything):**
+   ```bash
+   python -m scripts.dispatch_notifications                       # whole plan
+   python -m scripts.dispatch_notifications --audience residents --channel whatsapp
+   ```
+3. **Go live** (both locks open, and the current payload is genuinely live — demo and
+   synthetic-fallback rows are refused *even with both locks open*):
+   ```bash
+   python -m scripts.dispatch_notifications --live
+   ```
+   Or via the API: `curl -X POST localhost:8000/notifications/dispatch -H 'content-type:
+   application/json' -d '{"dry_run": false}'`.
+4. **Automate on a schedule** (cron; the dry-run form is always safe, the `--live` form only
+   sends when a real alert exists and the data is live):
+   ```cron
+   # every day at 07:00 IST — rehearse the queue and append to the log
+   0 7 * * *  cd /path/to/Heatshield && .venv/bin/python -m scripts.dispatch_notifications >> logs/notify.log 2>&1
+   ```
+   Every dispatch — dry or live — appends to `data/processed/notification_dry_run_log.csv`
+   (gitignored, path overridable with `HS_DRY_RUN_LOG`) for audit.

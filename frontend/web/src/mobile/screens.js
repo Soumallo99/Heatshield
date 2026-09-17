@@ -126,7 +126,7 @@ function AboutScreen({ payload }) {
     h('p', { className: 'phone-kicker', key: 'kicker' }, 'KNOW THE LIMITS'),
     h('h1', { id: 'phone-about-title', key: 'title' }, 'Data & limits'),
     h('dl', { className: 'phone-facts', key: 'facts' }, [
-      h('div', { key: 'delivery' }, [h('dt', { key: 'term' }, 'Delivery'), h('dd', { key: 'description' }, summary.static_snapshot ? 'Static snapshot available offline' : 'Live API when reachable')]),
+      h('div', { key: 'delivery' }, [h('dt', { key: 'term' }, 'Delivery'), h('dd', { key: 'description' }, (summary.static_snapshot ? 'Static snapshot available offline' : 'Live API when reachable') + ' · Install from your browser menu (Install app / Add to Home screen); for a store-style Android APK see README → “Install on Android”')]),
       h('div', { key: 'source' }, [h('dt', { key: 'term' }, 'Source'), h('dd', { key: 'description' }, text(summary.data_source, 'Source unavailable'))]),
       h('div', { key: 'aqi' }, [h('dt', { key: 'term' }, 'AQI'), h('dd', { key: 'description' }, 'Indicative PM2.5 sub-index; not a certified station AQI')]),
       h('div', { key: 'combined' }, [h('dt', { key: 'term' }, 'Heat + air'), h('dd', { key: 'description' }, 'Parameterised communication load, not a calibrated health-outcome model')]),

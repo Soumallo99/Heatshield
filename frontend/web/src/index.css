@@ -716,6 +716,16 @@ div:fullscreen { height: 100% !important; width: 100% !important; }
 .phone-tabs button:hover, .phone-tabs button:focus-visible { color: #fff; transform: translateY(-1px); }
 .phone-tabs button.is-active { background: rgba(255,255,255,.08); color: #fff; }
 .phone-tabs__dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.phone-notice {
+  margin: 0;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  background: rgba(227, 179, 65, .08);
+  color: #f2d38b;
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+.phone-icon-button[aria-pressed="true"] { background: rgba(227, 179, 65, .18); }
 .phone-progress {
   position: absolute;
   z-index: 5;
