@@ -14,7 +14,10 @@ Last verified 2026-09-01.
 | Weather forecast | Open-Meteo (aggregates DWD ICON, ECMWF, Météo-France, NOAA GFS) | CC-BY-4.0 | Live fetch, 5-day hourly |
 | Physics | Stull 2011 (wet bulb), Rothfusz/NWS (heat index), ISO 7243 (WBGT), Ranz–Marshall (convection) | Published literature | HI within ±0.4 °C of the NWS chart; Tw within 0.18 °C mean of psychrometric inversion |
 | Heatwave criteria | IMD (India Meteorological Department) | Published | Coastal preset applied for Kolkata |
-| Basemap | CARTO dark, built on OpenStreetMap | ODbL / CARTO | Attribution rendered in-app |
+| Basemap (Dark, Streets) | CARTO Dark Matter / Voyager, built on OpenStreetMap | ODbL / CARTO | Keyless; attribution rendered in-app |
+| Basemap (Satellite) | Esri World Imagery (Maxar, Earthstar Geographics) + CARTO label overlay | Esri terms, attribution required | Keyless; hybrid label layer drawn on top |
+| Basemap (Terrain) | OpenTopoMap (OSM + SRTM relief) | CC-BY-SA | Keyless |
+| Basemap (optional upgrade) | MapTiler / Thunderforest | Commercial, key required | Off unless `VITE_MAPTILER_KEY` / `VITE_THUNDERFOREST_KEY` is set. Google tiles are **not** used — scraping them breaks the Maps ToS |
 
 ## ⚙️ Modelled (real inputs, constructed relationship)
 
