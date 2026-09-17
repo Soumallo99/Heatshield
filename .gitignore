@@ -40,6 +40,8 @@ data/processed/*.bak.csv
 # ---------------- runtime output ----------------
 logs/
 *.log
+# dry-run notification rehearsals are runtime records, not committed data
+data/processed/notification_dry_run_log.csv
 
 # ---------------- editors / os ----------------
 .DS_Store

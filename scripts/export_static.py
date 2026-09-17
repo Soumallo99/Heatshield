@@ -11,9 +11,10 @@ Run after a forecast refresh, or use the built-in offline fallback deliberately:
     HS_FORECAST_DAYS=5 python -m scripts.export_static
     HS_FORECAST_DAYS=5 python -m scripts.export_static --check
 
-``--check`` also fails if a new ``/ncr/*`` or ``/heatwave/advance`` FastAPI
-route has not been added here.  That guard exists because a previous static
-release shipped nine live routes as GitHub Pages 404s.
+``--check`` also fails if a new GET route under ``/ncr/*``, ``/demo/*``,
+``/warnings/*``, ``/heatwave/advance`` or ``/notifications/preview`` has not
+been added here.  That guard exists because a previous static release shipped
+nine live routes as GitHub Pages 404s.
 """
 from __future__ import annotations
 
@@ -28,9 +29,32 @@ import pandas as pd
 
 from app import main as api
 from core import config
+from core import demo as demo_engine
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = ROOT / "frontend" / "web" / "public" / "static-api"
+
+
+def _demo_exports() -> tuple[tuple[str, str, Callable[[], dict[str, Any]]], ...]:
+    """One snapshot per demo route × scenario, so the Heat Risk Demo works on
+    GitHub Pages with no API, no network and no credentials."""
+    entries: list[tuple[str, str, Callable[[], dict[str, Any]]]] = [
+        ("/demo/scenarios", "demo-scenarios.json", api.demo_scenarios),
+        ("/demo/zones", "demo-zones.json", api.demo_zones),
+    ]
+    for scenario in demo_engine.scenario_ids():
+        entries.extend((
+            (f"/demo/forecast?scenario={scenario}", f"demo-forecast-{scenario}.json",
+             lambda s=scenario: api.demo_forecast(scenario=s)),
+            (f"/demo/thermal?scenario={scenario}", f"demo-thermal-{scenario}.json",
+             lambda s=scenario: api.demo_thermal(scenario=s)),
+            (f"/demo/warnings?scenario={scenario}", f"demo-warnings-{scenario}.json",
+             lambda s=scenario: api.demo_warnings(scenario=s)),
+            (f"/demo/notifications?scenario={scenario}", f"demo-notifications-{scenario}.json",
+             lambda s=scenario: api.demo_notifications(scenario=s)),
+        ))
+    return tuple(entries)
+
 
 # (live API path, file name, endpoint function).  Keep this list explicit:
 # output filenames are part of the versioned static-client contract.
@@ -45,7 +69,13 @@ EXPORTS: tuple[tuple[str, str, Callable[[], dict[str, Any]]], ...] = (
     ("/ncr/validation", "ncr-validation.json", api.ncr_validation),
     ("/ncr/alerts", "ncr-alerts.json", lambda: api.ncr_alerts(days=config.FORECAST_DAYS)),
     ("/heatwave/advance", "heatwave-advance.json", lambda: api.heatwave_advance(days=config.FORECAST_DAYS)),
-)
+    # Operational advance-warning + notification-preview routes (offline-safe:
+    # they render the labelled synthetic exercise frame when no provider answers).
+    ("/warnings/advance", "warnings-advance.json",
+     lambda: api.warnings_advance(days=config.FORECAST_DAYS + 1)),
+    ("/notifications/preview", "notifications-preview.json",
+     lambda: api.notifications_preview(days=config.FORECAST_DAYS + 1)),
+) + _demo_exports()
 
 
 def _json_default(value: Any) -> Any:
@@ -74,13 +104,25 @@ def exported_route_paths() -> set[str]:
     return {path.split("?", 1)[0] for path, _filename, _fn in EXPORTS}
 
 
+STATIC_ROUTE_PREFIXES = ("/ncr/", "/demo/", "/warnings/")
+STATIC_ROUTE_EXACT = ("/heatwave/advance", "/notifications/preview")
+
+
 def dynamic_phone_routes() -> set[str]:
-    """Routes that must have a static counterpart, discovered from FastAPI."""
-    return {
-        route.path
-        for route in api.app.routes
-        if getattr(route, "path", "").startswith("/ncr/") or getattr(route, "path", "") == "/heatwave/advance"
-    }
+    """GET routes that must have a static counterpart, discovered from FastAPI.
+
+    POST-only routes (dispatch endpoints) are excluded on purpose: a static
+    host cannot execute them, and the demo must never need them.
+    """
+    discovered: set[str] = set()
+    for route in api.app.routes:
+        path = getattr(route, "path", "")
+        methods = getattr(route, "methods", None) or set()
+        if "GET" not in methods:
+            continue
+        if path.startswith(STATIC_ROUTE_PREFIXES) or path in STATIC_ROUTE_EXACT:
+            discovered.add(path)
+    return discovered
 
 
 def check_catalogue() -> list[str]:
