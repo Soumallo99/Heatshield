@@ -315,6 +315,12 @@ cd frontend/web && npm install && npm run dev     # http://localhost:5173
 
 Three routes: **Overview** (landing), **Operations** (ward risk map + gauge), **Citizen**
 (mobile view). Vite proxies `/api/*` → FastAPI, so the browser never calls localhost directly.
+**Both Operations and Citizen carry a city switch — Kolkata ↔ Delhi NCR.** Kolkata keeps the
+141-ward risk map, gauge and scenario levers; Delhi NCR swaps in the eight-zone advance-warning
+console (zone table, lead days +0…+5, HTSI/impact views and the keyless demo-style map, fed by
+the live `/warnings/advance` rows — or the labelled snapshot when the provider is down). The
+Kolkata-specific scenario levers (+0…+8 °C) only re-score the Kolkata model, so they stay on the
+Kolkata branch.
 The **scenario switcher** (+0 / +2 / +4 / +6 / +8 °C) re-scores every ward live — the fastest way
 to demo how the model behaves under a real heatwave.
 
@@ -333,6 +339,12 @@ consumer map does, and risk shading can be toggled off to read the streets under
 
 All four are **keyless** — clone and run, no signup, matching the rest of the project.
 Registry lives in [`frontend/web/src/basemaps.js`](frontend/web/src/basemaps.js).
+
+Even with an optional key configured, you can never land on a field of *"API key required"*
+error tiles: if the keyed provider keeps failing (bad/expired key, blocked CDN), `RiskMap`
+counts `tileerror`s and automatically degrades to keyless CARTO tiles with a visible notice
+explaining what happened and how to fix the key. The demo/Delhi map is keyless-only and shows
+an equivalent honest note if its CDN is unreachable.
 
 Optional upgrade: put a key in `.env` and the same switcher swaps in higher-detail
 commercial tiles with no code change.
@@ -432,12 +444,14 @@ the cartographic fidelity is comparable without the key or the legal exposure.
   cd frontend/web && npm install
   ```
 
-## Phone app: NCR heat + air brief
+## Phone app: Delhi NCR + Kolkata briefs
 
 The **Citizen** tab (or `#/phone`) is the installable, thumb-first HeatShield
-experience for the National Capital Region. It is a deliberately separate
-surface from the Kolkata operations console: a resident needs one clear next
-action, not a ward-ranking table.
+experience for both covered cities — **Delhi NCR** (heat *and* air) and
+**Kolkata** (WBGT thermal-stress-led) — with a city switch at the top; the
+choice persists in `localStorage`. It is a deliberately separate surface from
+the operations console: a resident needs one clear next action, not a
+ward-ranking table.
 
 ### Five screens, one decision at a time
 
@@ -456,6 +470,39 @@ provide a non-gesture alternative. The user can always see whether a card is
 Synthetic rows are intentionally labelled; they exercise the warning path and
 must never be interpreted as observations or a forecast.
 
+### Two cities, one contract
+
+Both briefs speak the same phone payload contract (live `/api/citizen` ↔
+`/api/citizen/kolkata`; static `citizen.json` ↔ `citizen-kolkata.json`), so
+every screen, normaliser and test serves both:
+
+- **Delhi NCR** keeps the combined heat+air load — the coupled AQI is the one
+  validated surface and only ships where that validation exists.
+- **Kolkata bundles no air-quality source.** PM2.5/AQI/load fields stay `null`
+  with band `Unavailable`, every envelope says so in `source_notice`, and the
+  Now/Outlook/Safety cards lead with **estimated WBGT** thermal stress instead —
+  plus the plain facts residents asked for: temperature, humidity, wind speed
+  and heat index.
+- **Kolkata heatwave labels** come from the IMD **coastal absolute-temperature
+  rule** (Hot-day ≥ 37 °C; Heat Wave / Severe Heat Wave ≥ 40 °C with two-day
+  persistence). `climatology.available` is explicitly `false` — with no fixed
+  per-ward normals, departures are never claimed and window-mean pseudo-normals
+  never masquerade as climatology.
+
+### Location and notifications
+
+- **Location permission never gates data.** With location off, the app still
+  shows the *entire* brief for every ward/locality (chips + search work as
+  usual) and offers a one-shot banner **and** browser notification asking the
+  user to turn on location so the nearest zone can be pre-selected. Both are
+  dismissed forever from `localStorage`; nothing is transmitted anywhere.
+- With 🔔 granted, one unified rule (`personalNotificationFor`) decides what to
+  send: in a **heat-danger state** (heatwave watch, Extreme/Critical WBGT
+  stress in Kolkata, or Poor+ combined load / ≥ 40 °C in Delhi NCR) it fires a
+  protective-action alert; **not in danger** it sends a calm informational
+  update with temperature, humidity and wind speed (plus estimated WBGT in
+  Kolkata). Synthetic payloads always lead with *"Practice data"*.
+
 ### Motion and accessibility contract
 
 The phone route uses short horizontal spring transitions and a progress rail;
@@ -467,7 +514,8 @@ any state change or controls.
 
 There is no headless browser in this repository's verification environment.
 `tests/test_mobile_app.py` instead renders every rich and empty screen through
-`react-dom/server` against `public/static-api/citizen.json`. It rejects `NaN`,
+`react-dom/server` against `public/static-api/citizen.json` **and**
+`citizen-kolkata.json` (both cities). It rejects `NaN`,
 `undefined` and `Invalid Date`, checks every declared JSX field against the real
 generated payload, and enforces the composite-only motion rule. This caught
 states that a successful Vite build cannot see.
@@ -485,9 +533,12 @@ npm run budget
 ```
 
 `export_static.py` materialises the whole public catalogue — the nine `/ncr/*`
-routes, `/heatwave/advance`, `/warnings/advance`, `/notifications/preview` and
-all six `/demo/*` payload families (18 files) — in
-`frontend/web/public/static-api/` (30 exports). The phone and demo clients use
+routes, `/heatwave/advance`, `/warnings/advance`, `/notifications/preview`,
+`/citizen/kolkata` and all six `/demo/*` payload families (18 files) — in
+`frontend/web/public/static-api/` (31 exports). `citizen-kolkata.json` is a
+secondary, on-demand payload (~45 KB gzipped): it is fetched only when the user
+switches the citizen tab to Kolkata, so it stays out of the cold-open budget by
+design. The phone and demo clients use
 relative URLs, go directly to the snapshots on GitHub Pages, and otherwise try
 the live relative `/api` first before falling back to those labelled snapshots.
 The export catalogue is checked against FastAPI routes (`--check`) so adding a
@@ -499,7 +550,7 @@ are all relative (`./`), which keeps a project deployed at
 gate limits the actual phone cold-open set (entry + React + motion + phone chunk
 + CSS, never Leaflet, never the demo chunk) to **120 KiB gzip** and the initial
 citizen snapshot to **45 KiB uncompressed**. The checked build is currently
-**108,913 gzip bytes** and **27,181 bytes** respectively. Full hourly detail exports load
+**110,996 gzip bytes** and **26,032 bytes** respectively. Full hourly detail exports load
 only after the initial brief.
 
 ### NCR heatwave method and skill reporting
@@ -769,7 +820,8 @@ open**; dry runs append to a gitignored CSV log; no credential ever appears in G
 ### Static export & PWA
 
 Every public route — including all six demo payload families for all four scenarios — is in the
-`scripts/export_static.py` catalogue (30 exports), checked against the live FastAPI route table:
+`scripts/export_static.py` catalogue (31 exports, including the Kolkata brief `citizen-kolkata.json`),
+checked against the live FastAPI route table:
 
 ```bash
 HS_FORECAST_DAYS=5 .venv/bin/python -m scripts.export_static --check   # catalogue vs routes
@@ -785,7 +837,7 @@ Pages deployment under `https://<owner>.github.io/Heatshield/`.
 ### Running the tests
 
 ```bash
-HS_FORECAST_DAYS=5 .venv/bin/python -m pytest -q     # 164 passed
+HS_FORECAST_DAYS=5 .venv/bin/python -m pytest -q     # 172 passed
 ```
 
 The demo-relevant suites: `tests/test_demo_scenarios.py` (determinism, fixed clock, band/level
@@ -877,8 +929,11 @@ The citizen tab's 🔔 button opts the device into **individual thermal-risk not
 - Built from the payload the app already loaded — the resident's selected locality, its
   combined heat+air load index and band, temperature, and **one clear protective action**
   (band-specific advice mirrors the Safety screen).
-- Fires only when conditions warrant interrupting someone: load band **Poor / Very Poor /
-  Severe**, or temperature ≥ **40 °C**. A comfortable day sends nothing.
+- **Danger states** fire a protective-action alert: combined load band **Poor / Very Poor /
+  Severe** or ≥ **40 °C** in Delhi NCR; a heatwave watch or **Extreme/Critical** WBGT stress
+  band in Kolkata. **Non-danger states send a calm informational update instead of silence** —
+  temperature, humidity and wind speed (plus estimated WBGT in Kolkata). Only a payload with
+  nothing honest to say sends nothing.
 - **Honesty preserved:** when the payload is a synthetic outage fallback or a static snapshot
   exercise, the notification body starts with *"Practice data … not a live forecast"* — a
   rehearsal can never masquerade as a live warning (enforced by the render-harness test).

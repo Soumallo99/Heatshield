@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { EMPTY_PHONE_PAYLOAD, SCREEN_IDS, heatAlertFor, nearestZone } from './contract.js'
+import { EMPTY_PHONE_PAYLOAD, SCREEN_IDS, nearestZone, personalNotificationFor } from './contract.js'
 import { loadPhonePayload } from './data.js'
 import { MobileScreen, screenLabel } from './screens.js'
 
@@ -16,6 +16,26 @@ function nextIndex(current, direction) {
    already loaded (and labelled Practice data when that payload is synthetic). */
 const ALERT_PREF_KEY = 'heatshield.personalAlerts'
 const ALERT_SENT_KEY = 'heatshield.personalAlerts.sent'
+const CITY_KEY = 'heatshield.city'
+const LOCATION_DONE_KEY = 'heatshield.locationDone'
+const LOCATION_NOTIFIED_KEY = 'heatshield.locationNotified'
+
+export const CITY_OPTIONS = [
+  { id: 'delhi', label: 'Delhi NCR' },
+  { id: 'kolkata', label: 'Kolkata' },
+]
+
+function readCity() {
+  try { return localStorage.getItem(CITY_KEY) === 'kolkata' ? 'kolkata' : 'delhi' } catch { return 'delhi' }
+}
+
+function readFlag(key) {
+  try { return localStorage.getItem(key) === '1' } catch { return false }
+}
+
+function writeFlag(key, on) {
+  try { localStorage.setItem(key, on ? '1' : '0') } catch { /* private mode */ }
+}
 
 function readAlertPref() {
   try { return localStorage.getItem(ALERT_PREF_KEY) === 'on' } catch { return false }
@@ -55,10 +75,12 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
   const [screenIndex, setScreenIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   const [selectedZoneId, setSelectedZoneId] = useState(initialZoneId)
+  const [city, setCity] = useState(readCity)
   const [alertsOn, setAlertsOn] = useState(readAlertPref)
   const [notice, setNotice] = useState('')
   const [locating, setLocating] = useState(false)
   const [installPrompt, setInstallPrompt] = useState(null)
+  const [locationPromptVisible, setLocationPromptVisible] = useState(() => !readFlag(LOCATION_DONE_KEY))
   const pointerStart = useRef(null)
 
   /* Capture the PWA install prompt so "Install" is one tap when the browser
@@ -78,7 +100,7 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
     setStatus('loading')
     setError('')
     try {
-      const next = await loadPhonePayload({ signal: controller.signal })
+      const next = await loadPhonePayload({ city, signal: controller.signal })
       setPayload(next)
       setSelectedZoneId((selected) => next.summary.data.some((zone) => zone.zone_id === selected)
         ? selected
@@ -90,13 +112,13 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
       setError(fetchError?.message || 'Unable to load HeatShield data.')
     }
     return () => controller.abort()
-  }, [])
+  }, [city])
 
   useEffect(() => {
     const controller = new AbortController()
     let active = true
     setStatus('loading')
-    loadPhonePayload({ signal: controller.signal })
+    loadPhonePayload({ city, signal: controller.signal })
       .then((next) => {
         if (!active) return
         setPayload(next)
@@ -114,7 +136,7 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
       active = false
       controller.abort()
     }
-  }, [])
+  }, [city])
 
   const activeScreen = SCREEN_IDS[screenIndex]
   const zones = payload.summary.data
@@ -128,7 +150,7 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
   useEffect(() => {
     if (!alertsOn || status !== 'ready' || !notificationsSupported) return
     if (Notification.permission !== 'granted' || !selected) return
-    const alert = heatAlertFor(selected, { isSynthetic: payload.summary.is_synthetic })
+    const alert = personalNotificationFor(selected, { isSynthetic: payload.summary.is_synthetic })
     if (!alert) return
     const ledger = readSentLedger()
     if (ledger[alert.id]) return
@@ -140,9 +162,23 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
     } catch { /* some Android webviews throw on construction — the in-app card still shows */ }
   }, [alertsOn, status, selected, payload])
 
-  const locate = () => {
+  const switchCity = (nextCity) => {
+    if (nextCity === city) return
+    setCity(nextCity)
+    try { localStorage.setItem(CITY_KEY, nextCity) } catch { /* private mode */ }
+    setSelectedZoneId('')
+    setNotice(`Switched to ${CITY_OPTIONS.find((option) => option.id === nextCity)?.label || nextCity} — loading its brief…`)
+  }
+
+  const dismissLocationPrompt = () => {
+    setLocationPromptVisible(false)
+    writeFlag(LOCATION_DONE_KEY, true)
+    setNotice('Location stays off — the full brief for every locality remains visible; pick yours from the strip any time.')
+  }
+
+  const locate = (options = {}) => {
     if (!('geolocation' in navigator)) {
-      setNotice('This browser has no geolocation — pick your locality from the strip instead.')
+      setNotice('This browser has no geolocation — pick your locality from the strip instead. Every locality’s data stays visible.')
       return
     }
     setLocating(true)
@@ -156,17 +192,37 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
           return
         }
         setSelectedZoneId(hit.zone_id)
-        setNotice(`Nearest zone: ${hit.zone_name} (≈${Math.round(hit.km)} km from its centre — a ~10 km model grid point, not your street).`)
+        setLocationPromptVisible(false)
+        writeFlag(LOCATION_DONE_KEY, true)
+        setNotice(`Nearest ${payload.summary.city_profile === 'kolkata' ? 'ward' : 'zone'}: ${hit.zone_name} (≈${Math.round(hit.km)} km from its centre — a model grid point, not your street).`)
       },
       (error) => {
         setLocating(false)
         setNotice(error.code === error.PERMISSION_DENIED
-          ? 'Location permission denied — pick your locality from the strip. No key or account is needed for this.'
-          : 'Could not get a GPS fix right now — pick your locality from the strip.')
+          ? 'Location permission denied — showing the FULL brief for every locality; pick yours from the strip. Turn location on in your browser settings for ward-accurate alerts.'
+          : 'Could not get a GPS fix right now — showing every locality; pick yours from the strip.')
       },
       { timeout: 10000, maximumAge: 300000 },
     )
   }
+
+  /* While the location prompt is up (and the resident already opted into
+     alerts), also fire ONE browser notification asking to enable location —
+     the request is a nudge, never a gate: all data stays visible without it. */
+  useEffect(() => {
+    if (!locationPromptVisible || !alertsOn || status !== 'ready') return
+    if (!notificationsSupported || Notification.permission !== 'granted') return
+    if (readFlag(LOCATION_NOTIFIED_KEY)) return
+    try {
+      const notification = new Notification('HeatShield · location is off', {
+        body: 'Turn on location in the app for ward-accurate personal heat alerts. Your full brief is visible either way.',
+        tag: 'heatshield-location-prompt',
+        lang: 'en-IN',
+      })
+      notification.onclick = () => { window.focus(); notification.close() }
+      writeFlag(LOCATION_NOTIFIED_KEY, true)
+    } catch { /* in-app banner still shows */ }
+  }, [locationPromptVisible, alertsOn, status])
 
   const toggleAlerts = async () => {
     if (alertsOn) {
@@ -275,7 +331,37 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
           </div>
         </header>
 
+        <div className="phone-city-switch" role="group" aria-label="Choose city">
+          {CITY_OPTIONS.map((option) => (
+            <button
+              type="button"
+              key={option.id}
+              className={option.id === city ? 'is-active' : ''}
+              aria-pressed={option.id === city}
+              onClick={() => switchCity(option.id)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+
         {notice ? <p className="phone-notice" role="status">{notice}</p> : null}
+
+        {locationPromptVisible && status === 'ready' ? (
+          <div className="phone-location-prompt">
+            <p className="phone-location-prompt__text">
+              <strong>📍 Turn on location</strong> — get personal heat alerts for your exact
+              {' '}{payload.summary.city_profile === 'kolkata' ? 'ward' : 'locality'}. All data for every
+              {' '}{payload.summary.city_profile === 'kolkata' ? 'ward' : 'locality'} stays visible without it.
+            </p>
+            <div className="phone-location-prompt__actions">
+              <button type="button" className="phone-retry" onClick={() => locate()} disabled={locating}>
+                {locating ? 'Locating…' : 'Enable location'}
+              </button>
+              <button type="button" className="phone-text-button" onClick={dismissLocationPrompt}>Not now</button>
+            </div>
+          </div>
+        ) : null}
 
         {zones.length > 1 ? (
           <div className="phone-zone-strip" aria-label="Choose locality">

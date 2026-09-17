@@ -72,6 +72,46 @@ def test_personal_heat_alerts_are_labelled_and_location_maps_to_zones():
     assert alerts["nearestFarZoneId"] == "noida"
 
 
+def test_unified_notifications_are_danger_or_calm_facts_never_both_lies():
+    """🔔 contract: danger state -> protective alert; otherwise a calm update
+    with temperature/humidity/wind; synthetic data always labelled."""
+    alerts = _render()["personalAlerts"]
+    assert alerts["calmKind"] == "info"
+    assert alerts["calmHasFacts"] is True          # 31.4 °C · humidity 58% · wind 11.2 km/h
+    assert alerts["dangerKind"] == "danger"
+    assert alerts["dangerLabelled"] is True        # synthetic -> "Practice data"
+    # Kolkata profile has no AQ load: WBGT stress bands drive the danger call.
+    assert alerts["kolkataDangerKind"] == "danger"
+    assert alerts["kolkataDangerUsesWbgt"] is True
+
+
+def test_kolkata_citizen_brief_renders_every_screen_honestly():
+    """The Kolkata payload shares the phone contract: WBGT-led, AQ honestly
+    unavailable, no departure claims without fixed normals."""
+    kolkata_payload = WEB / "public" / "static-api" / "citizen-kolkata.json"
+    assert kolkata_payload.exists(), "run python -m scripts.export_static first"
+    result = subprocess.run(
+        ["node", str(RENDERER), str(kolkata_payload)],
+        cwd=ROOT, text=True, capture_output=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr or result.stdout
+    doc = json.loads(result.stdout)
+    assert doc["missingFields"] == []
+    assert doc["badOutput"] == []
+    assert doc["summary"]["zones"] == 141
+
+    home = doc["renders"]["home"]["rich"]
+    assert "Estimated WBGT" in home
+    assert "No air-quality source is bundled for Kolkata" in home
+    assert "Humidity" in home and "Wind" in home          # plain facts visible
+    outlook = doc["renders"]["outlook"]["rich"]
+    assert "WBGT" in outlook and "Risk" in outlook
+    watch = doc["renders"]["alerts"]["rich"]
+    assert "Historical normal unavailable" in watch or "No heatwave watch" in watch
+    about = doc["renders"]["about"]["rich"]
+    assert "Kolkata wards" in about
+
+
 def test_phone_contract_tracks_the_real_exported_payload_shape():
     """The static snapshot must stay a valid replacement for the live endpoints."""
     raw = json.loads(PAYLOAD.read_text())

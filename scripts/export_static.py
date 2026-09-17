@@ -75,6 +75,9 @@ EXPORTS: tuple[tuple[str, str, Callable[[], dict[str, Any]]], ...] = (
      lambda: api.warnings_advance(days=config.FORECAST_DAYS + 1)),
     ("/notifications/preview", "notifications-preview.json",
      lambda: api.notifications_preview(days=config.FORECAST_DAYS + 1)),
+    # Kolkata citizen brief (phone contract). Offline-safe: built from the
+    # committed forecast cache; empty+labelled when the cache is cold.
+    ("/citizen/kolkata", "citizen-kolkata.json", api.citizen_kolkata),
 ) + _demo_exports()
 
 
@@ -105,7 +108,7 @@ def exported_route_paths() -> set[str]:
 
 
 STATIC_ROUTE_PREFIXES = ("/ncr/", "/demo/", "/warnings/")
-STATIC_ROUTE_EXACT = ("/heatwave/advance", "/notifications/preview")
+STATIC_ROUTE_EXACT = ("/heatwave/advance", "/notifications/preview", "/citizen/kolkata")
 
 
 def dynamic_phone_routes() -> set[str]:

@@ -21,8 +21,9 @@ def test_catalogue_covers_every_ncr_and_advance_route():
     assert export_static.check_catalogue() == []
     assert export_static.dynamic_phone_routes() == export_static.exported_route_paths()
     # 9 /ncr/* + /heatwave/advance + /warnings/advance + /notifications/preview
-    # + 6 /demo/* route paths (scenario snapshots share the path, differ by query)
-    assert len(export_static.exported_route_paths()) == 18
+    # + /citizen/kolkata + 6 /demo/* route paths (scenario snapshots share the
+    # path, differ by query)
+    assert len(export_static.exported_route_paths()) == 19
 
 
 def test_catalogue_covers_every_demo_scenario():

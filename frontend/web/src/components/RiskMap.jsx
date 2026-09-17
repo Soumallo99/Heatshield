@@ -35,6 +35,17 @@ const KOLKATA_CENTER = [22.5726, 88.3639]
 // but stop them drifting to the Atlantic.
 const MAX_BOUNDS = L.latLngBounds([21.9, 87.6], [23.2, 89.2])
 
+/* Emergency basemap: if the configured provider's tiles keep failing (invalid
+   or expired API key, blocked CDN), the map degrades to keyless CARTO tiles
+   instead of showing a field of "API key required" error tiles. */
+const KEYLESS_FALLBACK = {
+  url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  subdomains: 'abcd',
+  maxZoom: 20,
+  maxNativeZoom: 20,
+  attribution: '© OpenStreetMap contributors · © CARTO',
+}
+
 // Mirrors core.risk band order (see bandColour in ../motion).
 const LEGEND = ['Normal', 'Caution', 'Danger', 'Critical', 'Extreme']
 
@@ -143,8 +154,14 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
   const [pickerOpen, setPickerOpen] = useState(false)
   const [me, setMe] = useState(null)
   const [query, setQuery] = useState('')
+  const [tileFailures, setTileFailures] = useState(0)
 
   const basemap = getBasemap(basemapId)
+  const degraded = tileFailures > 6
+  const effectiveBasemap = degraded
+    ? { ...basemap, ...KEYLESS_FALLBACK, id: `${basemap.id}-keyless`, labels: undefined }
+    : basemap
+  useEffect(() => { setTileFailures(0) }, [basemapId])
 
   useEffect(() => {
     try { localStorage.setItem('hs.basemap', basemapId) } catch { /* private mode */ }
@@ -258,6 +275,16 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
       className="relative min-w-0 overflow-hidden rounded-xl bg-[#0a0c14]"
       style={{ height: 420 }}
     >
+      {degraded && (
+        <div
+          className="absolute left-3 top-3 z-[1000] max-w-[280px] rounded-lg border border-amber-300/40 bg-ink-950/90 px-3 py-2 text-[11px] leading-snug text-amber-200/90"
+          role="status"
+        >
+          Basemap tiles from the configured provider kept failing (invalid/expired API key or a
+          blocked CDN) — switched to keyless CARTO tiles so the risk map stays usable. Check
+          <code> frontend/web/.env</code> if you set <code>VITE_MAPTILER_KEY</code>/<code>VITE_THUNDERFOREST_KEY</code>.
+        </div>
+      )}
       <MapContainer
         center={KOLKATA_CENTER}
         zoom={11}
@@ -277,24 +304,25 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
 
         {/* base tiles — keyed on id so switching does a clean swap, not a merge */}
         <TileLayer
-          key={basemap.id}
-          url={basemap.url}
-          subdomains={basemap.subdomains || 'abc'}
-          maxZoom={basemap.maxZoom || 19}
-          maxNativeZoom={basemap.maxNativeZoom}
+          key={effectiveBasemap.id}
+          url={effectiveBasemap.url}
+          subdomains={effectiveBasemap.subdomains || 'abc'}
+          maxZoom={effectiveBasemap.maxZoom || 19}
+          maxNativeZoom={effectiveBasemap.maxNativeZoom}
           detectRetina
           updateWhenIdle={false}
           keepBuffer={3}
-          attribution={basemap.attribution}
+          attribution={effectiveBasemap.attribution}
+          eventHandlers={{ tileerror: () => setTileFailures((n) => n + 1) }}
         />
         {/* hybrid label overlay for imagery styles */}
-        {basemap.labels && (
+        {effectiveBasemap.labels && (
           <Pane name="hs-labels" style={{ zIndex: 450, pointerEvents: 'none' }}>
             <TileLayer
-              key={`${basemap.id}-labels`}
-              url={basemap.labels.url}
-              subdomains={basemap.labels.subdomains || 'abc'}
-              maxZoom={basemap.labels.maxZoom || 19}
+              key={`${effectiveBasemap.id}-labels`}
+              url={effectiveBasemap.labels.url}
+              subdomains={effectiveBasemap.labels.subdomains || 'abc'}
+              maxZoom={effectiveBasemap.labels.maxZoom || 19}
               detectRetina
             />
           </Pane>

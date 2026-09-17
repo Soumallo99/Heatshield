@@ -96,6 +96,9 @@ const asObject = (value) => (isObject(value) ? value : {})
 const asArray = (value) => (Array.isArray(value) ? value : [])
 
 export function finiteNumber(value) {
+  // Number(null) is 0 — a silent lie for absent values. Null-ish inputs must
+  // stay null so screens render an honest em dash instead of a fake zero.
+  if (value === null || value === undefined || value === '') return null
   const parsed = typeof value === 'number' ? value : Number(value)
   return Number.isFinite(parsed) ? parsed : null
 }

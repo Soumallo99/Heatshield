@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { AttributionControl, CircleMarker, MapContainer, TileLayer, Tooltip } from 'react-leaflet'
 import { bandColour, levelColour, levelLabel, formatNumber, formatTemp, text } from './contract.js'
 
@@ -71,6 +71,10 @@ const DELHI_CENTRE = [28.58, 77.28]
  */
 export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, selectedZoneId = '', showCooling = false, onSelect }) {
   const layerDef = LAYERS[layer] || LAYERS.level
+  // Keyless CARTO tiles need no API key — but if the CDN is blocked the map
+  // must say so instead of rendering silent grey behind the data markers.
+  const [tileFailures, setTileFailures] = useState(0)
+  const tilesDegraded = tileFailures > 6
   const zoneById = useMemo(() => new Map(zones.map((zone) => [zone.zone_id, zone])), [zones])
 
   const markers = useMemo(
@@ -113,6 +117,7 @@ export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, sel
           subdomains="abcd"
           maxZoom={20}
           attribution="© OpenStreetMap contributors · © CARTO"
+          eventHandlers={{ tileerror: () => setTileFailures((n) => n + 1) }}
         />
         {markers.map(({ row, zone }) => {
           const colour = layerDef.colour(row)
@@ -154,6 +159,12 @@ export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, sel
           </CircleMarker>
         ))}
       </MapContainer>
+      {tilesDegraded ? (
+        <p className="demo-note" role="status">
+          Basemap tiles are unreachable on this network (no API key is involved — these tiles are
+          keyless). The coloured risk markers above and the zone tables carry the full data.
+        </p>
+      ) : null}
       <ul className="demo-map-legend" aria-label={`${layerDef.label} legend`}>
         {layerDef.legend.map((entry) => (
           <li key={entry.label}>

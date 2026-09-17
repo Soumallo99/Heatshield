@@ -716,6 +716,45 @@ div:fullscreen { height: 100% !important; width: 100% !important; }
 .phone-tabs button:hover, .phone-tabs button:focus-visible { color: #fff; transform: translateY(-1px); }
 .phone-tabs button.is-active { background: rgba(255,255,255,.08); color: #fff; }
 .phone-tabs__dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.phone-city-switch {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px 0;
+}
+.phone-city-switch button {
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.6);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color .16s ease, background-color .16s ease, border-color .16s ease, transform .16s ease;
+}
+.phone-city-switch button.is-active {
+  border-color: rgba(255, 140, 66, .7);
+  background: rgba(255, 140, 66, .16);
+  color: #ffc79a;
+}
+.phone-location-prompt {
+  display: grid;
+  gap: 8px;
+  margin: 8px 12px 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(88, 166, 255, .35);
+  border-radius: 12px;
+  background: rgba(88, 166, 255, .08);
+}
+.phone-location-prompt__text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #bcd7f5;
+}
+.phone-location-prompt__actions { display: flex; align-items: center; gap: 10px; }
 .phone-notice {
   margin: 0;
   padding: 8px 14px;

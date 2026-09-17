@@ -35,7 +35,7 @@ cd frontend/web && npm install && cd ../..
 
 python -m scripts.refresh          # re-fetch live forecast + re-score all wards
 python -m scripts.refresh --offline # no network: replay the cached fetch (says so loudly)
-HS_FORECAST_DAYS=5 python -m pytest -q   # expect: 164 passed
+HS_FORECAST_DAYS=5 python -m pytest -q   # expect: 172 passed
 ```
 
 Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
@@ -53,13 +53,14 @@ Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
 | Ward-hours fetched per cycle | **20,304** (141 × 144 h) |
 | Ward-days scored | **846** (141 × 6 days) — see the window note below |
 | Open-Meteo requests per cycle | **4** (batched 40 coords/request) |
-| Tests | **164 passed** (`HS_FORECAST_DAYS=5`) |
+| Tests | **172 passed** (`HS_FORECAST_DAYS=5`) |
 | `/zones` count | **141** |
 | Alert threshold | **60.0** (`DEFAULT_RISK_THRESHOLD` in `core/alerts.py`) |
 | Default min lead | **1 day** (`DEFAULT_MIN_LEAD_DAYS`) |
 | Demo scenarios | **4** — fixed clock, issued **2026-05-18T06:00 IST**, 8 zones × leads 0–5 = 48 rows each |
 | Demo disclaimer | defined **once**, in `core/warnings.py` (`DEMO_DISCLAIMER`) |
-| Static exports | **30** files in `frontend/web/public/static-api/` (`scripts/export_static.py`) |
+| Static exports | **31** files in `frontend/web/public/static-api/` (`scripts/export_static.py`) |
+| City surfaces | Dashboard **and** Citizen tab both switch **Kolkata ↔ Delhi NCR** (`DelhiOps.jsx` reuses the demo contract over live `/warnings/advance`; `/citizen/kolkata` ships the WBGT-led Kolkata brief) |
 
 A full cycle takes **~4 seconds**. If yours takes minutes, you have un-batched the API calls.
 
@@ -123,7 +124,8 @@ horizon end. Changing that silently changes the headline number.
 core/          weather · thermal · risk · alerts · subscribers · config      ← Kolkata engine
                coupled · htsi · health_impact · warnings · demo · notify     ← NCR impact engine
 app/main.py    FastAPI: /health /zones /risk/ranking /alerts/* /subscribers* /ncr/*
-               /heatwave/advance /warnings/advance /notifications/* /demo/* /docs
+               /heatwave/advance /warnings/advance /notifications/* /demo/*
+               /citizen/kolkata /docs
 scripts/       refresh · schedule · hindcast · build_wards · build_demographics · package
                build_climatology · validate_coupled_aqi · export_static · dispatch_notifications
 frontend/web/  Vite + React + Framer Motion + Tailwind dashboard
@@ -246,7 +248,7 @@ Full detail in `DATA.md`.
 ## 10. Before you open a PR
 
 ```bash
-HS_FORECAST_DAYS=5 python -m pytest -q                    # must be 164 passed
+HS_FORECAST_DAYS=5 python -m pytest -q                    # must be 172 passed
 python -m scripts.refresh                                 # must still print 20,304 / 846
 HS_FORECAST_DAYS=5 python -m scripts.export_static --check # catalogue == FastAPI routes
 HS_FORECAST_DAYS=5 python -m scripts.export_static        # refresh public/static-api/

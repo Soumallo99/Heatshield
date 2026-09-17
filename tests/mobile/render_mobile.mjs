@@ -14,6 +14,7 @@ import {
   heatAlertFor,
   nearestZone,
   normalisePhonePayload,
+  personalNotificationFor,
 } from '../../frontend/web/src/mobile/contract.js'
 import { MobileScreen } from '../../frontend/web/src/mobile/screens.js'
 
@@ -76,6 +77,20 @@ const syntheticProbe = heatAlertFor(
 )
 const nearestCentral = nearestZone(payload.summary.data, 28.6139, 77.209)   // Central Delhi grid point
 const nearestNoida = nearestZone(payload.summary.data, 28.5355, 77.391)     // Noida grid point
+/* Unified notification contract: danger when in a heatwave/stress danger
+ * state, otherwise a calm informational update with temp/humidity/wind. */
+const calmProbe = personalNotificationFor(
+  { zone_id: 'calm', zone_name: 'Calm Zone', timestamp_local: '2026-05-18T09:00', temp_c: 31.4, rh_pct: 58, wind_kmh: 11.2, heat_aqi_load_band: 'Good' },
+  { isSynthetic: false },
+)
+const dangerProbe = personalNotificationFor(
+  { zone_id: 'hot', zone_name: 'Hot Zone', timestamp_local: '2026-05-19T15:00', temp_c: 45.1, rh_pct: 22, wind_kmh: 9, heat_aqi_load: 402, heat_aqi_load_band: 'Severe' },
+  { isSynthetic: true },
+)
+const kolkataStressProbe = personalNotificationFor(
+  { zone_id: 'ward-9', zone_name: 'Ward 9', timestamp_local: '2026-05-19T15:00', temp_c: 35.2, rh_pct: 71, wind_kmh: 6, wbgt_c: 32.4, stress_band: 'Critical', heat_aqi_load_band: 'Unavailable' },
+  { isSynthetic: false },
+)
 const personalAlerts = {
   risky: alertSamples.length,
   allLabelled: alertSamples.every((alert) => /Practice data|Live forecast/.test(alert.body)),
@@ -83,6 +98,12 @@ const personalAlerts = {
   syntheticProbeLabelled: Boolean(syntheticProbe) && syntheticProbe.body.includes('Practice data'),
   nearestZoneId: nearestCentral ? nearestCentral.zone_id : '',
   nearestFarZoneId: nearestNoida ? nearestNoida.zone_id : '',
+  calmKind: calmProbe ? calmProbe.kind : '',
+  calmHasFacts: Boolean(calmProbe) && /31\.4 °C/.test(calmProbe.body) && /humidity 58%/.test(calmProbe.body) && /wind 11\.2 km\/h/.test(calmProbe.body),
+  dangerKind: dangerProbe ? dangerProbe.kind : '',
+  dangerLabelled: Boolean(dangerProbe) && dangerProbe.body.includes('Practice data'),
+  kolkataDangerKind: kolkataStressProbe ? kolkataStressProbe.kind : '',
+  kolkataDangerUsesWbgt: Boolean(kolkataStressProbe) && kolkataStressProbe.body.includes('WBGT'),
 }
 
 console.log(JSON.stringify({

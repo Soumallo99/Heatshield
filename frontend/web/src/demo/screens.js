@@ -18,8 +18,11 @@ const h = React.createElement
 
 /* --------------------------------------------------------------- fragments */
 
-function demoBanner(key = 'demo-banner') {
-  return h('p', { className: 'demo-disclaimer', role: 'status', key }, DEMO_DISCLAIMER)
+function demoBanner(payload, key = 'demo-banner') {
+  // The banner renders the PAYLOAD's own disclaimer: demo envelopes carry the
+  // canonical demo string; the live Delhi-NCR ops view reuses these screens
+  // with an honest live/practice label instead.
+  return h('p', { className: 'demo-disclaimer', role: 'status', key }, text(payload?.disclaimer, DEMO_DISCLAIMER))
 }
 
 function chip(label, colour, extraClass = '') {
@@ -104,7 +107,7 @@ function NowScreen({ payload, selectedZoneId }) {
       h('p', { className: 'demo-kicker', key: 'kicker' }, 'HEAT RISK DEMO · NOW'),
       h('h1', { id: 'demo-now-title', key: 'title' }, 'No scenario loaded'),
       h('p', { className: 'demo-empty', key: 'empty' }, 'Pick a scenario above to see current synthetic conditions, the 3–5 day outlook, impact indicators and alert previews.'),
-      demoBanner(),
+      demoBanner(payload),
     ])
   }
 
@@ -159,7 +162,7 @@ function NowScreen({ payload, selectedZoneId }) {
         ])
       : h('p', { className: 'demo-empty', key: 'no-hours' }, 'Hourly issue-day detail is unavailable in this payload.'),
     h('p', { className: 'demo-note', key: 'reason' }, [h('strong', { key: 'w' }, 'Why this level: '), row.reason]),
-    demoBanner(),
+    demoBanner(payload),
   ])
 }
 
@@ -232,7 +235,7 @@ function OutlookScreen({ payload, selectedZoneId }) {
         ])
       : h('p', { className: 'demo-empty', key: 'empty' }, 'No outlook rows are available for this scenario.'),
     h('p', { className: 'demo-note', key: 'persistence' }, text(payload.warnings.persistence_rule, '')),
-    demoBanner(),
+    demoBanner(payload),
   ])
 }
 
@@ -286,7 +289,7 @@ function ZonesScreen({ payload, selectedZoneId, leadDay = 3 }) {
         ])
       : h('p', { className: 'demo-empty', key: 'empty' }, `No zone rows for Day +${leadDay} in this scenario.`),
     h('p', { className: 'demo-note', key: 'granularity' }, text(payload.warnings.granularity_note, payload.zonesGranularityNote)),
-    demoBanner(),
+    demoBanner(payload),
   ])
 }
 
@@ -300,7 +303,7 @@ function ImpactScreen({ payload, selectedZoneId, leadDay = 3 }) {
       h('p', { className: 'demo-kicker', key: 'kicker' }, 'HEAT RISK DEMO · IMPACT'),
       h('h1', { id: 'demo-impact-title', key: 'title' }, 'No zone selected'),
       h('p', { className: 'demo-empty', key: 'empty' }, 'Select a scenario and zone to see the stress, vulnerability and impact breakdown.'),
-      demoBanner(),
+      demoBanner(payload),
     ])
   }
 
@@ -358,7 +361,7 @@ function ImpactScreen({ payload, selectedZoneId, leadDay = 3 }) {
           ]),
         ])
       : h('p', { className: 'demo-empty', key: 'no-actions' }, 'No action matrix entry for this level.'),
-    demoBanner(),
+    demoBanner(payload),
   ])
 }
 
@@ -401,7 +404,7 @@ function NotifyScreen({ payload, selectedZoneId }) {
           h('p', { className: 'demo-note', key: 'lock-note' }, preview.live_send),
         ])))
       : h('p', { className: 'demo-empty', key: 'empty' }, 'No alert in this scenario is severe enough to plan a notification. Try “Dry extreme heatwave” or “Severe heat + pollution”.'),
-    demoBanner(),
+    demoBanner(payload),
   ])
 }
 
@@ -459,7 +462,7 @@ function AboutScreen({ payload }) {
         ])
       : null,
     h('p', { className: 'demo-note', key: 'how' }, text(payload.scenarios.how_to_read, '')),
-    demoBanner(),
+    demoBanner(payload),
   ])
 }
 
@@ -471,7 +474,7 @@ export function DemoScreen({ screen = 'now', payload, selectedZoneId = '', leadD
     return h('section', { className: 'demo-screen' }, [
       h('h1', { key: 't' }, 'Demo payload unavailable'),
       h('p', { className: 'demo-empty', key: 'e' }, 'Load a scenario to see the demo.'),
-      demoBanner(),
+      demoBanner(payload),
     ])
   }
   if (screen === 'outlook') return h(OutlookScreen, { payload: safe, selectedZoneId })

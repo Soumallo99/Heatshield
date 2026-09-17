@@ -170,6 +170,33 @@ def test_demo_map_never_encodes_meaning_with_colour_alone():
     assert "demo-map-legend" in source and "Tooltip" in source
 
 
+def test_both_cities_are_switchable_in_dashboard_and_citizen_tab():
+    """Delhi NCR and Kolkata are both first-class: the ops console switches
+    city (ward console <-> zone advance-warning console) and the citizen app
+    switches its brief (citizen.json <-> citizen-kolkata.json)."""
+    dashboard = (WEB / "src" / "components" / "Dashboard.jsx").read_text(encoding="utf-8")
+    assert "CitySwitch" in dashboard and "DelhiOps" in dashboard
+    assert "'Kolkata'" in dashboard and "'Delhi NCR'" in dashboard
+    delhi_ops = (WEB / "src" / "components" / "DelhiOps.jsx").read_text(encoding="utf-8")
+    # live-first with the labelled snapshot fallback, honest banner either way
+    assert "'./api/warnings/advance'" in delhi_ops
+    assert "warnings-advance.json" in delhi_ops
+    assert "Practice data (provider outage fallback)" in delhi_ops
+    assert "Not an official IMD declaration" in delhi_ops
+    phone = (WEB / "src" / "mobile" / "PhoneApp.jsx").read_text(encoding="utf-8")
+    assert "CITY_OPTIONS" in phone and "Kolkata" in phone
+    assert "phone-location-prompt" in phone          # turn-on-location nudge
+    assert "FULL brief for every locality" in phone  # data never gated on GPS
+    data = (WEB / "src" / "mobile" / "data.js").read_text(encoding="utf-8")
+    assert "citizen-kolkata.json" in data and "'./api/citizen/kolkata'" in data
+    # No quoted absolute URLs in the loader (comments explaining GitHub Pages
+    # URLs are fine); every fetch target must be relative.
+    assert not re.search(r"[\"']https?://", data)
+    # The Kolkata map renders with keyless tiles and degrades honestly.
+    risk_map = (WEB / "src" / "components" / "RiskMap.jsx").read_text(encoding="utf-8")
+    assert "KEYLESS_FALLBACK" in risk_map and "tileerror" in risk_map
+
+
 def test_demo_is_route_level_code_split_and_prominently_linked():
     app = (WEB / "src" / "App.jsx").read_text(encoding="utf-8")
     assert "demo: 'demo'" in app
