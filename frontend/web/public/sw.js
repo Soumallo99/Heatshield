@@ -17,7 +17,7 @@
  * In Vite, put it in /public/sw.js.
  */
 
-const VERSION = 'heatshield-v3';
+const VERSION = 'heatshield-v4';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 
@@ -38,10 +38,14 @@ const GEOJSON = '/data/kolkata_wards.geojson';
    offline. Capped, because tiles are effectively infinite. */
 const TILE_CACHE = `${VERSION}-tiles`;
 const TILE_LIMIT = 600;
+/* Mirrors TILE_HOSTS in src/basemaps.js — a service worker can't import an ES
+   module, so the list is duplicated. tests/test_tile_hosts.py guards the two
+   against drifting apart. */
 const TILE_HOSTS = [
-  'basemaps.cartocdn.com',
   'server.arcgisonline.com',
+  'tile.openstreetmap.org',
   'tile.opentopomap.org',
+  'basemaps.cartocdn.com',
   'api.maptiler.com',
   'tile.thunderforest.com'
 ];

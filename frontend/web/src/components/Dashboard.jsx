@@ -17,6 +17,30 @@ import { ALERT_THRESHOLD, fetchAlerts, fetchGeo, fetchHourly, fetchRanking,
 
 const SCENARIOS = [0, 2, 4, 6, 8]
 
+/**
+ * "Trigger heatwave" — the one-click demo lever.
+ *
+ * The scenario pills are a fine analytical control but a poor demo: you have
+ * to know that +6 °C is the interesting one. This jumps straight there, which
+ * is reliably enough to push a large share of the 141 wards into Critical and
+ * fill the alert queue. It is the SAME code path as the pills — `scenario_c`
+ * on the existing endpoints — so nothing is faked or special-cased; it's a
+ * shortcut to a what-if the model already supports.
+ *
+ * IMD's heatwave criterion for a coastal station like Kolkata is a departure
+ * of +4.5 °C or more from normal, so +6 is a severe but real event, not an
+ * arbitrary number.
+ */
+const HEATWAVE_SCENARIO = 6
+
+/** Auto-refresh choices, in ms. 0 = off (the default; refresh stays manual). */
+const AUTO_INTERVALS = [
+  { ms: 0, label: 'off' },
+  { ms: 60_000, label: '1 m' },
+  { ms: 300_000, label: '5 m' },
+  { ms: 900_000, label: '15 m' },
+]
+
 function Clock() {
   const [t, setT] = useState(() => new Date())
   useEffect(() => {
@@ -27,6 +51,36 @@ function Clock() {
     <span className="tnum text-[11.5px] text-white/40">
       {t.toLocaleTimeString('en-IN', { hour12: false })}
     </span>
+  )
+}
+
+/**
+ * Auto-refresh interval picker.
+ *
+ * Deliberately a <select>, not another pill row: it's a setting you touch once,
+ * not a control you operate, and it has to fit next to Refresh without pushing
+ * the header onto a second line on a laptop.
+ */
+function AutoRefreshSelect({ value, onChange }) {
+  return (
+    <label
+      className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[.05] py-1 pl-2.5 pr-1.5 text-[10.5px] text-white/55 transition-colors hover:border-white/30"
+      title="Automatically re-fetch live data at this interval. Pauses while the tab is in the background."
+    >
+      <span className="hidden sm:inline">auto</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        aria-label="Auto-refresh interval"
+        className="cursor-pointer bg-transparent text-[10.5px] text-white/80 outline-none"
+      >
+        {AUTO_INTERVALS.map((o) => (
+          <option key={o.ms} value={o.ms} className="bg-[#0f1117] text-white">
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </label>
   )
 }
 
@@ -91,9 +145,24 @@ export default function Dashboard({ onExit }) {
   // `epoch` is the manual-refresh lever: bumping it re-calls every endpoint at
   // once. There is deliberately no interval — refresh is an explicit act.
   const [epoch, setEpoch] = useState(0)
+  // Auto-refresh is opt-in and remembered. Default stays 0 (off) so the
+  // project's "refresh is a deliberate act" rule holds for anyone who never
+  // touches the control.
+  const [autoMs, setAutoMs] = useState(() => {
+    try { return Number(localStorage.getItem('hs.autoMs')) || 0 } catch { return 0 }
+  })
+  useEffect(() => {
+    try { localStorage.setItem('hs.autoMs', String(autoMs)) } catch { /* private mode */ }
+  }, [autoMs])
 
-  const ranking = useLive(() => fetchRanking(scenario), [scenario, epoch])
-  const alerts = useLive(() => fetchAlerts(ALERT_THRESHOLD, 1, scenario), [scenario, epoch])
+  const ranking = useLive(() => fetchRanking(scenario), [scenario, epoch], { autoMs })
+  const alerts = useLive(() => fetchAlerts(ALERT_THRESHOLD, 1, scenario), [scenario, epoch], { autoMs })
+
+  const heatwaveOn = scenario === HEATWAVE_SCENARIO
+  const toggleHeatwave = useCallback(
+    () => setScenario((s) => (s === HEATWAVE_SCENARIO ? 0 : HEATWAVE_SCENARIO)),
+    []
+  )
 
   const refreshAll = useCallback(() => setEpoch((e) => e + 1), [])
   useRefreshShortcut(refreshAll)
@@ -172,14 +241,46 @@ export default function Dashboard({ onExit }) {
                 </button>
               ))}
             </div>
+
+            {/* One-click severe-heatwave what-if. Same scenario_c path as the
+                pills above — a shortcut, not a separate (or faked) mode. */}
+            <motion.button
+              onClick={toggleHeatwave}
+              aria-pressed={heatwaveOn}
+              title={
+                heatwaveOn
+                  ? 'Return to current forecast'
+                  : `Simulate a severe heatwave (+${HEATWAVE_SCENARIO} °C on every ward, re-scored live)`
+              }
+              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
+                heatwaveOn
+                  ? 'border-orange-400/60 bg-orange-500/20 text-orange-200'
+                  : 'border-white/15 bg-white/[.05] text-white/70 hover:border-orange-400/50 hover:text-orange-200'
+              }`}
+              whileHover={reduced ? undefined : { scale: 1.035 }}
+              whileTap={reduced ? undefined : { scale: 0.955 }}
+              transition={spring.snappy}
+            >
+              <motion.span
+                aria-hidden="true"
+                animate={reduced || !heatwaveOn ? { opacity: 1 } : { opacity: [1, 0.45, 1] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                ▲
+              </motion.span>
+              {heatwaveOn ? `Heatwave +${HEATWAVE_SCENARIO}° — reset` : 'Trigger heatwave'}
+            </motion.button>
           </div>
 
-          <RefreshButton
-            onRefresh={refreshAll}
-            busy={ranking.refreshing || alerts.refreshing || ranking.loading}
-            lastUpdated={ranking.lastUpdated}
-            error={ranking.error}
-          />
+          <div className="flex items-center gap-2">
+            <RefreshButton
+              onRefresh={refreshAll}
+              busy={ranking.refreshing || alerts.refreshing || ranking.loading}
+              lastUpdated={ranking.lastUpdated}
+              error={ranking.error}
+            />
+            <AutoRefreshSelect value={autoMs} onChange={setAutoMs} />
+          </div>
 
           <Clock />
         </div>

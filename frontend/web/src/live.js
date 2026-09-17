@@ -16,7 +16,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
  *              read through a ref so only `deps` + the refresh token re-run it.
  * @param deps  values that should trigger a refetch (scenario, ward id, …).
  */
-export function useLive(load, deps = []) {
+export function useLive(load, deps = [], { autoMs = 0 } = {}) {
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -26,6 +26,10 @@ export function useLive(load, deps = []) {
   const loadRef = useRef(load)
   loadRef.current = load
   const reqId = useRef(0)
+  // Read by the auto-refresh interval so it can skip a tick rather than stack
+  // overlapping requests. A ref, not state: the interval closes over it once.
+  const loadingRef = useRef(false)
+  loadingRef.current = loading
 
   useEffect(() => {
     const id = ++reqId.current
@@ -67,6 +71,47 @@ export function useLive(load, deps = []) {
     const id = setTimeout(() => setToken((t) => t + 1), 6000)
     return () => clearTimeout(id)
   }, [error, token])
+
+  // Opt-in auto-refresh. Off by default (autoMs = 0) — the project's rule is
+  // still "refresh is a deliberate act" — but an operations desk watching a
+  // heatwave shouldn't have to keep pressing R, so Dashboard offers it as a
+  // toggle. Two deliberate constraints:
+  //   1. Paused while the tab is hidden. A backgrounded dashboard polling
+  //      Open-Meteo all night is rude to a free keyless upstream, and the
+  //      first thing it does on becoming visible again is refetch anyway.
+  //   2. Skipped while a fetch is already in flight, so a slow response can
+  //      never stack up a queue of overlapping requests.
+  useEffect(() => {
+    if (!autoMs) return undefined
+    let id = null
+    const tick = () => {
+      if (document.visibilityState !== 'visible') return
+      if (loadingRef.current) return
+      setToken((t) => t + 1)
+    }
+    const start = () => {
+      stop()
+      id = setInterval(tick, autoMs)
+    }
+    const stop = () => {
+      if (id) clearInterval(id)
+      id = null
+    }
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        tick()
+        start()
+      } else {
+        stop()
+      }
+    }
+    start()
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      stop()
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  }, [autoMs])
 
   return {
     data,
