@@ -181,3 +181,192 @@ body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 .leaflet-tooltip-top::before { border-top-color: rgba(255, 255, 255, 0.12); }
+
+/* ============================================================
+   Map chrome — custom controls, basemap picker, labels
+   Built by hand instead of using Leaflet's default controls so the
+   map matches the dashboard's type scale and glass surfaces.
+   ============================================================ */
+.map-ctrl-group {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 12, 20, 0.72);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+.map-btn {
+  width: 28px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.62);
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.map-btn + .map-btn { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.map-btn:hover { background: rgba(255, 255, 255, 0.09); color: #fff; }
+.map-btn-on { color: #22d3ee; }
+
+.map-layers-btn {
+  display: flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 12, 20, 0.72);
+  backdrop-filter: blur(8px);
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  transition: background 0.18s ease;
+}
+.map-layers-btn:hover { background: rgba(255, 255, 255, 0.1); }
+
+.map-layers-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  width: 216px;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 12, 20, 0.94);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  animation: mapMenuIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes mapMenuIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+.map-layers-menu button {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+.map-layers-menu button:hover { background: rgba(255, 255, 255, 0.07); }
+.map-layers-menu button.on { background: rgba(34, 211, 238, 0.1); }
+.map-layers-menu button.on .lbl { color: #22d3ee; }
+.map-layers-menu .lbl {
+  display: block;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.86);
+}
+.map-layers-menu .hint {
+  display: block;
+  margin-top: 1px;
+  font-size: 9.5px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.36);
+}
+.map-layers-menu .note {
+  padding: 6px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 9px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.map-search {
+  width: 100%;
+  padding: 6px 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 12, 20, 0.78);
+  backdrop-filter: blur(8px);
+  font-size: 11px;
+  color: #eef1f7;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  outline: none;
+}
+.map-search::placeholder { color: rgba(255, 255, 255, 0.3); }
+.map-search:focus { border-color: rgba(34, 211, 238, 0.5); }
+.map-search-list {
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 12, 20, 0.94);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+.map-search-list button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 9px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.map-search-list button:hover { background: rgba(255, 255, 255, 0.08); }
+
+/* ward name + score labels drawn as HTML (cheap, crisp, no SVG text) */
+.ward-label {
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 6px rgba(0, 0, 0, 0.8);
+}
+.ward-label .wl-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--pc);
+  box-shadow: 0 0 5px var(--pc);
+}
+.ward-label .wl-score {
+  font-variant-numeric: tabular-nums;
+  color: var(--pc);
+  font-weight: 600;
+}
+
+/* browser geolocation marker */
+.geo-dot .geo-core {
+  position: absolute; left: 50%; top: 50%;
+  width: 10px; height: 10px; margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: #38bdf8;
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.9);
+}
+.geo-dot .geo-ring {
+  position: absolute; left: 50%; top: 50%;
+  width: 10px; height: 10px; margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  border: 2px solid #38bdf8;
+  animation: wardPulse 2.6s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+}
+
+/* Leaflet's own attribution + scale, restyled to match the dark UI */
+.leaflet-control-attribution {
+  background: rgba(10, 12, 20, 0.6) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 9px !important;
+  padding: 1px 5px !important;
+  border-radius: 4px 0 0 0;
+}
+.leaflet-control-attribution a { color: rgba(255, 255, 255, 0.55) !important; }
+.leaflet-control-scale-line {
+  background: rgba(10, 12, 20, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 9px !important;
+}
+
+/* fullscreen: the wrapper's fixed 420px height must give way */
+.leaflet-container:fullscreen,
+div:fullscreen { height: 100% !important; width: 100% !important; }

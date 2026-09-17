@@ -33,6 +33,28 @@ const APP_SHELL = [
    all-or-nothing, so a 2.5 MB failure there would take the shell down with it. */
 const GEOJSON = '/data/kolkata_wards.geojson';
 
+/* Basemap tile CDNs (see frontend/web/src/basemaps.js). Tiles are cached
+   stale-while-revalidate so a map the user has already panned over still draws
+   offline. Capped, because tiles are effectively infinite. */
+const TILE_CACHE = `${VERSION}-tiles`;
+const TILE_LIMIT = 600;
+const TILE_HOSTS = [
+  'basemaps.cartocdn.com',
+  'server.arcgisonline.com',
+  'tile.opentopomap.org',
+  'api.maptiler.com',
+  'tile.thunderforest.com'
+];
+
+async function trimTileCache() {
+  const cache = await caches.open(TILE_CACHE);
+  const keys = await cache.keys();
+  // FIFO: Cache Storage preserves insertion order, so the head is the oldest.
+  if (keys.length > TILE_LIMIT) {
+    await Promise.all(keys.slice(0, keys.length - TILE_LIMIT).map((k) => cache.delete(k)));
+  }
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(SHELL_CACHE);
@@ -95,6 +117,28 @@ self.addEventListener('fetch', (event) => {
             );
         })
     );
+    return;
+  }
+
+  // ---- Basemap tiles: stale-while-revalidate, in their own capped cache ---
+  // A heatwave dashboard that loses its basemap on a flaky connection is
+  // useless, so tiles the user has already seen are kept. They live apart from
+  // the shell because they're third-party, opaque-ish and numerous — a capped
+  // FIFO eviction keeps the cache from growing without bound.
+  if (TILE_HOSTS.some((h) => url.hostname.endsWith(h))) {
+    event.respondWith((async () => {
+      const cache = await caches.open(TILE_CACHE);
+      const cached = await cache.match(request);
+      const network = fetch(request)
+        .then((response) => {
+          if (response.ok || response.type === 'opaque') {
+            cache.put(request, response.clone()).then(() => trimTileCache());
+          }
+          return response;
+        })
+        .catch(() => cached);
+      return cached || network;
+    })());
     return;
   }
 

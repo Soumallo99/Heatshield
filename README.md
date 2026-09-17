@@ -191,7 +191,8 @@ what is measured, what is modelled, what is missing and why, and how to rebuild 
 dataset from source.
 
 Sources: OpenCity/datameet ward polygons (ODbL) · Census 2011 population via Wikidata ·
-OpenStreetMap green/water/buildings · Open-Meteo forecast · CARTO basemap.
+OpenStreetMap green/water/buildings · Open-Meteo forecast · basemaps from CARTO,
+Esri World Imagery and OpenTopoMap (all keyless — see [Map basemaps](#map-basemaps)).
 
 ## Quickstart
 
@@ -314,6 +315,35 @@ to demo how the model behaves under a real heatwave.
 
 Production build: `npm run build` → `frontend/web/dist` (107 KB gzipped).
 Installable as a PWA (offline + push) — see `frontend/MOBILE.md`.
+
+### Map basemaps
+
+The ward map is a real slippy map, not a static image: pinch/scroll zoom to z20,
+`@2x` retina tiles, a scale bar, hover readout, ward search, geolocation, fullscreen,
+and a layer switcher with four basemaps — **Dark** (CARTO Dark Matter, default),
+**Streets** (CARTO Voyager: full street names, POIs, transit), **Satellite** (Esri
+World Imagery with a street-label overlay on top — the "hybrid" look), and **Terrain**
+(OpenTopoMap relief + contours). Ward name/score labels thin out by zoom the way a
+consumer map does, and risk shading can be toggled off to read the streets underneath.
+
+All four are **keyless** — clone and run, no signup, matching the rest of the project.
+Registry lives in [`frontend/web/src/basemaps.js`](frontend/web/src/basemaps.js).
+
+Optional upgrade: put a key in `.env` and the same switcher swaps in higher-detail
+commercial tiles with no code change.
+
+```bash
+VITE_MAPTILER_KEY=...        # MapTiler Streets / Satellite / Hybrid, labels to z22
+VITE_THUNDERFOREST_KEY=...   # adds an extra "Atlas" street style
+```
+
+**On "just use Google Maps":** pulling tiles from `mt{n}.google.com/vt` is a ToS
+violation and is not done here. The licensed route is the Maps JavaScript API or the
+Map Tiles API, both of which require a billing-enabled Google Cloud key — if you have
+one, add a Google entry to `basemaps.js` (or swap `MapContainer` for `@vis.gl/react-google-maps`)
+and everything else keeps working. The keyless Streets/Satellite styles above are
+already drawn from the same underlying OSM + Maxar/Esri imagery Google licenses, so
+the cartographic fidelity is comparable without the key or the legal exposure.
 
 ## Gotchas learned in Phase 3
 
