@@ -35,7 +35,7 @@ cd frontend/web && npm install && cd ../..
 
 python -m scripts.refresh          # re-fetch live forecast + re-score all wards
 python -m scripts.refresh --offline # no network: replay the cached fetch (says so loudly)
-python -m pytest tests -q          # expect: 52 passed
+HS_FORECAST_DAYS=5 python -m pytest -q   # expect: 160 passed
 ```
 
 Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
@@ -53,10 +53,13 @@ Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
 | Ward-hours fetched per cycle | **20,304** (141 × 144 h) |
 | Ward-days scored | **846** (141 × 6 days) — see the window note below |
 | Open-Meteo requests per cycle | **4** (batched 40 coords/request) |
-| Tests | **52 passed** |
+| Tests | **160 passed** (`HS_FORECAST_DAYS=5`) |
 | `/zones` count | **141** |
 | Alert threshold | **60.0** (`DEFAULT_RISK_THRESHOLD` in `core/alerts.py`) |
 | Default min lead | **1 day** (`DEFAULT_MIN_LEAD_DAYS`) |
+| Demo scenarios | **4** — fixed clock, issued **2026-05-18T06:00 IST**, 8 zones × leads 0–5 = 48 rows each |
+| Demo disclaimer | defined **once**, in `core/warnings.py` (`DEMO_DISCLAIMER`) |
+| Static exports | **30** files in `frontend/web/public/static-api/` (`scripts/export_static.py`) |
 
 A full cycle takes **~4 seconds**. If yours takes minutes, you have un-batched the API calls.
 
@@ -117,12 +120,18 @@ horizon end. Changing that silently changes the headline number.
 ## 5. Repo map
 
 ```
-core/          weather · thermal · risk · alerts · subscribers · config   ← the engine
-app/main.py    FastAPI: /health /zones /risk/ranking /alerts/plan /subscribers* /docs
+core/          weather · thermal · risk · alerts · subscribers · config      ← Kolkata engine
+               coupled · htsi · health_impact · warnings · demo · notify     ← NCR impact engine
+app/main.py    FastAPI: /health /zones /risk/ranking /alerts/* /subscribers* /ncr/*
+               /heatwave/advance /warnings/advance /notifications/* /demo/* /docs
 scripts/       refresh · schedule · hindcast · build_wards · build_demographics · package
+               build_climatology · validate_coupled_aqi · export_static
 frontend/web/  Vite + React + Framer Motion + Tailwind dashboard
-data/          wards, census, processed outputs, cache, subscribers.csv
-tests/         test_thermal (11) · test_alerts (15) · test_operations (26) = 52 total test cases
+               src/mobile (citizen phone PWA) · src/demo (Heat Risk Demo)
+data/          wards, census, processed outputs, cache, subscribers.csv,
+               climatology_normals.json, validation/
+tests/         160 test cases, incl. the SSR harnesses tests/mobile/render_mobile.mjs
+               and tests/demo/render_demo.mjs (react-dom/server, no browser)
 ```
 
 ---
@@ -164,6 +173,17 @@ tests/         test_thermal (11) · test_alerts (15) · test_operations (26) = 5
    No auto-polling. All calls are relative `/api/*` proxied by Vite; never `localhost` from
    browser code.
 
+   **The one sanctioned exception: the Heat Risk Demo (`#/demo`).** Synthetic data is the demo's
+   entire point — deterministic scenarios from `core/demo.py` served at `/demo/*` and exported to
+   `public/static-api/demo-*.json` so it works offline with zero credentials. It never
+   masquerades as live: every payload, notification message and server-rendered screen carries
+   the canonical disclaimer (defined once in `core/warnings.py`, drift-guarded by tests), rows
+   are stamped `demo-synthetic`, health-impact status is always `synthetic_demo`, the clock is
+   fixed (2026-05-18T06:00 IST — never `today`), and demo/synthetic rows are **refused by live
+   notification dispatch even with both locks open**. Demo frontend code lives in
+   `frontend/web/src/demo/*` with its own data loader; it shares no path with `api.js`, and the
+   live-first rule above still applies to every other surface.
+
 ---
 
 ## 7. Known gaps — good tasks for an agent
@@ -180,9 +200,12 @@ Ordered roughly by value to the judges:
 5. **Scale-out above ~10,000 wards:** CSV → PostGIS, parquet → Redis, one pandas process →
    chunked/parallel. See the numbers in section 8.
 6. **Hindi/Bengali alert copy** — currently English-only.
-7. **Real mortality calibration.** `data/mortality_labels.SYNTHETIC.example.csv` is synthetic, so
-   the model's R²=0.548 is circular. **Blocked:** no ward-level outcome data exists. Do not
-   pretend otherwise.
+7. **Real mortality calibration.** The boundary is now formalised in `core/health_impact.py`:
+   three explicit model statuses, a strict observed-outcome CSV schema
+   (`load_health_outcomes`) and an evaluation-report requirement — the repo ships only labelled
+   synthetic examples, so `validated_observed_outcome_model` is unreachable by design and
+   `tests/test_health_impact.py` enforces that no payload can claim it. **Blocked:** no
+   ward-level outcome data exists. Do not pretend otherwise.
 
 ---
 
@@ -220,9 +243,12 @@ Full detail in `DATA.md`.
 ## 10. Before you open a PR
 
 ```bash
-python -m pytest tests -q          # must be 52 passed
-python -m scripts.refresh          # must still print 20,304 / 846
-cd frontend/web && npm run build   # must succeed
+HS_FORECAST_DAYS=5 python -m pytest -q                    # must be 160 passed
+python -m scripts.refresh                                 # must still print 20,304 / 846
+HS_FORECAST_DAYS=5 python -m scripts.export_static --check # catalogue == FastAPI routes
+HS_FORECAST_DAYS=5 python -m scripts.export_static        # refresh public/static-api/
+cd frontend/web && npm run build                          # must succeed
+cd frontend/web && npm run budget                         # phone cold-open gate (120 KiB gzip)
 ```
 
 CI (`.github/workflows/ci.yml`) runs exactly these on every push.

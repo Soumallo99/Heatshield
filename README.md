@@ -13,6 +13,11 @@
 > **Working with an AI agent on this code?** It should read [`AGENTS.md`](AGENTS.md) first —
 > architecture, physics formulas, invariants and hard constraints in one file.
 
+> **Want the full product with no network, no data and no credentials?** Open the
+> **Heat Risk Demo** (`#/demo`, or the amber *Heat Risk Demo* button on the landing page and
+> dashboard header). It runs entirely offline from labelled synthetic scenarios — see
+> [Heat Risk Demo & impact-based early warning](#heat-risk-demo--impact-based-early-warning).
+
 ## Run it on your laptop
 
 **One command:**
@@ -479,20 +484,22 @@ npm run build
 npm run budget
 ```
 
-`export_static.py` materialises all nine `/ncr/*` routes plus
-`/heatwave/advance` in `frontend/web/public/static-api/`. The phone client uses
-relative URLs, goes directly to `citizen.json` on GitHub Pages, and otherwise
-tries the live relative `/api` first before falling back to that labelled
-snapshot. The export catalogue is checked against FastAPI routes so adding a
-new phone endpoint cannot silently become a static-host 404.
+`export_static.py` materialises the whole public catalogue — the nine `/ncr/*`
+routes, `/heatwave/advance`, `/warnings/advance`, `/notifications/preview` and
+all six `/demo/*` payload families (18 files) — in
+`frontend/web/public/static-api/` (30 exports). The phone and demo clients use
+relative URLs, go directly to the snapshots on GitHub Pages, and otherwise try
+the live relative `/api` first before falling back to those labelled snapshots.
+The export catalogue is checked against FastAPI routes (`--check`) so adding a
+new endpoint cannot silently become a static-host 404.
 
 The production Vite base, manifest, service-worker registration and cache keys
 are all relative (`./`), which keeps a project deployed at
 `https://<owner>.github.io/Heatshield/` inside its own path. The current budget
 gate limits the actual phone cold-open set (entry + React + motion + phone chunk
-+ CSS, never Leaflet) to **120 KiB gzip** and the initial citizen snapshot to
-**45 KiB uncompressed**. The checked snapshot is currently **104,963 gzip
-bytes** and **28,356 bytes** respectively. Full hourly detail exports load
++ CSS, never Leaflet, never the demo chunk) to **120 KiB gzip** and the initial
+citizen snapshot to **45 KiB uncompressed**. The checked build is currently
+**106,781 gzip bytes** and **27,181 bytes** respectively. Full hourly detail exports load
 only after the initial brief.
 
 ### NCR heatwave method and skill reporting
@@ -573,3 +580,220 @@ It does **not** claim to validate the heat multiplier, health outcomes, all NCR
 locations, the station export's regulatory status, or a lead-time forecast
 retrospectively. `/ncr/validation` serves that exact boundary rather than a
 flattering chart.
+
+---
+
+## Heat Risk Demo & impact-based early warning
+
+HeatShield is an **impact-based heat-health early-warning platform**: it forecasts what heat
+will *do to people* — not just the dry-bulb temperature — with usable **3–5 day advance
+warnings** for municipal corporations, health systems, disaster management and residents, and a
+**Heat Risk Demo mode** that shows the entire product offline, with no API keys, credentials or
+network.
+
+### Why temperature alone is not enough
+
+A 41 °C dry May afternoon and a 35 °C afternoon at 75 % relative humidity are not the same
+disaster: humidity suppresses the evaporative cooling that keeps a human body alive, so the humid
+day can be the more dangerous one even though the thermometer reads lower. Wind, shortwave
+radiation and — critically — **departure from the local climate normal** (acclimatisation) all
+shift what a given temperature does to a body. And the same thermal stress lands on populations
+with very different capacity to cope. HeatShield therefore keeps three quantities **conceptually
+and structurally separate**:
+
+1. **Meteorological thermal stress** — what the weather does to a standard human body (HTSI).
+2. **Vulnerability** — who is exposed and how well they can cope (zone profiles).
+3. **Health-impact pressure** — a transparent, *parameterised* combination of the two, never
+   labelled a validated mortality forecast.
+
+### Architecture and data flow
+
+```
+Open-Meteo forecast + CAMS air composition (keyless)
+  └─> core/coupled.py        NCR fetch for 8 zones; on provider outage a LABELLED
+       │                     synthetic fallback answers (never an HTTP 500)
+       ├─> core/htsi.py      Heat Index, estimated WBGT, HTSI + quality flags
+       ├─> climatology       fixed 1991–2020 Tmax normals → departures
+       │                     (never a forecast-window average)
+       ├─> heatwave rules    IMD departure rule + 2-day persistence → episodes,
+       │                     single-day candidates stay early "watch" signals
+       └─> core/health_impact.py   parameterised indicator + model-status vocabulary
+            └─> core/warnings.py   advance warning rows: lead times, alert levels,
+                 │                 action matrix, provenance
+                 ├─> core/notify.py    previews + dry-run dispatch (SMS/WhatsApp)
+                 └─> core/demo.py      deterministic demo scenarios (fixed clock)
+                      └─> app/main.py (FastAPI) → React dashboard · citizen phone
+                           app · Heat Risk Demo (#/demo) → scripts/export_static.py
+```
+
+### Metric definitions and formulas
+
+**Heat Index (HI).** NWS Rothfusz regression with the three standard NWS adjustments.
+Documented valid range travels with every value in `HTSI_METADATA`: shade-assumed, light wind,
+T ≥ 26.7 °C (80 °F), RH 20–100 %; below 20 °C it degenerates to air temperature. HI *understates*
+stress in direct sun and for windy, wet conditions outside its fit range — the metadata says so.
+
+**WBGT — estimated, never measured.** `0.7·Tw + 0.2·Tg + 0.1·Ta` outdoors (wet bulb via Stull,
+globe temperature from a Ranz–Marshall convective + radiative energy balance), or the shade form
+`0.7·Tw + 0.3·Ta` when radiation is missing. Every WBGT value carries a quality flag from one
+fixed vocabulary:
+
+| Flag | Meaning |
+|---|---|
+| `measured` | a physical instrument observed this — **never produced by this codebase** (reserved for ingested station data) |
+| `estimated` | all required inputs present; computed with the documented formula |
+| `partial-input` | a required input was missing and replaced by a **listed documented assumption** (no radiation → shade form, *understates* sun stress; no wind → 0.13 m/s free-convection floor, *overstates* globe in breezy shade) |
+| `unavailable` | a mandatory input (temperature or humidity) is missing — **no value is produced rather than inventing one** |
+
+**UTCI is deliberately not faked.** It is not implemented; nothing labelled UTCI appears in any
+payload (a test enforces this).
+
+**HTSI (Human Thermal Stress Index), 0–100:**
+
+```
+HTSI = 100 · clip((WBGT_est − 25) / (36 − 25), 0, 1)^1.4
+       + min(8, 1.6 · max(0, Tmax − Tmax_normal(1991–2020)))
+```
+
+The anomaly term (capped at +8) encodes acclimatisation; it is only added when a **fixed
+historical normal** exists. Bands: **Normal** < 30 ≤ **Watch** < 55 ≤ **Warning** < 75 ≤
+**Severe**. Vulnerability and demographics are *never* HTSI inputs — enforced by tests.
+
+**Health-impact indicator, 0–100** (`core/health_impact.py`):
+
+```
+impact = clip( 0.62·HTSI + 0.28·vulnerability
+               + min(6, 1.6·max(0, departure_c − 2))
+               + min(6, max(0, AQI − 200)/25), 0, 100 )
+```
+
+Bands: Low / Moderate / High / Very High. It is a **parameterised** combination of stated
+assumptions — inspectable, not fitted — and it does **not** predict a number of deaths or
+admissions. Any downstream count is illustrative arithmetic on stated assumptions.
+
+### Mortality & hospitalisation risk — the validation boundary
+
+Every health-impact payload carries one of three explicit model statuses:
+
+| Status | When it may appear |
+|---|---|
+| `validated_observed_outcome_model` | **only** when (a) a committed evaluation report at `data/validation/health_outcome_model_evaluation.json` **names the observed dataset** (`observed_data_source`) and contains outcome-linked `metrics`, **and** (b) that dataset — ward/zone-level death or admission counts — loads cleanly against the strict schema below. |
+| `parameterised_health_risk_indicator` | live routes without the above — the honest default. |
+| `synthetic_demo` | every demo-scenario row, always. |
+
+This repository ships **no** observed outcome data (only the labelled
+`data/mortality_labels.SYNTHETIC.example.csv` example) and **no** evaluation report, so
+`validated_observed_outcome_model` is **unreachable** — and `tests/test_health_impact.py` proves
+no API payload can contain that label today. To actually validate: ingest real historical
+mortality/hospitalisation records with `core.health_impact.load_health_outcomes()` — the strict
+CSV schema requires `date` (ISO), `location_id`, `outcome_type` (`mortality` or
+`hospitalisation`), non-negative `count`, a named `source`, and `data_quality` (`official`,
+`provisional`, `estimated` or `incomplete`); malformed files are rejected wholesale — then
+commit the evaluation report and the status resolver will pick it up. Until then:
+**parameterised ≠ validated, and retrospective analysis ≠ operational forecast skill.** Where HeatShield does report forecast skill (heatwave
+contingency), it reports **CSI and HSS with hits, misses, false alarms and correct negatives** —
+never raw accuracy, which is meaningless for rare events.
+
+### True 3–5 day early warnings
+
+`GET /warnings/advance` (live) and `GET /demo/warnings?scenario=...` (demo) return one row per
+zone per target date carrying: forecast **issuance time**, **target date/time** (peak 15:00
+IST), **lead days and lead hours**, heatwave-candidate and **persistent-episode** status
+(2-day IMD persistence; a single qualifying day is an early **watch**, never a declared
+heatwave), thermal-stress level (HTSI band), vulnerability level, health-impact status,
+recommended action level, and **data source + quality/confidence** provenance
+(`live-forecast` / `synthetic-fallback` / `demo-synthetic`). Departures always compare against
+the fixed **1991–2020** climatology — a forecast window's own mean is never substituted for a
+normal. If Open-Meteo or CAMS is unreachable, the route answers 200 with labelled synthetic
+fallback rows and a `fallback_reason`; it must never 500 (tested).
+
+**Action matrix** (shipped in every payload, rendered on the Impact screen): routine →
+monitoring; watch → cooling-centre readiness, staff briefs, ORS pre-positioning, utility
+heads-up; warning → open cooling centres, shift outdoor work hours, hydration points,
+health-worker checks on high-risk households; severe → emergency coordination, ambulance
+surge readiness, power-demand operations, DM war-room. Resident advice accompanies each level.
+
+### Heat Risk Demo mode
+
+**Open it:** `http://localhost:5173/#/demo`, the amber **Heat Risk Demo** button on the landing
+hero and dashboard header, or the **Heat Demo** nav tab. No sign-up, no keys, no network needed.
+
+**How it stays offline:** the browser tries the relative live API (`./api/demo/*`) first and
+falls back to the exported snapshots in `frontend/web/public/static-api/demo-*.json`; on GitHub
+Pages (or any static host) it goes straight to the snapshots. Nothing in the demo path touches
+Twilio, WhatsApp or any credential.
+
+**Four deterministic scenarios** (fixed issuance **2026-05-18 06:00 IST** — the demo clock never
+depends on today's date):
+
+| Scenario | What it teaches | Levels you can see |
+|---|---|---|
+| **Dry extreme heatwave** | the classic Delhi May heatwave: Tmax to ~47 °C, declared multi-day episodes, Day +3/+4/+5 warnings | Watch → Warning → Severe |
+| **Humid dangerous heat** | 35–38 °C at 68–76 % RH: est. WBGT ~36 °C and HTSI ~100 **without any IMD heatwave label** — humidity danger the temperature-only view misses | Warning → Severe |
+| **Severe heat + high pollution** | compound exposure: heat *and* PM2.5-driven AQI in the 400s, with the capped heat–air load kept separate from raw AQI | Warning → Severe |
+| **Monsoon break** | the honest quiet case: pre-monsoon showers, Normal band, **zero** planned notifications | Normal → Watch |
+
+Each scenario covers **8 NCR zones × leads Day +0…+5** (48 warning rows) with different
+vulnerability profiles, so the map shows genuinely different risk levels side by side.
+
+**Screens:** *Now* (issue-day hourly thermal detail), *Outlook* (lead-time table + Day +3/+4/+5
+cards), *Zones* (the accessible, map-independent table for any lead day), *Impact* (HTSI /
+vulnerability / health-impact breakdown + actions), *Alerts* (notification preview cards),
+*Method* (what is real, synthetic and assumed). The GIS panel offers alert-level, thermal-stress,
+vulnerability and heatwave-outlook layers plus demo cooling centres — every colour is paired
+with a text label in the legend, tooltip and tables (never red/green-only), and the Zones table
+is a full keyboard-accessible alternative to the map.
+
+**The disclaimer is not decorative.** The canonical string —
+`Demo / synthetic scenario — not a live forecast or observation.` — is defined exactly once
+(`core/warnings.py`), appears in every demo payload, every demo notification message, and every
+server-rendered demo screen (all enforced by tests). Inside the demo, what is **real**: the
+1991–2020 climatology normals, the formulas, thresholds, persistence rule and action matrix.
+What is **synthetic**: the weather, the air quality, the zone vulnerability profiles, the
+cooling centres and every derived number.
+
+### Notifications — previews and dry-run safety
+
+`GET /notifications/preview`, `GET /demo/notifications?scenario=...` and
+`POST /notifications/dispatch` build messages from **real generated alert data**: zone,
+severity, target date, lead time, reason, recommended action and data-quality state. Two
+template families: the **3–5 day early warning** and the **same-day escalation**. Audiences:
+municipal control room, disaster management, healthcare, residents; channels: SMS and WhatsApp
+(SMS previews include character count and segment estimate).
+
+Safety properties, all tested: `dry_run=true` is the default everywhere; live sending requires
+**both** `HS_ALLOW_LIVE_SEND=1` **and** Twilio credentials; rows whose quality state is
+`demo-synthetic` or `synthetic-fallback` are **refused for live dispatch even with both locks
+open**; dry runs append to a gitignored CSV log; no credential ever appears in Git or chat.
+
+### Static export & PWA
+
+Every public route — including all six demo payload families for all four scenarios — is in the
+`scripts/export_static.py` catalogue (30 exports), checked against the live FastAPI route table:
+
+```bash
+HS_FORECAST_DAYS=5 .venv/bin/python -m scripts.export_static --check   # catalogue vs routes
+HS_FORECAST_DAYS=5 .venv/bin/python -m scripts.export_static           # write public/static-api/
+cd frontend/web && npm run build                                       # Vite build (relative base)
+cd frontend/web && npm run budget                                      # phone cold-open gate
+```
+
+The service worker caches the snapshots with the rest of the app, so after one visit the demo
+also survives going fully offline. All paths stay project-relative (`./`), preserving GitHub
+Pages deployment under `https://<owner>.github.io/Heatshield/`.
+
+### Running the tests
+
+```bash
+HS_FORECAST_DAYS=5 .venv/bin/python -m pytest -q     # 160 passed
+```
+
+The demo-relevant suites: `tests/test_demo_scenarios.py` (determinism, fixed clock, band/level
+coverage, disclaimer), `tests/test_htsi.py` (HI range, WBGT quality flags, missing inputs,
+vulnerability-not-in-HTSI, UTCI-not-faked), `tests/test_health_impact.py` (status vocabulary and
+the unreachable-validated boundary), `tests/test_advance_warnings.py` (lead-time fields,
+persistence, normals, outage fallback), `tests/test_notifications.py` (previews, templates,
+dry-run locks, demo-row refusal), and `tests/test_demo_app.py` — which **server-renders every
+demo screen through `react-dom/server` against the real exported payloads** for all four
+scenarios plus the empty state, rejecting `NaN`/`undefined`/`Invalid Date`, today's date, a
+missing disclaimer, colour-only legends and non-composite motion.
