@@ -5,6 +5,13 @@ name: Build NCR climatology
 # commits generated climate data from CI.
 on:
   workflow_dispatch:
+  # The artifact is also built on a PR so a reviewer can inspect the exact
+  # source response before the generated normal is committed.
+  pull_request:
+    paths:
+      - ".github/workflows/build-climatology.yml"
+      - "scripts/build_climatology.py"
+      - "core/coupled.py"
 
 permissions:
   contents: read
