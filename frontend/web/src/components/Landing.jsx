@@ -103,7 +103,7 @@ function Figure({ label, value, decimals = 0, suffix = '', hint, index, ready })
   )
 }
 
-export default function Landing({ onEnter }) {
+export default function Landing({ onEnter, onDemo }) {
   const { reduced } = useMotionSafe()
   const { scrollY } = useScroll()
   const heroY = useTransform(scrollY, [0, 600], [0, 90])
@@ -179,6 +179,14 @@ export default function Landing({ onEnter }) {
             lastUpdated={ranking.lastUpdated}
             error={ranking.error}
           />
+          {onDemo && (
+            <button
+              onClick={onDemo}
+              className="rounded-full border border-amber-300/35 bg-amber-300/[.08] px-4 py-1.5 text-[12px] font-medium text-amber-200/90 transition hover:border-amber-300/60 hover:bg-amber-300/[.14]"
+            >
+              Heat Risk Demo
+            </button>
+          )}
           <button
             onClick={onEnter}
             className="rounded-full border border-white/15 bg-white/[.05] px-4 py-1.5 text-[12px] font-medium transition hover:border-white/30 hover:bg-white/[.1]"
@@ -253,6 +261,18 @@ export default function Landing({ onEnter }) {
               transition={reduced ? { duration: 0 } : { duration: 0.45, ease: EASE }}
             />
           </motion.button>
+          {onDemo && (
+            <motion.button
+              onClick={onDemo}
+              className="rounded-full border border-amber-300/40 bg-amber-300/[.07] px-7 py-3.5 text-[13px] font-semibold text-amber-100/90 transition hover:border-amber-300/70 hover:bg-amber-300/[.12]"
+              whileHover={reduced ? undefined : { scale: 1.03 }}
+              whileTap={reduced ? undefined : { scale: 0.97 }}
+              transition={spring.snappy}
+            >
+              Open the Heat Risk Demo
+              <span className="ml-2 text-[11px] font-normal text-amber-100/50">synthetic scenarios · offline · no sign-up</span>
+            </motion.button>
+          )}
           <span className="text-[11.5px] text-white/35">
             No sign-up · open data · {hasData ? `${data.length} wards scored` : 'keyless forecast'}
           </span>
@@ -355,15 +375,28 @@ export default function Landing({ onEnter }) {
             deadly one is exposure — and exposure is something we can map, score and warn about days
             before the peak arrives.
           </p>
-          <motion.button
-            onClick={onEnter}
-            className="mt-10 rounded-full border border-white/20 bg-white/[.06] px-8 py-3.5 text-[13px] font-medium transition hover:border-white/40 hover:bg-white/[.12]"
-            whileHover={reduced ? undefined : { scale: 1.03 }}
-            whileTap={reduced ? undefined : { scale: 0.97 }}
-            transition={spring.snappy}
-          >
-            Open the operations dashboard
-          </motion.button>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <motion.button
+              onClick={onEnter}
+              className="rounded-full border border-white/20 bg-white/[.06] px-8 py-3.5 text-[13px] font-medium transition hover:border-white/40 hover:bg-white/[.12]"
+              whileHover={reduced ? undefined : { scale: 1.03 }}
+              whileTap={reduced ? undefined : { scale: 0.97 }}
+              transition={spring.snappy}
+            >
+              Open the operations dashboard
+            </motion.button>
+            {onDemo && (
+              <motion.button
+                onClick={onDemo}
+                className="rounded-full border border-amber-300/40 bg-amber-300/[.07] px-8 py-3.5 text-[13px] font-medium text-amber-100/90 transition hover:border-amber-300/70 hover:bg-amber-300/[.12]"
+                whileHover={reduced ? undefined : { scale: 1.03 }}
+                whileTap={reduced ? undefined : { scale: 0.97 }}
+                transition={spring.snappy}
+              >
+                Try the Heat Risk Demo (synthetic, offline)
+              </motion.button>
+            )}
+          </div>
         </motion.div>
       </section>
 

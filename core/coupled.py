@@ -50,6 +50,10 @@ WEATHER_HOURLY = (
     "wind_speed_10m",
     "precipitation",
     "surface_pressure",
+    # shortwave radiation feeds the estimated-WBGT globe term (core/htsi.py).
+    # When a provider omits it, HTSI degrades to a labelled `partial-input`
+    # shade-form estimate instead of failing or silently assuming full sun.
+    "shortwave_radiation",
 )
 AIR_HOURLY = (
     "pm2_5",
@@ -239,6 +243,7 @@ def _weather_frame(payloads: list[dict[str, Any]], zones: pd.DataFrame) -> pd.Da
             "wind_speed_10m": "wind_kmh",
             "precipitation": "precip_mm",
             "surface_pressure": "surface_pressure_hpa",
+            "shortwave_radiation": "solar_wm2",
         })
         for source, target, default in (
             ("temp_c", "temp_c", np.nan),
@@ -246,6 +251,7 @@ def _weather_frame(payloads: list[dict[str, Any]], zones: pd.DataFrame) -> pd.Da
             ("wind_kmh", "wind_kmh", np.nan),
             ("precip_mm", "precip_mm", 0.0),
             ("surface_pressure_hpa", "surface_pressure_hpa", np.nan),
+            ("solar_wm2", "solar_wm2", np.nan),
         ):
             if source not in frame:
                 frame[target] = default
@@ -258,7 +264,7 @@ def _weather_frame(payloads: list[dict[str, Any]], zones: pd.DataFrame) -> pd.Da
         raise RuntimeError("weather provider returned unusable timestamps or temperature")
     return out[[
         "zone_id", "zone_name", "lat", "lon", "timestamp_local", "temp_c", "rh_pct",
-        "wind_kmh", "precip_mm", "surface_pressure_hpa",
+        "wind_kmh", "precip_mm", "surface_pressure_hpa", "solar_wm2",
     ]]
 
 
@@ -420,6 +426,12 @@ def _synthetic(
             rh = max(18.0, min(85.0, 54.0 - 1.65 * diurnal - 0.6 * event - zone_heat))
             wind = max(1.2, 7.0 + 3.1 * math.sin((hour - 9) * 2 * math.pi / 24) - zone_position * 0.12)
             precip = 0.0
+            # Deterministic clear-sky shortwave bell (06:00–18:00, noon peak);
+            # the exercise episode is cloud-free by construction. Radiation
+            # lets HTSI compute a full-input estimated WBGT offline too.
+            solar = 0.0
+            if 6.0 < hour < 18.0:
+                solar = max(0.0, (940.0 + 25.0 * event) * math.sin(math.pi * (hour - 6.0) / 12.0))
             # Overnight inversion + a midday ventilation dip.  Again, this is
             # a test episode, not a claim about any observed station.
             pm25 = max(15.0, 132.0 + 30 * math.cos((hour - 7) * 2 * math.pi / 24) + 16 * event + zone_pm)
@@ -434,6 +446,7 @@ def _synthetic(
                 "wind_kmh": round(wind, 2),
                 "precip_mm": precip,
                 "surface_pressure_hpa": round(1006 - zone_position * 0.7, 1),
+                "solar_wm2": round(solar, 1),
                 "pm25_ugm3": round(pm25, 1),
                 "pm10_ugm3": round(pm10, 1),
                 "no2_ugm3": round(no2, 1),

@@ -16,6 +16,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
 from core import config
+from core import demo as demo_engine
 from core.coupled import (
     HEAT_AQI_PARAMETERS,
     _ncr_frame,
@@ -26,6 +27,8 @@ from core.coupled import (
 from core.alerts import (DEFAULT_MIN_LEAD_DAYS, DEFAULT_RISK_THRESHOLD,
                          compose_message, dispatch, filter_already_sent,
                          find_active_now, find_upcoming_events)
+from core.notify import dispatch_previews, plan_notifications
+from core.warnings import advance_warning_payload
 from core.risk import compute_risk, daily_risk, risk_band, ward_ranking
 from core.subscribers import (add_subscriber as reg_add,
                               load_registry, opt_out as reg_opt_out,
@@ -107,7 +110,11 @@ def root():
             "/ncr/zones", "/ncr/forecast", "/ncr/air-quality", "/ncr/heat-aqi",
             "/ncr/daily", "/ncr/summary", "/ncr/metadata", "/ncr/validation",
             "/ncr/alerts", "/heatwave/advance",
+            "/warnings/advance", "/notifications/preview", "/notifications/dispatch",
+            "/demo/scenarios", "/demo/zones", "/demo/forecast", "/demo/thermal",
+            "/demo/warnings", "/demo/notifications",
         ],
+        "demo_notice": demo_engine.DEMO_DISCLAIMER + " See /demo/scenarios.",
         "alert_defaults": {
             "risk_threshold": DEFAULT_RISK_THRESHOLD,
             "min_lead_days": DEFAULT_MIN_LEAD_DAYS,
@@ -189,7 +196,7 @@ def ncr_forecast(
     frame = frame.sort_values("timestamp_local").groupby("zone_id", group_keys=False).head(hours)
     weather_cols = [
         "zone_id", "zone_name", "lat", "lon", "timestamp_local", "temp_c", "rh_pct",
-        "wind_kmh", "precip_mm", "surface_pressure_hpa",
+        "wind_kmh", "precip_mm", "surface_pressure_hpa", "solar_wm2",
     ]
     return {
         "rows": int(len(frame)), "zone_id": zone_id,
@@ -372,6 +379,354 @@ def ncr_alerts(days: int = Query(config.FORECAST_DAYS, ge=1, le=8)):
         "climatology": payload["climatology"],
         "data": rows,
     }
+
+
+# ------------------------------------------------------------------ advance warnings
+# The operational 3–5 day early-warning product. Unlike /heatwave/advance
+# (IMD Tmax rule only), every row here carries the full decision chain:
+# issuance + lead time, heatwave persistence, HTSI thermal-stress level,
+# vulnerability level, health-impact indicator status, action level, and
+# provenance. Built on _ncr_frame, so a provider outage yields a labelled
+# synthetic exercise frame instead of HTTP 500.
+
+# ------------------------------------------------------------------ Citizen briefs
+@app.get("/citizen/kolkata")
+def citizen_kolkata():
+    """Citizen phone brief for KOLKATA — same payload contract as citizen.json.
+
+    Honesty rules baked in here (and enforced by tests/test_citizen_kolkata.py):
+
+    * Kolkata has NO bundled air-quality source. AQI/PM2.5/load fields are
+      null and their bands read "Unavailable" — the brief leads with WBGT
+      thermal stress instead of inventing an air number.
+    * No fixed per-ward climate normals ship for Kolkata, so the departure
+      rule is NOT claimed (``climatology.available = false``). Heatwave
+      labels use the IMD coastal ABSOLUTE-temperature rule (Tmax ≥ 37 °C,
+      severe ≥ 40 °C) with the standard two-day persistence; a single hot
+      day stays an early "Hot-day watch".
+    * Offline-safe: served from the committed forecast cache. With no cache
+      and no network it returns an empty, labelled payload — never a 500.
+    """
+    envelope_notice = (
+        "Kolkata citizen brief — thermal-stress (WBGT) based. No air-quality source is "
+        "bundled for Kolkata, so AQI fields are honestly unavailable. Heatwave labels use "
+        "the IMD coastal absolute-temperature rule with two-day persistence; fixed per-ward "
+        "climate normals are not bundled, so no departure-based declaration is made."
+    )
+
+    def _empty(reason: str) -> dict:
+        return {
+            "schema_version": 1,
+            "source_notice": f"{envelope_notice} Current state: {reason}",
+            "summary": {
+                "city_profile": "kolkata",
+                "static_snapshot": False,
+                "is_synthetic": False,
+                "data_source": reason,
+                "fallback_reason": reason,
+                "city": {
+                    "timestamp_local": _now_local().strftime("%Y-%m-%dT%H:%M"),
+                    "zones": 0, "hottest_temp_c": None, "highest_aqi": None,
+                    "highest_heat_aqi_load": None, "peak_wbgt_c": None, "wards_in_alert": 0,
+                },
+                "data": [],
+            },
+            "daily": [],
+            "alerts": {
+                "rows": 0,
+                "climatology": _kolkata_climatology_note(),
+                "data": [],
+            },
+        }
+
+    try:
+        forecast = get_forecast()
+    except Exception as exc:  # noqa: BLE001 — offline with cold cache must not 500
+        return _empty(f"Kolkata forecast unavailable ({str(exc)[:160]}). Run: python -m scripts.refresh")
+
+    if forecast is None or forecast.empty:
+        return _empty("Kolkata forecast cache is empty. Run: python -m scripts.refresh")
+
+    fetched_at = str(forecast["fetched_at"].iloc[0])
+    try:
+        age_min = (datetime.now(tz=ZoneInfo("UTC")) - pd.Timestamp(fetched_at)).total_seconds() / 60.0
+    except (ValueError, TypeError):
+        age_min = None
+    stale = age_min is not None and age_min > config.CACHE_TTL_MIN
+    source_label = f"Open-Meteo forecast cache fetched {fetched_at}" + (
+        " — stale cache served offline" if stale else ""
+    )
+
+    thermal = compute_thermal(forecast)
+    daily = daily_thermal(forecast)
+    risk = daily_risk(forecast)
+
+    # --- "now" row per ward: the cached hour closest to the current local time
+    now = _now_local().replace(tzinfo=None)
+    thermal = thermal.copy()
+    thermal["_delta"] = (thermal["timestamp_local"] - now).abs()
+    latest = thermal.sort_values("_delta").groupby("ward_id", as_index=False).first()
+
+    def _f(value) -> float | None:
+        try:
+            out = float(value)
+        except (TypeError, ValueError):
+            return None
+        return out if out == out else None  # NaN guard
+
+    summary_rows = [
+        {
+            "zone_id": f"ward-{int(row.ward_id)}",
+            "zone_name": row.ward_name,
+            "lat": _f(row.lat),
+            "lon": _f(row.lon),
+            "timestamp_local": pd.Timestamp(row.timestamp_local).strftime("%Y-%m-%dT%H:%M"),
+            "temp_c": _f(row.temp_c),
+            "rh_pct": _f(row.rh_pct),
+            "wind_kmh": _f(row.wind_kmh),
+            "wbgt_c": _f(row.wbgt_c),
+            "heat_index_c": _f(row.heat_index_c),
+            "stress_band": str(row.stress_band),
+            "pm25_ugm3": None,
+            "aqi_india": None,
+            "aqi_band": "Unavailable",
+            "heat_multiplier": None,
+            "heat_aqi_load": None,
+            "heat_aqi_load_band": "Unavailable",
+            "is_synthetic": False,
+            "data_source": source_label,
+        }
+        for row in latest.itertuples()
+    ]
+
+    # --- heatwave status: IMD coastal ABSOLUTE rule + two-day persistence
+    daily = daily.sort_values(["ward_id", "date"]).copy()
+    daily["hot_day"] = daily["tmax_c"] >= 37.0
+    daily["severe_day"] = daily["tmax_c"] >= 40.0
+    daily["_run"] = daily.groupby("ward_id")["hot_day"].transform(lambda s: s.ne(s.shift()).cumsum())
+    run_len = daily.groupby(["ward_id", "_run"])["hot_day"].transform("sum")
+    daily["episode"] = daily["hot_day"] & (run_len >= 2)
+    daily["heatwave_label"] = "None"
+    daily.loc[daily["hot_day"] & ~daily["episode"], "heatwave_label"] = "Hot-day watch"
+    daily.loc[daily["episode"], "heatwave_label"] = "Heat Wave"
+    daily.loc[daily["episode"] & daily["severe_day"], "heatwave_label"] = "Severe Heat Wave"
+
+    merged = daily.merge(
+        risk[["ward_id", "date", "risk_score", "risk_band", "exposed_population"]],
+        on=["ward_id", "date"], how="left",
+    )
+    daily_rows = [
+        {
+            "zone_id": f"ward-{int(row.ward_id)}",
+            "zone_name": row.ward_name,
+            "date": str(row.date),
+            "tmax_c": _f(row.tmax_c),
+            "wbgt_peak_c": _f(row.wbgt_peak_c),
+            "stress_band": str(row.stress_band),
+            "heatwave_label": str(row.heatwave_label),
+            "risk_score": _f(row.risk_score),
+            "risk_band": str(row.risk_band) if row.risk_band == row.risk_band else "Unavailable",
+            "normal_tmax_c": None,
+            "departure_c": None,
+            "pm25_mean_ugm3": None,
+            "aqi_peak": None,
+            "aqi_band": "Unavailable",
+            "heat_aqi_load_peak": None,
+            "heat_aqi_load_band": "Unavailable",
+        }
+        for row in merged.itertuples()
+    ]
+
+    # Alert rows = absolute-rule heatwave days only. A humid WBGT-"Critical"
+    # day is real thermal stress (shown on Now/Outlook) but it is NOT a
+    # heatwave watch — conflating them would cry wolf every monsoon day.
+    alert_frame = daily[daily["hot_day"]]
+    alert_rows = [
+        {
+            "zone_id": f"ward-{int(row.ward_id)}",
+            "zone_name": row.ward_name,
+            "date": str(row.date),
+            "tmax_c": _f(row.tmax_c),
+            "normal_tmax_c": None,
+            "departure_c": None,
+            "heatwave_label": str(row.heatwave_label),
+            "is_heatwave_episode": bool(row.episode),
+            "is_severe_episode": bool(row.episode and row.severe_day),
+            "extreme_temperature_watch": bool(row.severe_day),
+            "wbgt_peak_c": _f(row.wbgt_peak_c),
+            "stress_band": str(row.stress_band),
+            "aqi_peak": None,
+            "heat_aqi_load_peak": None,
+        }
+        for row in alert_frame.itertuples()
+    ][:600]
+
+    hottest = max((_f(r["temp_c"]) for r in summary_rows if _f(r["temp_c"]) is not None), default=None)
+    peak_wbgt = max((_f(r["wbgt_c"]) for r in summary_rows if _f(r["wbgt_c"]) is not None), default=None)
+    wards_in_alert = len({r["zone_id"] for r in alert_rows})
+
+    return {
+        "schema_version": 1,
+        "source_notice": envelope_notice,
+        "summary": {
+            "city_profile": "kolkata",
+            "static_snapshot": False,
+            "is_synthetic": False,
+            "data_source": source_label,
+            "fallback_reason": "stale cache served offline" if stale else "",
+            "city": {
+                "timestamp_local": now.strftime("%Y-%m-%dT%H:%M"),
+                "zones": len(summary_rows),
+                "hottest_temp_c": hottest,
+                "highest_aqi": None,
+                "highest_heat_aqi_load": None,
+                "peak_wbgt_c": peak_wbgt,
+                "wards_in_alert": wards_in_alert,
+            },
+            "data": summary_rows,
+        },
+        "daily": daily_rows,
+        "alerts": {
+            "rows": len(alert_rows),
+            "climatology": _kolkata_climatology_note(),
+            "data": alert_rows,
+        },
+    }
+
+
+def _kolkata_climatology_note() -> dict:
+    return {
+        "available": False,
+        "reference_period": None,
+        "method": (
+            "IMD coastal absolute-temperature rule (Tmax ≥ 37 °C heatwave day, ≥ 40 °C severe) "
+            "with two-day persistence. The departure-from-normal rule is deliberately DISABLED "
+            "for Kolkata: no fixed per-ward climate normals are bundled, and a forecast-window "
+            "mean must never masquerade as a normal."
+        ),
+    }
+
+
+@app.get("/warnings/advance")
+def warnings_advance(
+    days: int = Query(config.FORECAST_DAYS + 1, ge=2, le=9,
+                      description="Provider window; issue day + 5 target days needs 6"),
+    zone_id: str | None = None,
+    force_refresh: bool = False,
+):
+    try:
+        return advance_warning_payload(days=days, zone_id=zone_id, force_refresh=force_refresh)
+    except KeyError:
+        raise HTTPException(404, f"NCR zone '{zone_id}' not found") from None
+
+
+# ------------------------------------------------------------------ notifications
+# Planning + preview only. Real sending stays behind the existing double lock
+# (HS_ALLOW_LIVE_SEND + Twilio credentials) in core/alerts.py, and demo or
+# synthetic-fallback alerts can never be dispatched live at all.
+
+@app.get("/notifications/preview")
+def notifications_preview(
+    days: int = Query(config.FORECAST_DAYS + 1, ge=2, le=9),
+    zone_id: str | None = None,
+):
+    """Dry-run notification previews built from real generated warning rows."""
+    try:
+        payload = advance_warning_payload(days=days, zone_id=zone_id)
+    except KeyError:
+        raise HTTPException(404, f"NCR zone '{zone_id}' not found") from None
+    plan = plan_notifications(payload["data"], is_demo=False)
+    return {
+        "disclaimer": payload["disclaimer"],
+        "data_source": payload["data_source"],
+        "is_synthetic": payload["is_synthetic"],
+        "quality_state": payload["quality_state"],
+        "fallback_reason": payload["fallback_reason"],
+        **plan,
+    }
+
+
+class NotifyDispatchIn(BaseModel):
+    dry_run: bool = True
+    days: int = config.FORECAST_DAYS + 1
+    to_numbers: list[str] | None = None
+
+
+@app.post("/notifications/dispatch")
+def notifications_dispatch(payload: NotifyDispatchIn):
+    """Dispatch planned notifications. Dry-run by default; live send is refused
+    unless both opt-in locks are open AND no row is demo/synthetic."""
+    plan_payload = advance_warning_payload(days=payload.days)
+    plan = plan_notifications(plan_payload["data"], is_demo=False)
+    try:
+        result = dispatch_previews(plan["previews"], dry_run=payload.dry_run,
+                                   to_numbers=payload.to_numbers)
+    except PermissionError as exc:
+        # An unsafe live send is a refusal with a readable reason, not a crash.
+        return {"dispatched": 0, "dry_run": payload.dry_run, "refused": str(exc)}
+    return result
+
+
+# ------------------------------------------------------------------ Heat Risk Demo
+# Fully offline, deterministic, labelled synthetic scenarios. Fixed scenario
+# clock (2026-05-18 06:00 IST) so lead times never drift with the review date.
+
+def _demo_scenario_or_404(scenario: str) -> str:
+    if scenario not in demo_engine.SCENARIOS:
+        raise HTTPException(
+            404,
+            f"unknown demo scenario '{scenario}' — valid: {', '.join(demo_engine.scenario_ids())}",
+        )
+    return scenario
+
+
+@app.get("/demo/scenarios")
+def demo_scenarios():
+    """Catalogue of demo presets with labels, teaching points and expectations."""
+    return demo_engine.scenarios_payload()
+
+
+@app.get("/demo/zones")
+def demo_zones():
+    """Demo zone registry: geography, synthetic vulnerability profile, cooling centres."""
+    return demo_engine.zones_payload()
+
+
+@app.get("/demo/forecast")
+def demo_forecast(scenario: str = "dry-extreme", zone_id: str | None = None):
+    """Deterministic 5-day synthetic forecast with explicit lead times."""
+    _demo_scenario_or_404(scenario)
+    try:
+        return demo_engine.forecast_payload(scenario, zone_id=zone_id)
+    except KeyError:
+        raise HTTPException(404, f"demo zone '{zone_id}' not found") from None
+
+
+@app.get("/demo/thermal")
+def demo_thermal(scenario: str = "dry-extreme", zone_id: str | None = None):
+    """HTSI detail for a scenario: Heat Index, estimated WBGT, quality flags."""
+    _demo_scenario_or_404(scenario)
+    try:
+        return demo_engine.thermal_payload(scenario, zone_id=zone_id)
+    except KeyError:
+        raise HTTPException(404, f"demo zone '{zone_id}' not found") from None
+
+
+@app.get("/demo/warnings")
+def demo_warnings(scenario: str = "dry-extreme", zone_id: str | None = None):
+    """Advance-warning rows (lead 0–5) for a scenario — same contract as live."""
+    _demo_scenario_or_404(scenario)
+    try:
+        return demo_engine.warnings_payload(scenario, zone_id=zone_id)
+    except KeyError:
+        raise HTTPException(404, f"demo zone '{zone_id}' not found") from None
+
+
+@app.get("/demo/notifications")
+def demo_notifications(scenario: str = "dry-extreme"):
+    """Dry-run notification previews for a scenario. Nothing is ever sent."""
+    _demo_scenario_or_404(scenario)
+    return demo_engine.notifications_payload(scenario)
 
 
 # ------------------------------------------------------------------ Phase 2

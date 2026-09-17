@@ -13,6 +13,11 @@
 > **Working with an AI agent on this code?** It should read [`AGENTS.md`](AGENTS.md) first —
 > architecture, physics formulas, invariants and hard constraints in one file.
 
+> **Want the full product with no network, no data and no credentials?** Open the
+> **Heat Risk Demo** (`#/demo`, or the amber *Heat Risk Demo* button on the landing page and
+> dashboard header). It runs entirely offline from labelled synthetic scenarios — see
+> [Heat Risk Demo & impact-based early warning](#heat-risk-demo--impact-based-early-warning).
+
 ## Run it on your laptop
 
 **One command:**
@@ -310,6 +315,12 @@ cd frontend/web && npm install && npm run dev     # http://localhost:5173
 
 Three routes: **Overview** (landing), **Operations** (ward risk map + gauge), **Citizen**
 (mobile view). Vite proxies `/api/*` → FastAPI, so the browser never calls localhost directly.
+**Both Operations and Citizen carry a city switch — Kolkata ↔ Delhi NCR.** Kolkata keeps the
+141-ward risk map, gauge and scenario levers; Delhi NCR swaps in the eight-zone advance-warning
+console (zone table, lead days +0…+5, HTSI/impact views and the keyless demo-style map, fed by
+the live `/warnings/advance` rows — or the labelled snapshot when the provider is down). The
+Kolkata-specific scenario levers (+0…+8 °C) only re-score the Kolkata model, so they stay on the
+Kolkata branch.
 The **scenario switcher** (+0 / +2 / +4 / +6 / +8 °C) re-scores every ward live — the fastest way
 to demo how the model behaves under a real heatwave.
 
@@ -329,13 +340,12 @@ consumer map does, and risk shading can be toggled off to read the streets under
 All four are **keyless** — clone and run, no signup, matching the rest of the project.
 Registry lives in [`frontend/web/src/basemaps.js`](frontend/web/src/basemaps.js).
 
-Optional upgrade: put a key in `.env` and the same switcher swaps in higher-detail
-commercial tiles with no code change.
-
-```bash
-VITE_MAPTILER_KEY=...        # MapTiler Streets / Satellite / Hybrid, labels to z22
-VITE_THUNDERFOREST_KEY=...   # adds an extra "Atlas" street style
-```
+**An *"API key required"* tile can never appear.** The optional keyed-provider upgrade
+(`VITE_MAPTILER_KEY` / `VITE_THUNDERFOREST_KEY`) has been removed from the shipped code —
+there is no key slot left to misconfigure. And if a tile CDN is unreachable (blocked
+network, hostile proxy), `RiskMap` counts `tileerror`s and automatically degrades to
+OpenStreetMap standard tiles on a *different* CDN with a visible notice; the demo/Delhi
+map does the same. Every map keeps rendering keyless, whatever the network does.
 
 **On "just use Google Maps":** pulling tiles from `mt{n}.google.com/vt` is a ToS
 violation and is not done here. The licensed route is the Maps JavaScript API or the
@@ -427,12 +437,14 @@ the cartographic fidelity is comparable without the key or the legal exposure.
   cd frontend/web && npm install
   ```
 
-## Phone app: NCR heat + air brief
+## Phone app: Delhi NCR + Kolkata briefs
 
 The **Citizen** tab (or `#/phone`) is the installable, thumb-first HeatShield
-experience for the National Capital Region. It is a deliberately separate
-surface from the Kolkata operations console: a resident needs one clear next
-action, not a ward-ranking table.
+experience for both covered cities — **Delhi NCR** (heat *and* air) and
+**Kolkata** (WBGT thermal-stress-led) — with a city switch at the top; the
+choice persists in `localStorage`. It is a deliberately separate surface from
+the operations console: a resident needs one clear next action, not a
+ward-ranking table.
 
 ### Five screens, one decision at a time
 
@@ -451,6 +463,39 @@ provide a non-gesture alternative. The user can always see whether a card is
 Synthetic rows are intentionally labelled; they exercise the warning path and
 must never be interpreted as observations or a forecast.
 
+### Two cities, one contract
+
+Both briefs speak the same phone payload contract (live `/api/citizen` ↔
+`/api/citizen/kolkata`; static `citizen.json` ↔ `citizen-kolkata.json`), so
+every screen, normaliser and test serves both:
+
+- **Delhi NCR** keeps the combined heat+air load — the coupled AQI is the one
+  validated surface and only ships where that validation exists.
+- **Kolkata bundles no air-quality source.** PM2.5/AQI/load fields stay `null`
+  with band `Unavailable`, every envelope says so in `source_notice`, and the
+  Now/Outlook/Safety cards lead with **estimated WBGT** thermal stress instead —
+  plus the plain facts residents asked for: temperature, humidity, wind speed
+  and heat index.
+- **Kolkata heatwave labels** come from the IMD **coastal absolute-temperature
+  rule** (Hot-day ≥ 37 °C; Heat Wave / Severe Heat Wave ≥ 40 °C with two-day
+  persistence). `climatology.available` is explicitly `false` — with no fixed
+  per-ward normals, departures are never claimed and window-mean pseudo-normals
+  never masquerade as climatology.
+
+### Location and notifications
+
+- **Location permission never gates data.** With location off, the app still
+  shows the *entire* brief for every ward/locality (chips + search work as
+  usual) and offers a one-shot banner **and** browser notification asking the
+  user to turn on location so the nearest zone can be pre-selected. Both are
+  dismissed forever from `localStorage`; nothing is transmitted anywhere.
+- With 🔔 granted, one unified rule (`personalNotificationFor`) decides what to
+  send: in a **heat-danger state** (heatwave watch, Extreme/Critical WBGT
+  stress in Kolkata, or Poor+ combined load / ≥ 40 °C in Delhi NCR) it fires a
+  protective-action alert; **not in danger** it sends a calm informational
+  update with temperature, humidity and wind speed (plus estimated WBGT in
+  Kolkata). Synthetic payloads always lead with *"Practice data"*.
+
 ### Motion and accessibility contract
 
 The phone route uses short horizontal spring transitions and a progress rail;
@@ -462,7 +507,8 @@ any state change or controls.
 
 There is no headless browser in this repository's verification environment.
 `tests/test_mobile_app.py` instead renders every rich and empty screen through
-`react-dom/server` against `public/static-api/citizen.json`. It rejects `NaN`,
+`react-dom/server` against `public/static-api/citizen.json` **and**
+`citizen-kolkata.json` (both cities). It rejects `NaN`,
 `undefined` and `Invalid Date`, checks every declared JSX field against the real
 generated payload, and enforces the composite-only motion rule. This caught
 states that a successful Vite build cannot see.
@@ -479,20 +525,25 @@ npm run build
 npm run budget
 ```
 
-`export_static.py` materialises all nine `/ncr/*` routes plus
-`/heatwave/advance` in `frontend/web/public/static-api/`. The phone client uses
-relative URLs, goes directly to `citizen.json` on GitHub Pages, and otherwise
-tries the live relative `/api` first before falling back to that labelled
-snapshot. The export catalogue is checked against FastAPI routes so adding a
-new phone endpoint cannot silently become a static-host 404.
+`export_static.py` materialises the whole public catalogue — the nine `/ncr/*`
+routes, `/heatwave/advance`, `/warnings/advance`, `/notifications/preview`,
+`/citizen/kolkata` and all six `/demo/*` payload families (18 files) — in
+`frontend/web/public/static-api/` (31 exports). `citizen-kolkata.json` is a
+secondary, on-demand payload (~45 KB gzipped): it is fetched only when the user
+switches the citizen tab to Kolkata, so it stays out of the cold-open budget by
+design. The phone and demo clients use
+relative URLs, go directly to the snapshots on GitHub Pages, and otherwise try
+the live relative `/api` first before falling back to those labelled snapshots.
+The export catalogue is checked against FastAPI routes (`--check`) so adding a
+new endpoint cannot silently become a static-host 404.
 
 The production Vite base, manifest, service-worker registration and cache keys
 are all relative (`./`), which keeps a project deployed at
 `https://<owner>.github.io/Heatshield/` inside its own path. The current budget
 gate limits the actual phone cold-open set (entry + React + motion + phone chunk
-+ CSS, never Leaflet) to **120 KiB gzip** and the initial citizen snapshot to
-**45 KiB uncompressed**. The checked snapshot is currently **104,963 gzip
-bytes** and **28,356 bytes** respectively. Full hourly detail exports load
++ CSS, never Leaflet, never the demo chunk) to **120 KiB gzip** and the initial
+citizen snapshot to **45 KiB uncompressed**. The checked build is currently
+**110,996 gzip bytes** and **26,032 bytes** respectively. Full hourly detail exports load
 only after the initial brief.
 
 ### NCR heatwave method and skill reporting
@@ -573,3 +624,342 @@ It does **not** claim to validate the heat multiplier, health outcomes, all NCR
 locations, the station export's regulatory status, or a lead-time forecast
 retrospectively. `/ncr/validation` serves that exact boundary rather than a
 flattering chart.
+
+---
+
+## Heat Risk Demo & impact-based early warning
+
+HeatShield is an **impact-based heat-health early-warning platform**: it forecasts what heat
+will *do to people* — not just the dry-bulb temperature — with usable **3–5 day advance
+warnings** for municipal corporations, health systems, disaster management and residents, and a
+**Heat Risk Demo mode** that shows the entire product offline, with no API keys, credentials or
+network.
+
+### Why temperature alone is not enough
+
+A 41 °C dry May afternoon and a 35 °C afternoon at 75 % relative humidity are not the same
+disaster: humidity suppresses the evaporative cooling that keeps a human body alive, so the humid
+day can be the more dangerous one even though the thermometer reads lower. Wind, shortwave
+radiation and — critically — **departure from the local climate normal** (acclimatisation) all
+shift what a given temperature does to a body. And the same thermal stress lands on populations
+with very different capacity to cope. HeatShield therefore keeps three quantities **conceptually
+and structurally separate**:
+
+1. **Meteorological thermal stress** — what the weather does to a standard human body (HTSI).
+2. **Vulnerability** — who is exposed and how well they can cope (zone profiles).
+3. **Health-impact pressure** — a transparent, *parameterised* combination of the two, never
+   labelled a validated mortality forecast.
+
+### Architecture and data flow
+
+```
+Open-Meteo forecast + CAMS air composition (keyless)
+  └─> core/coupled.py        NCR fetch for 8 zones; on provider outage a LABELLED
+       │                     synthetic fallback answers (never an HTTP 500)
+       ├─> core/htsi.py      Heat Index, estimated WBGT, HTSI + quality flags
+       ├─> climatology       fixed 1991–2020 Tmax normals → departures
+       │                     (never a forecast-window average)
+       ├─> heatwave rules    IMD departure rule + 2-day persistence → episodes,
+       │                     single-day candidates stay early "watch" signals
+       └─> core/health_impact.py   parameterised indicator + model-status vocabulary
+            └─> core/warnings.py   advance warning rows: lead times, alert levels,
+                 │                 action matrix, provenance
+                 ├─> core/notify.py    previews + dry-run dispatch (SMS/WhatsApp)
+                 └─> core/demo.py      deterministic demo scenarios (fixed clock)
+                      └─> app/main.py (FastAPI) → React dashboard · citizen phone
+                           app · Heat Risk Demo (#/demo) → scripts/export_static.py
+```
+
+### Metric definitions and formulas
+
+**Heat Index (HI).** NWS Rothfusz regression with the three standard NWS adjustments.
+Documented valid range travels with every value in `HTSI_METADATA`: shade-assumed, light wind,
+T ≥ 26.7 °C (80 °F), RH 20–100 %; below 20 °C it degenerates to air temperature. HI *understates*
+stress in direct sun and for windy, wet conditions outside its fit range — the metadata says so.
+
+**WBGT — estimated, never measured.** `0.7·Tw + 0.2·Tg + 0.1·Ta` outdoors (wet bulb via Stull,
+globe temperature from a Ranz–Marshall convective + radiative energy balance), or the shade form
+`0.7·Tw + 0.3·Ta` when radiation is missing. Every WBGT value carries a quality flag from one
+fixed vocabulary:
+
+| Flag | Meaning |
+|---|---|
+| `measured` | a physical instrument observed this — **never produced by this codebase** (reserved for ingested station data) |
+| `estimated` | all required inputs present; computed with the documented formula |
+| `partial-input` | a required input was missing and replaced by a **listed documented assumption** (no radiation → shade form, *understates* sun stress; no wind → 0.13 m/s free-convection floor, *overstates* globe in breezy shade) |
+| `unavailable` | a mandatory input (temperature or humidity) is missing — **no value is produced rather than inventing one** |
+
+**UTCI is deliberately not faked.** It is not implemented; nothing labelled UTCI appears in any
+payload (a test enforces this).
+
+**HTSI (Human Thermal Stress Index), 0–100:**
+
+```
+HTSI = 100 · clip((WBGT_est − 25) / (36 − 25), 0, 1)^1.4
+       + min(8, 1.6 · max(0, Tmax − Tmax_normal(1991–2020)))
+```
+
+The anomaly term (capped at +8) encodes acclimatisation; it is only added when a **fixed
+historical normal** exists. Bands: **Normal** < 30 ≤ **Watch** < 55 ≤ **Warning** < 75 ≤
+**Severe**. Vulnerability and demographics are *never* HTSI inputs — enforced by tests.
+
+**Health-impact indicator, 0–100** (`core/health_impact.py`):
+
+```
+impact = clip( 0.62·HTSI + 0.28·vulnerability
+               + min(6, 1.6·max(0, departure_c − 2))
+               + min(6, max(0, AQI − 200)/25), 0, 100 )
+```
+
+Bands: Low / Moderate / High / Very High. It is a **parameterised** combination of stated
+assumptions — inspectable, not fitted — and it does **not** predict a number of deaths or
+admissions. Any downstream count is illustrative arithmetic on stated assumptions.
+
+### Mortality & hospitalisation risk — the validation boundary
+
+Every health-impact payload carries one of three explicit model statuses:
+
+| Status | When it may appear |
+|---|---|
+| `validated_observed_outcome_model` | **only** when (a) a committed evaluation report at `data/validation/health_outcome_model_evaluation.json` **names the observed dataset** (`observed_data_source`) and contains outcome-linked `metrics`, **and** (b) that dataset — ward/zone-level death or admission counts — loads cleanly against the strict schema below. |
+| `parameterised_health_risk_indicator` | live routes without the above — the honest default. |
+| `synthetic_demo` | every demo-scenario row, always. |
+
+This repository ships **no** observed outcome data (only the labelled
+`data/mortality_labels.SYNTHETIC.example.csv` example) and **no** evaluation report, so
+`validated_observed_outcome_model` is **unreachable** — and `tests/test_health_impact.py` proves
+no API payload can contain that label today. To actually validate: ingest real historical
+mortality/hospitalisation records with `core.health_impact.load_health_outcomes()` — the strict
+CSV schema requires `date` (ISO), `location_id`, `outcome_type` (`mortality` or
+`hospitalisation`), non-negative `count`, a named `source`, and `data_quality` (`official`,
+`provisional`, `estimated` or `incomplete`); malformed files are rejected wholesale — then
+commit the evaluation report and the status resolver will pick it up. Until then:
+**parameterised ≠ validated, and retrospective analysis ≠ operational forecast skill.** Where HeatShield does report forecast skill (heatwave
+contingency), it reports **CSI and HSS with hits, misses, false alarms and correct negatives** —
+never raw accuracy, which is meaningless for rare events.
+
+### True 3–5 day early warnings
+
+`GET /warnings/advance` (live) and `GET /demo/warnings?scenario=...` (demo) return one row per
+zone per target date carrying: forecast **issuance time**, **target date/time** (peak 15:00
+IST), **lead days and lead hours**, heatwave-candidate and **persistent-episode** status
+(2-day IMD persistence; a single qualifying day is an early **watch**, never a declared
+heatwave), thermal-stress level (HTSI band), vulnerability level, health-impact status,
+recommended action level, and **data source + quality/confidence** provenance
+(`live-forecast` / `synthetic-fallback` / `demo-synthetic`). Departures always compare against
+the fixed **1991–2020** climatology — a forecast window's own mean is never substituted for a
+normal. If Open-Meteo or CAMS is unreachable, the route answers 200 with labelled synthetic
+fallback rows and a `fallback_reason`; it must never 500 (tested).
+
+**Action matrix** (shipped in every payload, rendered on the Impact screen): routine →
+monitoring; watch → cooling-centre readiness, staff briefs, ORS pre-positioning, utility
+heads-up; warning → open cooling centres, shift outdoor work hours, hydration points,
+health-worker checks on high-risk households; severe → emergency coordination, ambulance
+surge readiness, power-demand operations, DM war-room. Resident advice accompanies each level.
+
+### Heat Risk Demo mode
+
+**Open it:** `http://localhost:5173/#/demo`, the amber **Heat Risk Demo** button on the landing
+hero and dashboard header, or the **Heat Demo** nav tab. No sign-up, no keys, no network needed.
+
+**How it stays offline:** the browser tries the relative live API (`./api/demo/*`) first and
+falls back to the exported snapshots in `frontend/web/public/static-api/demo-*.json`; on GitHub
+Pages (or any static host) it goes straight to the snapshots. Nothing in the demo path touches
+Twilio, WhatsApp or any credential.
+
+**Four deterministic scenarios** (fixed issuance **2026-05-18 06:00 IST** — the demo clock never
+depends on today's date):
+
+| Scenario | What it teaches | Levels you can see |
+|---|---|---|
+| **Dry extreme heatwave** | the classic Delhi May heatwave: Tmax to ~47 °C, declared multi-day episodes, Day +3/+4/+5 warnings | Watch → Warning → Severe |
+| **Humid dangerous heat** | 35–38 °C at 68–76 % RH: est. WBGT ~36 °C and HTSI ~100 **without any IMD heatwave label** — humidity danger the temperature-only view misses | Warning → Severe |
+| **Severe heat + high pollution** | compound exposure: heat *and* PM2.5-driven AQI in the 400s, with the capped heat–air load kept separate from raw AQI | Warning → Severe |
+| **Monsoon break** | the honest quiet case: pre-monsoon showers, Normal band, **zero** planned notifications | Normal → Watch |
+
+Each scenario covers **8 NCR zones × leads Day +0…+5** (48 warning rows) with different
+vulnerability profiles, so the map shows genuinely different risk levels side by side.
+
+**Screens:** *Now* (issue-day hourly thermal detail), *Outlook* (lead-time table + Day +3/+4/+5
+cards), *Zones* (the accessible, map-independent table for any lead day), *Impact* (HTSI /
+vulnerability / health-impact breakdown + actions), *Alerts* (notification preview cards),
+*Method* (what is real, synthetic and assumed). The GIS panel offers alert-level, thermal-stress,
+vulnerability and heatwave-outlook layers plus demo cooling centres — every colour is paired
+with a text label in the legend, tooltip and tables (never red/green-only), and the Zones table
+is a full keyboard-accessible alternative to the map.
+
+**The disclaimer is not decorative.** The canonical string —
+`Demo / synthetic scenario — not a live forecast or observation.` — is defined exactly once
+(`core/warnings.py`), appears in every demo payload, every demo notification message, and every
+server-rendered demo screen (all enforced by tests). Inside the demo, what is **real**: the
+1991–2020 climatology normals, the formulas, thresholds, persistence rule and action matrix.
+What is **synthetic**: the weather, the air quality, the zone vulnerability profiles, the
+cooling centres and every derived number.
+
+### Notifications — previews and dry-run safety
+
+`GET /notifications/preview`, `GET /demo/notifications?scenario=...` and
+`POST /notifications/dispatch` build messages from **real generated alert data**: zone,
+severity, target date, lead time, reason, recommended action and data-quality state. Two
+template families: the **3–5 day early warning** and the **same-day escalation**. Audiences:
+municipal control room, disaster management, healthcare, residents; channels: SMS and WhatsApp
+(SMS previews include character count and segment estimate).
+
+Safety properties, all tested: `dry_run=true` is the default everywhere; live sending requires
+**both** `HS_ALLOW_LIVE_SEND=1` **and** Twilio credentials; rows whose quality state is
+`demo-synthetic` or `synthetic-fallback` are **refused for live dispatch even with both locks
+open**; dry runs append to a gitignored CSV log; no credential ever appears in Git or chat.
+
+### Static export & PWA
+
+Every public route — including all six demo payload families for all four scenarios — is in the
+`scripts/export_static.py` catalogue (31 exports, including the Kolkata brief `citizen-kolkata.json`),
+checked against the live FastAPI route table:
+
+```bash
+HS_FORECAST_DAYS=5 .venv/bin/python -m scripts.export_static --check   # catalogue vs routes
+HS_FORECAST_DAYS=5 .venv/bin/python -m scripts.export_static           # write public/static-api/
+cd frontend/web && npm run build                                       # Vite build (relative base)
+cd frontend/web && npm run budget                                      # phone cold-open gate
+```
+
+The service worker caches the snapshots with the rest of the app, so after one visit the demo
+also survives going fully offline. All paths stay project-relative (`./`), preserving GitHub
+Pages deployment under `https://<owner>.github.io/Heatshield/`.
+
+### Running the tests
+
+```bash
+HS_FORECAST_DAYS=5 .venv/bin/python -m pytest -q     # 172 passed
+```
+
+The demo-relevant suites: `tests/test_demo_scenarios.py` (determinism, fixed clock, band/level
+coverage, disclaimer), `tests/test_htsi.py` (HI range, WBGT quality flags, missing inputs,
+vulnerability-not-in-HTSI, UTCI-not-faked), `tests/test_health_impact.py` (status vocabulary and
+the unreachable-validated boundary), `tests/test_advance_warnings.py` (lead-time fields,
+persistence, normals, outage fallback), `tests/test_notifications.py` (previews, templates,
+dry-run locks, demo-row refusal), and `tests/test_demo_app.py` — which **server-renders every
+demo screen through `react-dom/server` against the real exported payloads** for all four
+scenarios plus the empty state, rejecting `NaN`/`undefined`/`Invalid Date`, today's date, a
+missing disclaimer, colour-only legends and non-composite motion.
+
+---
+
+## Map keys, installability & notification automation
+
+### Maps are keyless — no "API key required", ever
+
+Every map (operations dashboard, Heat Risk Demo, Delhi NCR ops) renders out of the box with
+keyless CARTO/Esri/OpenTopoMap tiles. The former *optional* commercial-key upgrade was
+**removed from the shipped code entirely**: a misconfigured, expired or placeholder key could
+paint the map with the provider's *"API key required"* error tiles, and a prototype must never
+depend on a key nobody has. There is now no tile-key slot anywhere — `frontend/web/src/basemaps.js`
+contains only keyless providers plus `OSM_FALLBACK` (automatic OpenStreetMap tiles on a
+different CDN when one is blocked, with an honest on-map notice; a test enforces that no keyed
+provider can creep back in).
+
+If you genuinely want commercial tiles **for your own deployment**, add an entry to the
+registry in `basemaps.js` yourself — a plain `{ id, label, hint, url, attribution, … }` object
+consumed by `<TileLayer/>` — and keep the `tileerror` fallback behaviour in
+`RiskMap.jsx`/`DemoMap.jsx` intact so a bad key can never blank the map again.
+
+### Using Google tiles (and why there is no Google key field)
+
+There is deliberately **no `VITE_GOOGLE_*` key slot**: the only licensed way to render Google
+basemaps in a web app is the **Google Maps Tile API**, which requires a GCP project with
+**billing enabled** and a session-token handshake per tile session — not a static key in a URL.
+Scraping `mt{n}.google.com/vt` violates Google's Terms of Service and stays excluded (see the
+comment at the top of `basemaps.js`). If you hold a billing-enabled key, the supported paths are:
+
+1. Keep the keyless CARTO/ESRI basemaps (visually very close, zero cost), or
+2. Take the MapTiler upgrade above (free tier), or
+3. Add a `google` entry to the registry in `basemaps.js` using the official Map Tiles API
+   with its session flow — a self-contained change to that one file.
+
+**For *location* ("find me on the map") no Google key is needed at all:** the citizen tab's 📍
+button uses the browser's built-in **Geolocation API** and matches your GPS fix to the nearest
+Delhi-NCR zone with the payload's own coordinates (same 8-zone registry as the demo map —
+verified identical lat/lon). Nothing leaves the device; no account, no key, no geocoding bill.
+
+### Install on Android (PWA one-tap, or a real APK)
+
+The citizen tab is an installable PWA (`manifest.webmanifest`: standalone display, 192/512 +
+maskable icons; service worker caches everything for offline use).
+
+- **One tap:** open the Citizen tab in Chrome/Edge on Android → the header shows an
+  **Install** button (it appears whenever the browser offers the install prompt) → HeatShield
+  lands on the home screen, runs full-screen and works offline.
+- **iPhone/iPad:** Safari → Share → **Add to Home Screen** (Apple does not expose the install
+  prompt to web apps).
+- **A real, store-style APK/AAB:** package the deployed PWA with **PWABuilder** —
+  1. Deploy the site (GitHub Pages works: `scripts/export_static` + `npm run build`, relative
+     paths already configured).
+  2. Go to <https://www.pwabuilder.com>, enter your deployed URL (e.g.
+     `https://<owner>.github.io/Heatshield/#/phone`).
+  3. *Package For Stores → Android → Generate* → download the **signed APK** (or the AAB for
+     Play Store submission). The output is a Trusted Web Activity wrapping this exact PWA —
+     it installs, launches full-screen and works offline.
+
+  This keeps the repository's hard constraint (**AGENTS.md rule 2: PWA only — no Capacitor, no
+  Gradle, no Android Studio**): the APK is generated *outside* the repo from the deployed site,
+  so a clone still needs nothing but Python + Node.
+
+### Personal heat-risk notifications (per user, on their own device)
+
+The citizen tab's 🔔 button opts the device into **individual thermal-risk notifications**:
+
+- Built from the payload the app already loaded — the resident's selected locality, its
+  combined heat+air load index and band, temperature, and **one clear protective action**
+  (band-specific advice mirrors the Safety screen).
+- **Danger states** fire a protective-action alert: combined load band **Poor / Very Poor /
+  Severe** or ≥ **40 °C** in Delhi NCR; a heatwave watch or **Extreme/Critical** WBGT stress
+  band in Kolkata. **Non-danger states send a calm informational update instead of silence** —
+  temperature, humidity and wind speed (plus estimated WBGT in Kolkata). Only a payload with
+  nothing honest to say sends nothing.
+- **Honesty preserved:** when the payload is a synthetic outage fallback or a static snapshot
+  exercise, the notification body starts with *"Practice data … not a live forecast"* — a
+  rehearsal can never masquerade as a live warning (enforced by the render-harness test).
+- One notification per zone × timestamp × band × data-quality state (de-duplicated in
+  `localStorage`), permission is opt-in and revocable, and nothing is transmitted anywhere —
+  these are local browser notifications, no account and no key.
+- Limitation, stated plainly: browser notifications need the app open (tab or installed PWA).
+  For alerts that reach a **closed** app / basic phone, use the WhatsApp–SMS channel below.
+
+### Automating warnings on WhatsApp (Twilio) — opt-in, dry-run by default
+
+The pipeline already composes real alert messages; sending them is a deliberate, double-locked
+act.
+
+1. **Get credentials (free to start):** Twilio Console → Messaging → **WhatsApp Sandbox** —
+   join the sandbox by sending its join code from your WhatsApp, then copy:
+   ```ini
+   # .env  (repo root — gitignored; never commit, never paste into chat)
+   TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxx
+   TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxx
+   TWILIO_FROM_NUMBER=whatsapp:+14155238886
+   ALERT_TO_NUMBERS=whatsapp:+91xxxxxxxxxx,+91xxxxxxxxxx
+   HS_ALLOW_LIVE_SEND=1        # second lock — without it, live sending is refused
+   ```
+   (A production WhatsApp sender needs Meta template approval via Twilio; the sandbox is for
+   testing with joined numbers only. Plain SMS works with the same variables minus the
+   `whatsapp:` prefixes.)
+2. **Rehearse (default — sends nothing, logs everything):**
+   ```bash
+   python -m scripts.dispatch_notifications                       # whole plan
+   python -m scripts.dispatch_notifications --audience residents --channel whatsapp
+   ```
+3. **Go live** (both locks open, and the current payload is genuinely live — demo and
+   synthetic-fallback rows are refused *even with both locks open*):
+   ```bash
+   python -m scripts.dispatch_notifications --live
+   ```
+   Or via the API: `curl -X POST localhost:8000/notifications/dispatch -H 'content-type:
+   application/json' -d '{"dry_run": false}'`.
+4. **Automate on a schedule** (cron; the dry-run form is always safe, the `--live` form only
+   sends when a real alert exists and the data is live):
+   ```cron
+   # every day at 07:00 IST — rehearse the queue and append to the log
+   0 7 * * *  cd /path/to/Heatshield && .venv/bin/python -m scripts.dispatch_notifications >> logs/notify.log 2>&1
+   ```
+   Every dispatch — dry or live — appends to `data/processed/notification_dry_run_log.csv`
+   (gitignored, path overridable with `HS_DRY_RUN_LOG`) for audit.

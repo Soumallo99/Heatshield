@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import argparse
 from datetime import date, timedelta
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -36,7 +35,6 @@ import pandas as pd
 from core.alerts import DEFAULT_RISK_THRESHOLD
 from core.config import DATA_DIR
 from core.risk import daily_risk
-from core.thermal import compute_thermal, daily_thermal, heatwave_flags
 from core.weather import get_archive, load_wards
 
 ARCHIVE_DIR = DATA_DIR / "archive"
@@ -109,7 +107,7 @@ def retrospective(days: int, lag: int, threshold: float) -> pd.DataFrame:
     print("(A) RETROSPECTIVE RUN — model replayed on OBSERVED weather")
     print("=" * 78)
     print(f"  window      : {start} -> {end}  ({days} days, ending {lag}d before today)")
-    print(f"  source      : Open-Meteo archive API (reanalysis), keyless")
+    print("  source      : Open-Meteo archive API (reanalysis), keyless")
     print(f"  threshold   : risk >= {threshold}")
     print("  NOTE: this validates model behaviour on real weather, NOT forecast skill.\n")
 
@@ -117,8 +115,6 @@ def retrospective(days: int, lag: int, threshold: float) -> pd.DataFrame:
     df = get_archive(wards, start.isoformat(), end.isoformat())
     print(f"  pulled      : {len(df):,} ward-hours across {df['ward_id'].nunique()} wards")
 
-    th = compute_thermal(df)
-    daily_th = heatwave_flags(daily_thermal(df))
     daily = daily_risk(df, wards, temp_offset_c=0.0)
 
     print(f"  scored      : {len(daily):,} ward-days\n")
@@ -171,7 +167,7 @@ def retrospective(days: int, lag: int, threshold: float) -> pd.DataFrame:
           f"max {daily['wbgt_peak_c'].max():.1f} °C")
 
     daily.to_csv(DATA_DIR / "processed" / "hindcast_actual_daily.csv", index=False)
-    print(f"\n  saved -> data/processed/hindcast_actual_daily.csv")
+    print("\n  saved -> data/processed/hindcast_actual_daily.csv")
     return daily
 
 

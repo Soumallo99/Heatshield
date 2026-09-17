@@ -5,7 +5,7 @@ import {
   TileLayer, Tooltip, useMap, useMapEvents,
 } from 'react-leaflet'
 import { bandColour } from '../motion'
-import { BASEMAPS, DEFAULT_BASEMAP, getBasemap, USING_KEYED_TILES } from '../basemaps'
+import { BASEMAPS, DEFAULT_BASEMAP, getBasemap, OSM_FALLBACK } from '../basemaps'
 
 /**
  * Ward risk map.
@@ -15,9 +15,9 @@ import { BASEMAPS, DEFAULT_BASEMAP, getBasemap, USING_KEYED_TILES } from '../bas
  *
  * Basemaps: see ../basemaps.js. Four keyless styles (Dark / Streets /
  * Satellite+labels / Terrain) at @2x where the provider offers it, so the map
- * reads as sharp and as complete as a consumer map app. Drop a
- * VITE_MAPTILER_KEY into .env and the same switcher silently upgrades to
- * higher-detail commercial tiles — no code change.
+ * reads as sharp and as complete as a consumer map app — with an automatic
+ * OpenStreetMap fallback if a tile CDN is unreachable. No API key is ever
+ * requested, so an "API key required" tile cannot appear.
  *
  * Why not Google tiles directly? Pulling mt{n}.google.com/vt breaks the Maps
  * ToS. The licensed route (Maps JS API / Map Tiles API) needs a billing key;
@@ -143,8 +143,16 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
   const [pickerOpen, setPickerOpen] = useState(false)
   const [me, setMe] = useState(null)
   const [query, setQuery] = useState('')
+  const [tileFailures, setTileFailures] = useState(0)
 
   const basemap = getBasemap(basemapId)
+  // If the selected tile CDN keeps failing (blocked network, hostile proxy),
+  // degrade to OpenStreetMap tiles on a different CDN — never broken tiles.
+  const degraded = tileFailures > 6
+  const effectiveBasemap = degraded
+    ? { ...basemap, ...OSM_FALLBACK, id: `${basemap.id}-fallback`, labels: undefined }
+    : basemap
+  useEffect(() => { setTileFailures(0) }, [basemapId])
 
   useEffect(() => {
     try { localStorage.setItem('hs.basemap', basemapId) } catch { /* private mode */ }
@@ -258,6 +266,16 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
       className="relative min-w-0 overflow-hidden rounded-xl bg-[#0a0c14]"
       style={{ height: 420 }}
     >
+      {degraded && (
+        <div
+          className="absolute left-3 top-3 z-[1000] max-w-[280px] rounded-lg border border-amber-300/40 bg-ink-950/90 px-3 py-2 text-[11px] leading-snug text-amber-200/90"
+          role="status"
+        >
+          Basemap tiles from the selected provider keep failing on this network — switched to
+          OpenStreetMap standard tiles so the risk map stays usable. Every basemap here is
+          keyless; no API key is requested anywhere.
+        </div>
+      )}
       <MapContainer
         center={KOLKATA_CENTER}
         zoom={11}
@@ -277,24 +295,25 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
 
         {/* base tiles — keyed on id so switching does a clean swap, not a merge */}
         <TileLayer
-          key={basemap.id}
-          url={basemap.url}
-          subdomains={basemap.subdomains || 'abc'}
-          maxZoom={basemap.maxZoom || 19}
-          maxNativeZoom={basemap.maxNativeZoom}
+          key={effectiveBasemap.id}
+          url={effectiveBasemap.url}
+          subdomains={effectiveBasemap.subdomains || 'abc'}
+          maxZoom={effectiveBasemap.maxZoom || 19}
+          maxNativeZoom={effectiveBasemap.maxNativeZoom}
           detectRetina
           updateWhenIdle={false}
           keepBuffer={3}
-          attribution={basemap.attribution}
+          attribution={effectiveBasemap.attribution}
+          eventHandlers={{ tileerror: () => setTileFailures((n) => n + 1) }}
         />
         {/* hybrid label overlay for imagery styles */}
-        {basemap.labels && (
+        {effectiveBasemap.labels && (
           <Pane name="hs-labels" style={{ zIndex: 450, pointerEvents: 'none' }}>
             <TileLayer
-              key={`${basemap.id}-labels`}
-              url={basemap.labels.url}
-              subdomains={basemap.labels.subdomains || 'abc'}
-              maxZoom={basemap.labels.maxZoom || 19}
+              key={`${effectiveBasemap.id}-labels`}
+              url={effectiveBasemap.labels.url}
+              subdomains={effectiveBasemap.labels.subdomains || 'abc'}
+              maxZoom={effectiveBasemap.labels.maxZoom || 19}
               detectRetina
             />
           </Pane>
@@ -437,9 +456,8 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
                 </button>
               ))}
               <div className="note">
-                {USING_KEYED_TILES
-                  ? 'API key detected — high-detail tiles active.'
-                  : 'Keyless tiles. Add VITE_MAPTILER_KEY to .env for higher detail.'}
+                Keyless tiles only — CARTO, Esri and OpenTopoMap, with an automatic
+                OpenStreetMap fallback. No API key is used or required.
               </div>
             </div>
           )}

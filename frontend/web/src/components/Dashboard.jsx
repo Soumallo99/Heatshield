@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 // Loading them lazily keeps the landing page bundle small.
 const RiskMap = lazy(() => import('./RiskMap'))
 import AlertsPanel from './AlertsPanel'
+import DelhiOps from './DelhiOps'
 import Gauge from './Gauge'
 import HourlyChart from './HourlyChart'
 import Odometer from './Odometer'
@@ -83,8 +84,33 @@ function SectionHead({ eyebrow, title, note, right }) {
   )
 }
 
-export default function Dashboard({ onExit }) {
+function CitySwitch({ city, setCity }) {
+  return (
+    <div
+      className="flex gap-1 rounded-full border border-white/10 bg-white/[.04] p-1"
+      role="group"
+      aria-label="Choose city"
+    >
+      {[['kolkata', 'Kolkata'], ['delhi', 'Delhi NCR']].map(([id, label]) => (
+        <button
+          key={id}
+          onClick={() => setCity(id)}
+          aria-pressed={city === id}
+          title={id === 'kolkata'
+            ? 'Kolkata — 141 ward-level console (risk, exposure, alerts)'
+            : 'Delhi NCR — 8-zone advance-warning console (HTSI, leads Day +0…+5)'}
+          className={`relative rounded-full px-3 py-1 text-[11px] transition ${city === id ? 'bg-white/[.14] text-white' : 'text-white/45 hover:text-white/80'}`}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+export default function Dashboard({ onExit, onDemo }) {
   const { reduced } = useMotionSafe()
+  const [city, setCity] = useState('kolkata')
   const [selectedId, setSelectedId] = useState(null)
   const [scenario, setScenario] = useState(0)
   const [geo, setGeo] = useState(null)
@@ -132,6 +158,41 @@ export default function Dashboard({ onExit }) {
   const danger = rows.filter((r) => r.risk_band === 'Danger')
   const colour = bandColour[selected?.risk_band] || '#22c55e'
 
+  /* Delhi NCR: zone-level advance-warning console. Rendered AFTER every hook
+     above so the Kolkata data layer stays hook-stable across city switches. */
+  if (city === 'delhi') {
+    return (
+      <div className="relative min-h-screen">
+        <header
+          className="sticky top-0 z-40 backdrop-blur-md"
+          style={{ background: 'rgba(7,8,13,.72)', borderBottom: '1px solid rgba(255,255,255,.08)' }}
+        >
+          <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-4 gap-y-2 px-6 py-3">
+            <button onClick={onExit} className="flex items-center gap-2.5 transition hover:opacity-70">
+              <div className="h-5 w-5 rounded-full" style={{ background: 'linear-gradient(135deg,#ff5f6d,#ffc371)' }} />
+              <span className="display text-[18px]">HeatShield</span>
+            </button>
+            <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/30 sm:block">
+              operations
+            </span>
+            {onDemo && (
+              <button
+                onClick={onDemo}
+                title="Synthetic scenario mode — offline, labelled, not live data"
+                className="rounded-full border border-amber-300/35 bg-amber-300/[.08] px-3 py-1 text-[11px] font-medium text-amber-200/90 transition hover:border-amber-300/60 hover:bg-amber-300/[.14]"
+              >
+                Heat Risk Demo
+              </button>
+            )}
+            <CitySwitch city={city} setCity={setCity} />
+            <div className="flex-1" />
+          </div>
+        </header>
+        <DelhiOps />
+      </div>
+    )
+  }
+
   return (
     <div className="relative min-h-screen">
       {/* ---------------------------------------------------------- top bar */}
@@ -147,6 +208,16 @@ export default function Dashboard({ onExit }) {
           <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/30 sm:block">
             operations
           </span>
+          {onDemo && (
+            <button
+              onClick={onDemo}
+              title="Synthetic scenario mode — offline, labelled, not live data"
+              className="rounded-full border border-amber-300/35 bg-amber-300/[.08] px-3 py-1 text-[11px] font-medium text-amber-200/90 transition hover:border-amber-300/60 hover:bg-amber-300/[.14]"
+            >
+              Heat Risk Demo
+            </button>
+          )}
+          <CitySwitch city={city} setCity={setCity} />
 
           <div className="flex-1" />
 
