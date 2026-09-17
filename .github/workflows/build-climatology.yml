@@ -1,0 +1,35 @@
+name: Build NCR climatology
+
+# A manually-run reproducible fetch.  This is useful when a developer is behind
+# a restrictive network: it produces an artifact for review, never silently
+# commits generated climate data from CI.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ncr-normals:
+    name: 1991–2020 NCR daily Tmax normals
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install the small builder dependency set
+        run: python -m pip install --disable-pip-version-check pandas requests numpy
+      - name: Fetch and build
+        run: |
+          python -m scripts.build_climatology --ncr \
+            --save-raw /tmp/ncr-open-meteo-1991-2020.json \
+            --output data/climatology_normals.json
+      - name: Upload generated data and source response
+        uses: actions/upload-artifact@v4
+        with:
+          name: ncr-climatology-1991-2020
+          if-no-files-found: error
+          path: |
+            data/climatology_normals.json
+            /tmp/ncr-open-meteo-1991-2020.json
