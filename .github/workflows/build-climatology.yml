@@ -14,7 +14,10 @@ on:
       - "core/coupled.py"
 
 permissions:
-  contents: read
+  # The same-repository PR job below commits only the generated normal. This
+  # lets a constrained developer network retrieve a reviewed, reproducible
+  # result without copying a binary Actions artifact by hand.
+  contents: write
 
 jobs:
   ncr-normals:
@@ -22,6 +25,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # A pull_request checkout otherwise points at a detached merge ref,
+          # which cannot receive the reviewed generated normal.
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -32,6 +39,22 @@ jobs:
           python -m scripts.build_climatology --ncr \
             --save-raw /tmp/ncr-open-meteo-1991-2020.json \
             --output data/climatology_normals.json
+      - name: Commit generated normal for a same-repository pull request
+        # Never grant a fork write access. The raw source stays an artifact;
+        # only the small, reviewable aggregate enters Git.
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          if test -f data/climatology_normals.json && git diff --quiet -- data/climatology_normals.json; then
+            echo "climatology already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/climatology_normals.json
+          git commit -m "Build 1991-2020 NCR climatology normals"
+          git push origin "HEAD:${HEAD_REF}"
       - name: Upload generated data and source response
         uses: actions/upload-artifact@v4
         with:
