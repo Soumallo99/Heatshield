@@ -16,6 +16,13 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
 from core import config
+from core.coupled import (
+    HEAT_AQI_PARAMETERS,
+    _ncr_frame,
+    heatwave_advance_payload,
+    ncr_daily,
+    ncr_zones,
+)
 from core.alerts import (DEFAULT_MIN_LEAD_DAYS, DEFAULT_RISK_THRESHOLD,
                          compose_message, dispatch, filter_already_sent,
                          find_active_now, find_upcoming_events)
@@ -54,6 +61,36 @@ def _window(df: pd.DataFrame, hours: int, ward_id: int | None = None) -> pd.Data
     return df[df["timestamp_local"] >= _now_local()].head(hours)
 
 
+def _records(frame: pd.DataFrame, *, timestamp_columns: tuple[str, ...] = ("timestamp_local",),
+             date_columns: tuple[str, ...] = ("date",)) -> list[dict]:
+    """JSON-safe records for provider data.
+
+    Open-Meteo can legitimately omit a pollutant.  JSON forbids NaN, and a
+    missing optional field must not turn a healthy fallback route into a 500.
+    """
+    out = frame.copy()
+    for column in timestamp_columns:
+        if column in out:
+            out[column] = pd.to_datetime(out[column], errors="coerce").dt.strftime("%Y-%m-%dT%H:%M")
+    for column in date_columns:
+        if column in out:
+            out[column] = out[column].astype(str)
+    # astype(object) is important: otherwise pandas silently coerces None back
+    # to NaN in a floating-point column.
+    out = out.astype(object).where(pd.notna(out), None)
+    return out.to_dict(orient="records")
+
+
+def _ncr_filtered(zone_id: str | None = None, days: int | None = None) -> tuple[pd.DataFrame, str | None]:
+    """Common NCR route path: live if possible, synthetic only when necessary."""
+    frame, fallback_reason = _ncr_frame(days=days)
+    if zone_id is not None:
+        frame = frame[frame["zone_id"] == zone_id].copy()
+        if frame.empty:
+            raise HTTPException(404, f"NCR zone '{zone_id}' not found")
+    return frame, fallback_reason
+
+
 @app.get("/")
 def root():
     """Service banner. Handy when someone opens the API port in a browser."""
@@ -67,6 +104,9 @@ def root():
             "/thermal", "/thermal/daily", "/thermal/ward/{ward_id}",
             "/risk", "/risk/daily", "/risk/ranking", "/risk/ward/{ward_id}",
             "/alerts/plan", "/alerts/dispatch",
+            "/ncr/zones", "/ncr/forecast", "/ncr/air-quality", "/ncr/heat-aqi",
+            "/ncr/daily", "/ncr/summary", "/ncr/metadata", "/ncr/validation",
+            "/ncr/alerts", "/heatwave/advance",
         ],
         "alert_defaults": {
             "risk_threshold": DEFAULT_RISK_THRESHOLD,
@@ -126,6 +166,214 @@ def forecast_daily():
     d = daily_peak(df)
     d["date"] = d["date"].astype(str)
     return {"rows": len(d), "data": d.to_dict(orient="records")}
+
+
+# ------------------------------------------------------------------ NCR: heat + air quality
+# These routes power the installable phone app.  They are deliberately compact,
+# stable contracts so scripts/export_static.py can materialise every one for a
+# GitHub Pages deployment, where there is no FastAPI proxy.
+
+@app.get("/ncr/zones")
+def ncr_zone_list():
+    zones = ncr_zones()
+    return {"count": int(len(zones)), "data": _records(zones, timestamp_columns=(), date_columns=())}
+
+
+@app.get("/ncr/forecast")
+def ncr_forecast(
+    hours: int = Query(120, ge=1, le=24 * 8),
+    zone_id: str | None = None,
+):
+    """NCR hourly weather, with an explicit offline-exercise marker if needed."""
+    frame, fallback_reason = _ncr_filtered(zone_id)
+    frame = frame.sort_values("timestamp_local").groupby("zone_id", group_keys=False).head(hours)
+    weather_cols = [
+        "zone_id", "zone_name", "lat", "lon", "timestamp_local", "temp_c", "rh_pct",
+        "wind_kmh", "precip_mm", "surface_pressure_hpa", "data_source", "is_synthetic", "fetched_at",
+    ]
+    return {
+        "rows": int(len(frame)), "zone_id": zone_id,
+        "data_source": str(frame["data_source"].iloc[0]) if len(frame) else "unavailable",
+        "is_synthetic": bool(frame["is_synthetic"].iloc[0]) if len(frame) else True,
+        "fallback_reason": fallback_reason,
+        "data": _records(frame[[column for column in weather_cols if column in frame]]),
+    }
+
+
+@app.get("/ncr/air-quality")
+def ncr_air_quality(
+    hours: int = Query(120, ge=1, le=24 * 8),
+    zone_id: str | None = None,
+):
+    """Indicative NCR pollutant forecast and Indian PM2.5 sub-index."""
+    frame, fallback_reason = _ncr_filtered(zone_id)
+    frame = frame.sort_values("timestamp_local").groupby("zone_id", group_keys=False).head(hours)
+    air_cols = [
+        "zone_id", "zone_name", "lat", "lon", "timestamp_local", "pm25_ugm3", "pm10_ugm3",
+        "no2_ugm3", "o3_ugm3", "so2_ugm3", "provider_us_aqi", "aqi_india", "aqi_band",
+        "data_source", "is_synthetic", "fetched_at",
+    ]
+    return {
+        "rows": int(len(frame)), "zone_id": zone_id,
+        "index_note": "AQI is an indicative Indian PM2.5 sub-index from hourly forecast concentrations, not a certified station AQI.",
+        "data_source": str(frame["data_source"].iloc[0]) if len(frame) else "unavailable",
+        "is_synthetic": bool(frame["is_synthetic"].iloc[0]) if len(frame) else True,
+        "fallback_reason": fallback_reason,
+        "data": _records(frame[[column for column in air_cols if column in frame]]),
+    }
+
+
+@app.get("/ncr/heat-aqi")
+def ncr_heat_aqi(
+    hours: int = Query(120, ge=1, le=24 * 8),
+    zone_id: str | None = None,
+):
+    """Joint heat–air *load*, kept distinct from the pollutant AQI itself."""
+    frame, fallback_reason = _ncr_filtered(zone_id)
+    frame = frame.sort_values("timestamp_local").groupby("zone_id", group_keys=False).head(hours)
+    cols = [
+        "zone_id", "zone_name", "timestamp_local", "temp_c", "pm25_ugm3", "aqi_india", "aqi_band",
+        "heat_multiplier", "heat_aqi_load", "heat_aqi_load_band", "ventilation_index",
+        "data_source", "is_synthetic", "fetched_at",
+    ]
+    return {
+        "rows": int(len(frame)), "zone_id": zone_id,
+        "parameters": HEAT_AQI_PARAMETERS,
+        "parameterised_not_validated": True,
+        "data_source": str(frame["data_source"].iloc[0]) if len(frame) else "unavailable",
+        "is_synthetic": bool(frame["is_synthetic"].iloc[0]) if len(frame) else True,
+        "fallback_reason": fallback_reason,
+        "data": _records(frame[[column for column in cols if column in frame]]),
+    }
+
+
+@app.get("/ncr/daily")
+def ncr_daily_route(zone_id: str | None = None):
+    """Daily Tmax, PM2.5 and joint-load peaks for all NCR phone-app locations."""
+    frame, fallback_reason = _ncr_filtered(zone_id)
+    daily = ncr_daily(frame)
+    return {
+        "rows": int(len(daily)), "zone_id": zone_id,
+        "data_source": str(frame["data_source"].iloc[0]) if len(frame) else "unavailable",
+        "is_synthetic": bool(frame["is_synthetic"].iloc[0]) if len(frame) else True,
+        "fallback_reason": fallback_reason,
+        "data": _records(daily),
+    }
+
+
+@app.get("/ncr/summary")
+def ncr_summary(zone_id: str | None = None):
+    """Small cold-open payload for the citizen phone app.
+
+    This is intentionally a summary rather than the full 120-hour tables.  It
+    keeps an installed app quick to open on constrained networks, while detail
+    screens can load the static ``/ncr/*`` exports on demand.
+    """
+    frame, fallback_reason = _ncr_filtered(zone_id)
+    if frame.empty:
+        return {"rows": 0, "data": [], "is_synthetic": True, "fallback_reason": fallback_reason}
+    now = _now_local()
+    upcoming = frame[frame["timestamp_local"] >= now]
+    if upcoming.empty:
+        upcoming = frame
+    current = (
+        upcoming.sort_values("timestamp_local")
+        .groupby("zone_id", as_index=False)
+        .first()
+        .sort_values("heat_aqi_load", ascending=False)
+    )
+    daily = ncr_daily(frame)
+    next_day = daily[daily["date"] >= now.date()]
+    city = {
+        "timestamp_local": str(current["timestamp_local"].min().strftime("%Y-%m-%dT%H:%M")),
+        "zones": int(current["zone_id"].nunique()),
+        "hottest_temp_c": float(current["temp_c"].max()),
+        "highest_aqi": float(current["aqi_india"].max()),
+        "highest_heat_aqi_load": float(current["heat_aqi_load"].max()),
+        "days": int(next_day["date"].nunique()),
+    }
+    cols = [
+        "zone_id", "zone_name", "lat", "lon", "timestamp_local", "temp_c", "rh_pct", "wind_kmh",
+        "pm25_ugm3", "aqi_india", "aqi_band", "heat_multiplier", "heat_aqi_load", "heat_aqi_load_band",
+        "data_source", "is_synthetic", "fetched_at",
+    ]
+    return {
+        "rows": int(len(current)), "zone_id": zone_id, "city": city,
+        "data_source": str(frame["data_source"].iloc[0]),
+        "is_synthetic": bool(frame["is_synthetic"].iloc[0]),
+        "fallback_reason": fallback_reason,
+        "data": _records(current[[column for column in cols if column in current]]),
+    }
+
+
+@app.get("/ncr/metadata")
+def ncr_metadata():
+    """Method and provenance card; a UI must not hide model limits."""
+    return {
+        "zones": int(len(ncr_zones())),
+        "weather_source": "Open-Meteo numerical weather forecast when reachable",
+        "air_source": "Open-Meteo CAMS atmospheric-composition forecast when reachable",
+        "offline_mode": "deterministic synthetic exercise episode, explicitly labelled in each response",
+        "aqi_method": "Indian PM2.5 sub-index breakpoint interpolation",
+        "joint_load": HEAT_AQI_PARAMETERS,
+        "validated": {
+            "aqi_concentrations": "See /ncr/validation; requires CPCB/CAAQMS observations.",
+            "joint_heat_aqi_load": "Parameterised communication indicator; not calibrated as a health-outcome model.",
+        },
+    }
+
+
+@app.get("/ncr/validation")
+def ncr_validation():
+    """Last reproducible observed-AQI validation report, if one has been built."""
+    path = config.DATA_DIR / "validation" / "coupled_aqi_validation.json"
+    if not path.exists():
+        return {
+            "available": False,
+            "message": "No CPCB/CAAQMS validation report has been generated yet.",
+            "how": "python -m scripts.validate_coupled_aqi --observations <cpcb.csv>",
+        }
+    try:
+        import json
+        return {"available": True, **json.loads(path.read_text())}
+    except (OSError, ValueError):
+        return {
+            "available": False,
+            "message": "Validation report is unreadable; rebuild it from the observed source file.",
+        }
+
+
+@app.get("/heatwave/advance")
+def heatwave_advance(
+    days: int = Query(config.FORECAST_DAYS, ge=1, le=8),
+    zone_id: str | None = None,
+    force_refresh: bool = False,
+):
+    """IMD-plains heatwave watch with a 3–5 day lead and offline fallback.
+
+    Unlike the original implementation, this route goes through ``_ncr_frame``
+    via ``heatwave_advance_payload``.  An Open-Meteo outage therefore produces
+    a labelled synthetic exercise episode rather than an HTTP 500.
+    """
+    try:
+        return heatwave_advance_payload(days=days, zone_id=zone_id, force_refresh=force_refresh)
+    except KeyError:
+        raise HTTPException(404, f"NCR zone '{zone_id}' not found") from None
+
+
+@app.get("/ncr/alerts")
+def ncr_alerts(days: int = Query(config.FORECAST_DAYS, ge=1, le=8)):
+    """Compact heatwave-alert queue for the phone app notification surface."""
+    payload = heatwave_advance_payload(days=days)
+    rows = [row for row in payload["data"] if row.get("is_heatwave_episode")]
+    return {
+        "rows": len(rows),
+        "data_source": payload["data_source"],
+        "is_synthetic": payload["is_synthetic"],
+        "fallback_reason": payload["fallback_reason"],
+        "climatology": payload["climatology"],
+        "data": rows,
+    }
 
 
 # ------------------------------------------------------------------ Phase 2
