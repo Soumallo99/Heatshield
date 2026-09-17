@@ -7,6 +7,10 @@ import react from '@vitejs/plugin-react'
 const API_TARGET = `http://127.0.0.1:${process.env.HS_API_PORT || 8000}`
 
 export default defineConfig({
+  // Relative assets are essential on GitHub Pages, where this project is served
+  // below /Heatshield/ rather than at a domain root. Set VITE_BASE_PATH when a
+  // deployment intentionally has a known absolute prefix.
+  base: process.env.VITE_BASE_PATH || './',
   plugins: [react()],
   server: {
     host: '0.0.0.0',

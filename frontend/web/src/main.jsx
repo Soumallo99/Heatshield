@@ -11,13 +11,13 @@ import './index.css'
  * and you end up debugging stale modules. Use `npm run build && npm run preview`
  * to exercise the offline path.
  *
- * sw.js is served from the site root (public/), so its scope covers the whole
- * app. Registering from anywhere else silently limits it to a subdirectory.
+ * sw.js is served beside index.html. A relative scope covers this app while
+ * preserving a GitHub Pages project subdirectory (for example /Heatshield/).
  */
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register('/sw.js', { scope: '/' })
+      .register('./sw.js', { scope: './' })
       .then((reg) => {
         // Pick up a new worker as soon as one is waiting, without a full reload.
         if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' })

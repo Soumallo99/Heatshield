@@ -34,4 +34,7 @@ shapely           # ward geometry centroids
 pyproj            # CRS handling
 
 # ---- tests (run with: python -m pytest tests -q) ----
+# FastAPI's TestClient uses the optional httpx transport.  Keep it explicit:
+# current Starlette releases no longer install it transitively.
+httpx
 pytest

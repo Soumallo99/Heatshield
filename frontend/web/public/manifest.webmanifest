@@ -2,9 +2,9 @@
   "name": "HeatShield — Heat Stress & Early Warning",
   "short_name": "HeatShield",
   "description": "Ward-level extreme heat risk, thermal stress index and health guidance.",
-  "id": "/",
-  "start_url": "/",
-  "scope": "/",
+  "id": "./",
+  "start_url": "./#/phone",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#07080d",
@@ -36,11 +36,11 @@
     {
       "name": "My ward risk",
       "short_name": "My ward",
-      "url": "/ward/current"
+      "url": "./#/phone"
     },
     {
       "name": "Hourly forecast",
-      "url": "/hourly"
+      "url": "./#/phone"
     }
   ],
   "prefer_related_applications": false

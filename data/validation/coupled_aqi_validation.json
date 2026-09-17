@@ -1,0 +1,399 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-09-17T13:12:10+00:00",
+  "status": "validated-limited",
+  "station": "Anand Vihar, Delhi \u2014 DPCC CAAQMS",
+  "paired_period": {
+    "first_paired_date": "2025-10-01",
+    "last_paired_date": "2025-11-25",
+    "paired_days": 47
+  },
+  "observed_source": {
+    "provider": "Delhi Pollution Control Committee (DPCC) CAAQMS station export",
+    "url": "https://github.com/Vibhor2702/airsen/blob/6207c163deff4b2ee2afcd20a28570b036ad6d7b/team-pipeline/forecasting/data/raw/Anand_Vihar__PM25__20251001_20251126.csv",
+    "variable": "daily mean PM2.5 (\u00b5g/m\u00b3)",
+    "note": "Pinned public historical export (SHA-256 verified in this workflow), harvested from the DPCC Advance Search PM2.5 endpoint. DPCC reports this station series in local IST; this run retains only daily means with at least 18 valid hourly values.",
+    "input_sha256": "187ca64971fab42614f3a199ba07bb51608de3f9f7b807a7f5dbfff2361429eb"
+  },
+  "observation_quality": {
+    "minimum_valid_hourly_values_per_day": 18,
+    "daily_rows_with_any_valid_value": 54,
+    "daily_rows_retained": 47,
+    "daily_rows_excluded_for_coverage": 7,
+    "raw_input_rows": 1272,
+    "note": "Coverage screen is a transparent quality filter for this limited comparison; it is not a regulatory data-validation certificate."
+  },
+  "model_source": {
+    "provider": "Open-Meteo Air Quality API / CAMS global archive",
+    "variable": "daily mean PM2.5 (\u00b5g/m\u00b3)",
+    "caveat": "Retrospective archive comparison, not an archived operational forecast issued before the observation."
+  },
+  "metrics": {
+    "cams_archive_vs_cpcb_observation": {
+      "n_days": 47,
+      "mae_ugm3": 103.26,
+      "rmse_ugm3": 128.29,
+      "mean_bias_ugm3": -102.73,
+      "pearson_r": 0.722,
+      "event_threshold_pm25_ugm3": 90.0,
+      "event_skill": {
+        "hits": 17,
+        "misses": 20,
+        "false_alarms": 0,
+        "correct_negatives": 10,
+        "csi": 0.459,
+        "hss": 0.266
+      }
+    },
+    "yesterday_observed_persistence_baseline": {
+      "n_days": 41,
+      "mae_ugm3": 36.45,
+      "rmse_ugm3": 46.98,
+      "mean_bias_ugm3": -4.56,
+      "pearson_r": 0.889,
+      "event_threshold_pm25_ugm3": 90.0,
+      "event_skill": {
+        "hits": 29,
+        "misses": 3,
+        "false_alarms": 2,
+        "correct_negatives": 7,
+        "csi": 0.853,
+        "hss": 0.658
+      }
+    }
+  },
+  "what_is_validated": "The source PM2.5 concentration series only, against the named CPCB/CAAQMS station and period.",
+  "what_is_parameterised": "The heat_aqi_load multiplier is a transparent communication indicator. It is not fitted to PM2.5 or health outcomes and is not validated by this concentration comparison.",
+  "not_reported": "Bare accuracy is intentionally omitted; CSI and HSS are the event-skill measures.",
+  "paired_daily_sample": [
+    {
+      "date": "2025-10-01",
+      "observed_pm25_ugm3": 49.30434782608695,
+      "observation_hours": 23,
+      "model_pm25_ugm3": 48.87916666666666,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-02",
+      "observed_pm25_ugm3": 53.833333333333336,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 47.84583333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-03",
+      "observed_pm25_ugm3": 42.166666666666664,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 36.016666666666666,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-04",
+      "observed_pm25_ugm3": 90.75,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 65.10416666666667,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-05",
+      "observed_pm25_ugm3": 76.5,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 64.45,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-06",
+      "observed_pm25_ugm3": 43.0,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 52.39166666666667,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-07",
+      "observed_pm25_ugm3": 30.375,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 26.441666666666666,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-08",
+      "observed_pm25_ugm3": 55.708333333333336,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 42.083333333333336,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-09",
+      "observed_pm25_ugm3": 39.583333333333336,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 42.59166666666666,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-10",
+      "observed_pm25_ugm3": 65.04166666666667,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 49.79583333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-11",
+      "observed_pm25_ugm3": 90.79166666666667,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 49.47083333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-12",
+      "observed_pm25_ugm3": 72.20833333333333,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 62.69583333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-13",
+      "observed_pm25_ugm3": 90.54166666666667,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 59.03333333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-14",
+      "observed_pm25_ugm3": 109.66666666666667,
+      "observation_hours": 21,
+      "model_pm25_ugm3": 62.699999999999996,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-16",
+      "observed_pm25_ugm3": 136.58333333333334,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 59.770833333333336,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-17",
+      "observed_pm25_ugm3": 136.75,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 62.800000000000004,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-18",
+      "observed_pm25_ugm3": 154.0,
+      "observation_hours": 19,
+      "model_pm25_ugm3": 77.64999999999999,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-20",
+      "observed_pm25_ugm3": 249.65217391304347,
+      "observation_hours": 23,
+      "model_pm25_ugm3": 85.05833333333334,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-25",
+      "observed_pm25_ugm3": 229.63636363636363,
+      "observation_hours": 22,
+      "model_pm25_ugm3": 100.0625,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-26",
+      "observed_pm25_ugm3": 212.55,
+      "observation_hours": 20,
+      "model_pm25_ugm3": 100.73333333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-27",
+      "observed_pm25_ugm3": 191.72727272727272,
+      "observation_hours": 22,
+      "model_pm25_ugm3": 88.57916666666667,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-28",
+      "observed_pm25_ugm3": 142.875,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 76.12916666666666,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-29",
+      "observed_pm25_ugm3": 206.7391304347826,
+      "observation_hours": 23,
+      "model_pm25_ugm3": 93.97500000000001,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-30",
+      "observed_pm25_ugm3": 233.0,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 103.37916666666666,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-10-31",
+      "observed_pm25_ugm3": 114.30434782608695,
+      "observation_hours": 23,
+      "model_pm25_ugm3": 101.43333333333334,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-01",
+      "observed_pm25_ugm3": 212.0,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 96.80416666666667,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-02",
+      "observed_pm25_ugm3": 216.58333333333334,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 90.23333333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-03",
+      "observed_pm25_ugm3": 227.125,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 79.07083333333334,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-04",
+      "observed_pm25_ugm3": 172.3913043478261,
+      "observation_hours": 23,
+      "model_pm25_ugm3": 81.00833333333334,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-05",
+      "observed_pm25_ugm3": 116.5,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 79.90833333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-06",
+      "observed_pm25_ugm3": 165.125,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 60.13333333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-07",
+      "observed_pm25_ugm3": 238.83333333333334,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 51.300000000000004,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-08",
+      "observed_pm25_ugm3": 303.2916666666667,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 53.175000000000004,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-09",
+      "observed_pm25_ugm3": 250.04166666666666,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 65.22500000000001,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-10",
+      "observed_pm25_ugm3": 304.2083333333333,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 84.15833333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-11",
+      "observed_pm25_ugm3": 350.625,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 90.37083333333334,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-12",
+      "observed_pm25_ugm3": 354.0,
+      "observation_hours": 23,
+      "model_pm25_ugm3": 99.87083333333334,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-15",
+      "observed_pm25_ugm3": 268.8333333333333,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 86.19583333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-16",
+      "observed_pm25_ugm3": 275.4166666666667,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 67.64999999999999,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-17",
+      "observed_pm25_ugm3": 254.83333333333334,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 105.34583333333335,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-18",
+      "observed_pm25_ugm3": 277.2083333333333,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 146.94166666666666,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-19",
+      "observed_pm25_ugm3": 317.375,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 138.78333333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-21",
+      "observed_pm25_ugm3": 302.5833333333333,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 178.19583333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-22",
+      "observed_pm25_ugm3": 295.6666666666667,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 183.08333333333334,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-23",
+      "observed_pm25_ugm3": 389.05555555555554,
+      "observation_hours": 18,
+      "model_pm25_ugm3": 173.6625,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-24",
+      "observed_pm25_ugm3": 277.5833333333333,
+      "observation_hours": 24,
+      "model_pm25_ugm3": 133.38333333333333,
+      "model_hours": 24
+    },
+    {
+      "date": "2025-11-25",
+      "observed_pm25_ugm3": 238.8695652173913,
+      "observation_hours": 23,
+      "model_pm25_ugm3": 93.375,
+      "model_hours": 24
+    }
+  ]
+}

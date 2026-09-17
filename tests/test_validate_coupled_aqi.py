@@ -1,0 +1,107 @@
+"""Observed-PM2.5 validation contract tests (all offline fixtures)."""
+from __future__ import annotations
+
+import json
+
+import pandas as pd
+
+from scripts import validate_coupled_aqi as validation
+
+
+def _observations() -> pd.DataFrame:
+    timestamps = pd.date_range("2025-01-01", periods=4 * 24, freq="h")
+    # Daily means are 80, 100, 120, 140 µg/m³.
+    values = [80] * 24 + [100] * 24 + [120] * 24 + [140] * 24
+    return pd.DataFrame({"Date Time": timestamps.astype(str), "PM2.5": values})
+
+
+def _model() -> pd.DataFrame:
+    timestamps = pd.date_range("2025-01-01", periods=4 * 24, freq="h")
+    values = [90] * 24 + [90] * 24 + [130] * 24 + [130] * 24
+    return pd.DataFrame({"timestamp_local": timestamps.astype(str), "pm25_ugm3": values})
+
+
+def test_tidy_cpcb_and_model_frames_to_daily_means():
+    observed = validation.tidy_observations(_observations())
+    model = validation.tidy_model(_model())
+
+    assert observed["observed_pm25_ugm3"].tolist() == [80.0, 100.0, 120.0, 140.0]
+    assert observed["observation_hours"].tolist() == [24, 24, 24, 24]
+    assert model["model_pm25_ugm3"].tolist() == [90.0, 90.0, 130.0, 130.0]
+    assert model["model_hours"].tolist() == [24, 24, 24, 24]
+
+
+def test_generic_caaqms_value_stream_is_limited_to_pm25_rows_and_quality_screened():
+    stream = pd.DataFrame({
+        "parameter": ["PM2.5"] * 24 + ["PM10"] * 24,
+        "timestamp": list(pd.date_range("2025-01-01", periods=24, freq="h").astype(str)) * 2,
+        "value": [80] * 24 + [200] * 24,
+    })
+    observed = validation.tidy_observations(stream)
+    assert observed.to_dict("records") == [{
+        "date": pd.Timestamp("2025-01-01").date(), "observed_pm25_ugm3": 80.0, "observation_hours": 24,
+    }]
+
+    coverage = pd.DataFrame({
+        "date": pd.date_range("2025-01-01", periods=3, freq="D").date,
+        "observed_pm25_ugm3": [50.0, 60.0, 70.0],
+        "observation_hours": [17, 18, 24],
+    })
+    assert validation.quality_screen_observations(coverage, 18)["observed_pm25_ugm3"].tolist() == [60.0, 70.0]
+
+
+def test_metrics_use_error_and_csi_hss_not_bare_accuracy():
+    paired = validation.tidy_observations(_observations()).merge(validation.tidy_model(_model()), on="date")
+    metrics = validation.paired_metrics(paired, event_threshold=90)
+
+    assert metrics["n_days"] == 4
+    assert metrics["mae_ugm3"] == 10.0
+    assert metrics["rmse_ugm3"] == 10.0
+    assert metrics["mean_bias_ugm3"] == 0.0
+    assert metrics["event_skill"] == {
+        "hits": 3, "misses": 0, "false_alarms": 1, "correct_negatives": 0,
+        "csi": 0.75, "hss": 0.0,
+    }
+    assert "accuracy" not in metrics
+
+
+def test_persistence_baseline_does_not_cross_missing_calendar_days():
+    paired = pd.DataFrame({
+        "date": [pd.Timestamp("2025-01-01").date(), pd.Timestamp("2025-01-03").date()],
+        "observed_pm25_ugm3": [80.0, 100.0],
+        "model_pm25_ugm3": [70.0, 110.0],
+    })
+    assert validation.persistence_metrics(paired) is None
+
+
+def test_report_distinguishes_validated_concentration_from_parameterised_load(tmp_path):
+    report = validation.make_report(
+        validation.tidy_observations(_observations()), validation.tidy_model(_model()),
+        station="Fixture CPCB", source_url="https://example.test/cpcb", min_days_for_validated_claim=4,
+    )
+    path = validation.write_report(report, tmp_path / "report.json")
+    parsed = json.loads(path.read_text())
+
+    assert parsed["status"] == "validated-limited"
+    assert parsed["paired_period"] == {
+        "first_paired_date": "2025-01-01", "last_paired_date": "2025-01-04", "paired_days": 4,
+    }
+    assert "CPCB" in parsed["what_is_validated"]
+    assert "not fitted" in parsed["what_is_parameterised"]
+    assert "accuracy" in parsed["not_reported"].lower()
+    assert parsed["metrics"]["cams_archive_vs_cpcb_observation"]["event_skill"]["csi"] == 0.75
+
+
+def test_cli_can_replay_saved_observation_and_model_files_without_network(tmp_path):
+    observed = tmp_path / "observed.csv"
+    model = tmp_path / "model.csv"
+    output = tmp_path / "validation.json"
+    _observations().to_csv(observed, index=False)
+    _model().to_csv(model, index=False)
+
+    status = validation.main([
+        "--observations", str(observed), "--model", str(model), "--output", str(output),
+        "--min-days", "4", "--station", "Fixture CPCB",
+    ])
+    assert status == 0
+    assert json.loads(output.read_text())["station"] == "Fixture CPCB"

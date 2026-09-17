@@ -426,3 +426,150 @@ the cartographic fidelity is comparable without the key or the legal exposure.
   python -m pip install fastapi "uvicorn[standard]" python-dotenv pydantic
   cd frontend/web && npm install
   ```
+
+## Phone app: NCR heat + air brief
+
+The **Citizen** tab (or `#/phone`) is the installable, thumb-first HeatShield
+experience for the National Capital Region. It is a deliberately separate
+surface from the Kolkata operations console: a resident needs one clear next
+action, not a ward-ranking table.
+
+### Five screens, one decision at a time
+
+| Screen | What it answers | Data shown |
+|---|---|---|
+| **Now** | *What is my immediate heat + air burden?* | locality, temperature, PM2.5, indicative Indian AQI, combined heat–air load and one plain-language instruction |
+| **Outlook** | *Which day needs planning?* | a short daily Tmax/AQI/load table |
+| **Watch** | *Is a heatwave developing 3–5 days ahead?* | fixed-normal departure, two-day episode status and an absolute-temperature watch |
+| **Safety** | *What should I do?* | hydration, shade, smoke-exposure and neighbour-check actions; emergency symptoms are explicit |
+| **About** | *Can I trust this number?* | source, snapshot state, AQI method and model limits |
+
+Swipe left/right anywhere in the card to move between screens. The bottom tabs
+are equally usable with a keyboard or assistive technology, and locality chips
+provide a non-gesture alternative. The user can always see whether a card is
+**live**, a **last exported snapshot**, or a **synthetic outage exercise**.
+Synthetic rows are intentionally labelled; they exercise the warning path and
+must never be interpreted as observations or a forecast.
+
+### Motion and accessibility contract
+
+The phone route uses short horizontal spring transitions and a progress rail;
+gesture recognition requires a 48 px predominantly horizontal swipe, so normal
+vertical reading does not jump screens. Motion is limited to **transform** and
+**opacity**. It never animates `width`, `height`, `top`, `left`, or `filter`.
+`prefers-reduced-motion` removes the slide and spinner motion without removing
+any state change or controls.
+
+There is no headless browser in this repository's verification environment.
+`tests/test_mobile_app.py` instead renders every rich and empty screen through
+`react-dom/server` against `public/static-api/citizen.json`. It rejects `NaN`,
+`undefined` and `Invalid Date`, checks every declared JSX field against the real
+generated payload, and enforces the composite-only motion rule. This caught
+states that a successful Vite build cannot see.
+
+### Static hosting and cold-open budget
+
+GitHub Pages has no FastAPI proxy. Run the export **before** building Vite:
+
+```bash
+HS_FORECAST_DAYS=5 .venv/bin/python -m scripts.export_static --check
+HS_FORECAST_DAYS=5 .venv/bin/python -m scripts.export_static
+cd frontend/web
+npm run build
+npm run budget
+```
+
+`export_static.py` materialises all nine `/ncr/*` routes plus
+`/heatwave/advance` in `frontend/web/public/static-api/`. The phone client uses
+relative URLs, goes directly to `citizen.json` on GitHub Pages, and otherwise
+tries the live relative `/api` first before falling back to that labelled
+snapshot. The export catalogue is checked against FastAPI routes so adding a
+new phone endpoint cannot silently become a static-host 404.
+
+The production Vite base, manifest, service-worker registration and cache keys
+are all relative (`./`), which keeps a project deployed at
+`https://<owner>.github.io/Heatshield/` inside its own path. The current budget
+gate limits the actual phone cold-open set (entry + React + motion + phone chunk
++ CSS, never Leaflet) to **120 KiB gzip** and the initial citizen snapshot to
+**45 KiB uncompressed**. The checked snapshot is currently **104,963 gzip
+bytes** and **28,356 bytes** respectively. Full hourly detail exports load
+only after the initial brief.
+
+### NCR heatwave method and skill reporting
+
+`GET /heatwave/advance` applies the IMD plains **departure-from-normal** rule:
+Tmax must be at least 40 °C and at least 4.5 °C above a fixed 1991–2020 normal;
+6.5 °C is severe. Two consecutive qualifying days form an episode. A Tmax of
+45 °C is retained as a separate extreme-temperature watch rather than replacing
+the anomaly rule. That distinction matters: on a seven-day event peaking at
+46.2 °C, a forecast-window mean normal of 43.9 °C can flag **0/7** anomaly days,
+whereas a 39.5 °C historical normal flags **5/7**. A window's own mean is never
+silently used as a substitute.
+
+Build the normal on a networked machine (the command refuses to invent a file
+if its source is unavailable):
+
+```bash
+python -m scripts.build_climatology --ncr
+```
+
+The resulting `data/climatology_normals.json` stores 366 daily Tmax normals and
+12 monthly fallbacks for each of eight NCR locations, derived from the
+Open-Meteo historical archive over 1991–2020. It is gridded reanalysis, **not**
+a certified IMD station normal; the metadata and UI say so. The manual
+`Build NCR climatology` GitHub workflow is a reproducible alternative when a
+developer sandbox cannot reach Open-Meteo. It uploads the raw response for
+review and, for a same-repository PR, commits only the small generated aggregate.
+
+Heatwave verification reports **Critical Success Index (CSI)** and **Heidke
+Skill Score (HSS)** with hits, misses, false alarms and correct negatives; it
+does not report bare accuracy. In a mostly non-event data set, a model that
+never predicts an event can score 0.951 accuracy while having CSI = 0.
+
+### Coupled AQI: what is—and is not—validated
+
+The NCR hourly air source is Open-Meteo's CAMS atmospheric-composition forecast.
+`aqi_india` is an indicative Indian PM2.5 breakpoint sub-index. It stays a
+concentration index: HeatShield does **not** quietly increase AQI just because
+it is hot. `heat_aqi_load` is a separate, capped heat multiplier intended for
+plain-language simultaneous-exposure communication, and is explicitly marked
+**parameterised, not a calibrated pollutant or mortality prediction**. Its
+unfitted rule is `min(500, AQI × min(1.15, 1 + 0.015 × max(T − 35 °C, 0)))`.
+That makes the 35 °C onset, 1.5%/°C increment, 15% cap and 500 cap inspectable
+assumptions—not fitted claims.
+
+Validate the concentration source against a named CPCB/CAAQMS station export,
+not by changing coefficients until a graph feels plausible:
+
+```bash
+python -m scripts.validate_coupled_aqi \
+  --observations data/raw/cpcb-station.csv \
+  --lat 28.6469 --lon 77.3160 --station "Anand Vihar" \
+  --source-url "https://airquality.cpcb.gov.in/ccr/#/caaqm-dashboard-all/caaqm-landing/caaqm-data-repository"
+```
+
+The reproducible report at `data/validation/coupled_aqi_validation.json` pairs
+daily observed PM2.5 with the corresponding CAMS archive series and reports
+MAE, RMSE, mean bias, Pearson *r*, CSI and HSS against a yesterday-observed
+persistence baseline. It records the station, period and source URL. The
+committed run is a **limited, observed station comparison**:
+
+| Comparison | Samples | Result at 90 µg/m³ daily PM2.5 |
+|---|---:|---|
+| CAMS archive vs. Anand Vihar DPCC CAAQMS | 47 paired days, 1 Oct–25 Nov 2025 | MAE 103.26 µg/m³, bias −102.73 µg/m³, *r* = 0.722; 17 hits, 20 misses, 0 false alarms; CSI 0.459, HSS 0.266 |
+| Yesterday-observed persistence | 41 **adjacent** paired days after coverage gaps | MAE 36.45 µg/m³, bias −4.56 µg/m³, *r* = 0.889; CSI 0.853, HSS 0.658 |
+
+The station export is a SHA-256-checked, pinned public historical DPCC CAAQMS
+extract; its exact retrieval URL, hash, daily range and quality screen are in
+the report and the `Validate observed NCR PM2.5` workflow. Of 54 days with an
+observation, 47 passed the transparent 18-valid-hour (75%) daily coverage
+screen. The seven sparse days were excluded; this screen is a quality filter,
+not a regulatory certificate. The archive series substantially underestimates
+this short, high-pollution station sample and is worse than the persistence
+reference. That is a useful validation result—not a reason to tune the heat
+multiplier or to claim an operational forecast skill score.
+
+It does **not** claim to validate the heat multiplier, health outcomes, all NCR
+locations, the station export's regulatory status, or a lead-time forecast
+retrospectively. `/ncr/validation` serves that exact boundary rather than a
+flattering chart.

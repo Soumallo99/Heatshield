@@ -7,10 +7,11 @@
     <meta name="description" content="Ward-level human thermal stress index and extreme heat early warning for Kolkata." />
 
     <!-- PWA -->
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- Relative URLs preserve the repository subpath on GitHub Pages. -->
+    <link rel="manifest" href="./manifest.webmanifest" />
     <meta name="theme-color" content="#07080d" />
-    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="./favicon.png" />
 
     <!--
       TYPOGRAPHY
@@ -38,8 +39,9 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           if ('%MODE%' === 'production') {
-            // From the site ROOT so its scope is '/'.
-            navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+            // Relative scope keeps the worker inside a GitHub Pages project
+            // subdirectory instead of trying to control the whole domain.
+            navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
           } else {
             // A worker an earlier dev session registered keeps serving stale
             // bundles. Evict it and its caches so nobody sits on old modules.
