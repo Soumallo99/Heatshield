@@ -187,24 +187,33 @@ def get_air_quality(
     *,
     days: int | None = None,
     past_days: int = 1,
+    start_date: str | None = None,
+    end_date: str | None = None,
     timeout: int = 8,
 ) -> pd.DataFrame:
-    """Fetch NCR hourly composition/AQI from Open-Meteo (no fallback here)."""
+    """Fetch NCR hourly composition/AQI from Open-Meteo (no fallback here).
+
+    ``start_date`` + ``end_date`` selects the CAMS archive and is used only by
+    the observed-CPCB validation script.  Forecast and archive modes are kept
+    mutually exclusive so a caller cannot accidentally validate a live horizon
+    while believing it fetched historical model values.
+    """
+    if (start_date is None) != (end_date is None):
+        raise ValueError("start_date and end_date must be supplied together")
     z = _expanded_zones(zones)
     days = int(days or config.FORECAST_DAYS)
     latitudes, longitudes = _joined_coordinates(z)
-    payloads = _request_payload(
-        NCR_AIR_QUALITY_URL,
-        {
-            "latitude": latitudes,
-            "longitude": longitudes,
-            "hourly": ",".join(AIR_HOURLY),
-            "forecast_days": days,
-            "past_days": max(0, int(past_days)),
-            "timezone": config.TIMEZONE,
-        },
-        timeout=timeout,
-    )
+    params: dict[str, Any] = {
+        "latitude": latitudes,
+        "longitude": longitudes,
+        "hourly": ",".join(AIR_HOURLY),
+        "timezone": config.TIMEZONE,
+    }
+    if start_date is not None:
+        params.update({"start_date": start_date, "end_date": end_date})
+    else:
+        params.update({"forecast_days": days, "past_days": max(0, int(past_days))})
+    payloads = _request_payload(NCR_AIR_QUALITY_URL, params, timeout=timeout)
     return _air_frame(payloads, z)
 
 
