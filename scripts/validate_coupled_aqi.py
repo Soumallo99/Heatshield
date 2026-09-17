@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -58,7 +59,13 @@ def _numeric(series: pd.Series) -> pd.Series:
 
 
 def tidy_observations(frame: pd.DataFrame, timezone_name: str = "Asia/Kolkata") -> pd.DataFrame:
-    """Normalise a tidy CPCB/CAAQMS export to local daily observed PM2.5 means."""
+    """Normalise a tidy CPCB/CAAQMS export to local daily observed PM2.5 means.
+
+    In addition to conventional ``PM2.5`` headers, this accepts the common
+    stream shape ``parameter,value,timestamp``.  A mixed-pollutant stream is
+    filtered to its PM2.5 parameter before aggregation; a bare ``value`` field
+    is never assumed to mean PM2.5 when its parameter says otherwise.
+    """
     timestamp_column = _find_column(
         frame,
         ("timestamplocal", "timestamp", "datetime", "datetimeist", "datetimeutc", "dateandtime", "date"),
@@ -66,10 +73,19 @@ def tidy_observations(frame: pd.DataFrame, timezone_name: str = "Asia/Kolkata") 
     )
     pm25_column = _find_column(
         frame,
-        ("pm25", "pm25ugm3", "pm25value", "pm2point5", "pm2_5", "pm2.5"),
+        ("pm25", "pm25ugm3", "pm25value", "pm2point5", "pm2_5", "pm2.5", "value"),
         "PM2.5",
     )
-    stamp = pd.to_datetime(frame[timestamp_column], errors="coerce", format="mixed")
+    source = frame.copy()
+    if _normalise_name(pm25_column) == "value":
+        columns = {_normalise_name(column): str(column) for column in source.columns}
+        parameter_column = next((columns[name] for name in ("parameter", "param", "pollutant") if name in columns), None)
+        if parameter_column is not None:
+            pm25_rows = source[parameter_column].map(_normalise_name).eq("pm25")
+            source = source.loc[pm25_rows].copy()
+            if source.empty:
+                raise ValueError("a generic value column was supplied but no PM2.5 parameter rows were found")
+    stamp = pd.to_datetime(source[timestamp_column], errors="coerce", format="mixed")
     # A CAAQMS export is normally local IST. If it explicitly carries an offset,
     # normalise it before extracting the local calendar day.
     try:
@@ -77,7 +93,7 @@ def tidy_observations(frame: pd.DataFrame, timezone_name: str = "Asia/Kolkata") 
             stamp = stamp.dt.tz_convert(timezone_name).dt.tz_localize(None)
     except (AttributeError, TypeError):
         pass
-    out = pd.DataFrame({"timestamp_local": stamp, "observed_pm25_ugm3": _numeric(frame[pm25_column])}).dropna()
+    out = pd.DataFrame({"timestamp_local": stamp, "observed_pm25_ugm3": _numeric(source[pm25_column])}).dropna()
     out = out[out["observed_pm25_ugm3"] >= 0]
     if out.empty:
         raise ValueError("no non-negative timestamped PM2.5 observations found")
@@ -88,6 +104,24 @@ def tidy_observations(frame: pd.DataFrame, timezone_name: str = "Asia/Kolkata") 
         .sort_values("date")
         .reset_index(drop=True)
     )
+
+
+def quality_screen_observations(observations: pd.DataFrame, minimum_hours: int = 18) -> pd.DataFrame:
+    """Keep daily means with enough valid hourly values for a limited comparison.
+
+    ``18`` is a transparent 75% coverage screen, not a claim that this alone
+    confers regulatory validity. The caller records the screen in its report.
+    """
+    if minimum_hours < 1 or int(minimum_hours) != minimum_hours:
+        raise ValueError("minimum observation hours must be a positive integer")
+    needed = {"date", "observed_pm25_ugm3", "observation_hours"}
+    missing = needed - set(observations)
+    if missing:
+        raise ValueError(f"observation frame missing {sorted(missing)}")
+    screened = observations[observations["observation_hours"] >= int(minimum_hours)].copy()
+    if screened.empty:
+        raise ValueError(f"no daily observations meet the {minimum_hours}-hour coverage screen")
+    return screened.reset_index(drop=True)
 
 
 def tidy_model(frame: pd.DataFrame) -> pd.DataFrame:
@@ -151,6 +185,10 @@ def make_report(
     source_url: str,
     event_threshold: float = 90.0,
     min_days_for_validated_claim: int = 30,
+    source_provider: str = "CPCB / CAAQMS station observation export",
+    source_note: str | None = None,
+    input_sha256: str | None = None,
+    observation_quality: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Pair daily data and make the validation boundary explicit in JSON."""
     paired = observations.merge(model, on="date", how="inner").sort_values("date").reset_index(drop=True)
@@ -165,9 +203,15 @@ def make_report(
         "status": report_status,
         "station": station,
         "observed_source": {
-            "provider": "CPCB / CAAQMS station observation export",
+            "provider": source_provider,
             "url": source_url,
             "variable": "daily mean PM2.5 (µg/m³)",
+            "note": source_note,
+            "input_sha256": input_sha256,
+        },
+        "observation_quality": observation_quality or {
+            "minimum_valid_hourly_values_per_day": None,
+            "note": "No CLI coverage screen metadata was supplied.",
         },
         "model_source": {
             "provider": "Open-Meteo Air Quality API / CAMS global archive",
@@ -210,13 +254,33 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--lon", type=float, help="station longitude (required without --model)")
     parser.add_argument("--station", default="NCR validation station")
     parser.add_argument("--source-url", default=DEFAULT_CPCB_SOURCE)
+    parser.add_argument("--source-provider", default="CPCB / CAAQMS station observation export")
+    parser.add_argument("--source-note", help="provenance note retained verbatim in the report")
     parser.add_argument("--event-threshold", type=float, default=90.0)
     parser.add_argument("--min-days", type=int, default=30)
+    parser.add_argument(
+        "--min-observation-hours", type=int, default=18,
+        help="minimum valid hourly PM2.5 values for a retained daily mean (default: 18)",
+    )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args(argv)
 
     try:
-        observed = tidy_observations(pd.read_csv(args.observations))
+        source_bytes = args.observations.read_bytes()
+        raw_observations = pd.read_csv(args.observations)
+        observed_before_screen = tidy_observations(raw_observations)
+        observed = quality_screen_observations(observed_before_screen, args.min_observation_hours)
+        observation_quality = {
+            "minimum_valid_hourly_values_per_day": args.min_observation_hours,
+            "daily_rows_with_any_valid_value": int(len(observed_before_screen)),
+            "daily_rows_retained": int(len(observed)),
+            "daily_rows_excluded_for_coverage": int(len(observed_before_screen) - len(observed)),
+            "raw_input_rows": int(len(raw_observations)),
+            "note": (
+                "Coverage screen is a transparent quality filter for this limited comparison; "
+                "it is not a regulatory data-validation certificate."
+            ),
+        }
         if args.model:
             model = tidy_model(pd.read_csv(args.model))
         else:
@@ -228,6 +292,9 @@ def main(argv: list[str] | None = None) -> int:
         report = make_report(
             observed, model, station=args.station, source_url=args.source_url,
             event_threshold=args.event_threshold, min_days_for_validated_claim=args.min_days,
+            source_provider=args.source_provider, source_note=args.source_note,
+            input_sha256=hashlib.sha256(source_bytes).hexdigest(),
+            observation_quality=observation_quality,
         )
         path = write_report(report, args.output)
     except Exception as exc:

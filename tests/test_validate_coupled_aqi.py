@@ -31,6 +31,25 @@ def test_tidy_cpcb_and_model_frames_to_daily_means():
     assert model["model_hours"].tolist() == [24, 24, 24, 24]
 
 
+def test_generic_caaqms_value_stream_is_limited_to_pm25_rows_and_quality_screened():
+    stream = pd.DataFrame({
+        "parameter": ["PM2.5"] * 24 + ["PM10"] * 24,
+        "timestamp": list(pd.date_range("2025-01-01", periods=24, freq="h").astype(str)) * 2,
+        "value": [80] * 24 + [200] * 24,
+    })
+    observed = validation.tidy_observations(stream)
+    assert observed.to_dict("records") == [{
+        "date": pd.Timestamp("2025-01-01").date(), "observed_pm25_ugm3": 80.0, "observation_hours": 24,
+    }]
+
+    coverage = pd.DataFrame({
+        "date": pd.date_range("2025-01-01", periods=3, freq="D").date,
+        "observed_pm25_ugm3": [50.0, 60.0, 70.0],
+        "observation_hours": [17, 18, 24],
+    })
+    assert validation.quality_screen_observations(coverage, 18)["observed_pm25_ugm3"].tolist() == [60.0, 70.0]
+
+
 def test_metrics_use_error_and_csi_hss_not_bare_accuracy():
     paired = validation.tidy_observations(_observations()).merge(validation.tidy_model(_model()), on="date")
     metrics = validation.paired_metrics(paired, event_threshold=90)
