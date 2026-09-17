@@ -1,8 +1,13 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-09-17T13:10:10+00:00",
+  "generated_at_utc": "2026-09-17T13:12:10+00:00",
   "status": "validated-limited",
   "station": "Anand Vihar, Delhi \u2014 DPCC CAAQMS",
+  "paired_period": {
+    "first_paired_date": "2025-10-01",
+    "last_paired_date": "2025-11-25",
+    "paired_days": 47
+  },
   "observed_source": {
     "provider": "Delhi Pollution Control Committee (DPCC) CAAQMS station export",
     "url": "https://github.com/Vibhor2702/airsen/blob/6207c163deff4b2ee2afcd20a28570b036ad6d7b/team-pipeline/forecasting/data/raw/Anand_Vihar__PM25__20251001_20251126.csv",
@@ -41,19 +46,19 @@
       }
     },
     "yesterday_observed_persistence_baseline": {
-      "n_days": 46,
-      "mae_ugm3": 37.76,
-      "rmse_ugm3": 48.51,
-      "mean_bias_ugm3": -4.12,
-      "pearson_r": 0.88,
+      "n_days": 41,
+      "mae_ugm3": 36.45,
+      "rmse_ugm3": 46.98,
+      "mean_bias_ugm3": -4.56,
+      "pearson_r": 0.889,
       "event_threshold_pm25_ugm3": 90.0,
       "event_skill": {
-        "hits": 34,
+        "hits": 29,
         "misses": 3,
         "false_alarms": 2,
         "correct_negatives": 7,
-        "csi": 0.872,
-        "hss": 0.669
+        "csi": 0.853,
+        "hss": 0.658
       }
     }
   },
