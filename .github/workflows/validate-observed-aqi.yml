@@ -1,0 +1,84 @@
+name: Validate observed NCR PM2.5
+
+# This is deliberately manual: it compares a CAMS *archive* series with a
+# named station export. It is a reproducible retrospective concentration check,
+# not an operational forecast-score job.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  anand-vihar-cams-comparison:
+    name: Anand Vihar DPCC CAAQMS vs CAMS archive
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # A manually dispatched run checks out the selected branch, so its
+          # small review report can be committed back to that same branch.
+          ref: ${{ github.ref }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install validation dependencies
+        run: python -m pip install --disable-pip-version-check pandas numpy requests
+      - name: Retrieve pinned CAAQMS PM2.5 station export
+        run: |
+          curl --fail --location --retry 3 --retry-all-errors \
+            --output /tmp/anand-vihar-pm25.csv \
+            https://raw.githubusercontent.com/Vibhor2702/airsen/6207c163deff4b2ee2afcd20a28570b036ad6d7b/team-pipeline/forecasting/data/raw/Anand_Vihar__PM25__20251001_20251126.csv
+          echo "187ca64971fab42614f3a199ba07bb51608de3f9f7b807a7f5dbfff2361429eb  /tmp/anand-vihar-pm25.csv" | sha256sum --check --strict
+      - name: Fetch CAMS archive and calculate transparent metrics
+        run: |
+          if test -f data/validation/coupled_aqi_validation.json; then
+            cp data/validation/coupled_aqi_validation.json /tmp/coupled-aqi-before.json
+          fi
+          python -m scripts.validate_coupled_aqi \
+            --observations /tmp/anand-vihar-pm25.csv \
+            --lat 28.6469 --lon 77.3160 \
+            --station "Anand Vihar, Delhi — DPCC CAAQMS" \
+            --source-provider "Delhi Pollution Control Committee (DPCC) CAAQMS station export" \
+            --source-url "https://github.com/Vibhor2702/airsen/blob/6207c163deff4b2ee2afcd20a28570b036ad6d7b/team-pipeline/forecasting/data/raw/Anand_Vihar__PM25__20251001_20251126.csv" \
+            --source-note "Pinned public historical export (SHA-256 verified in this workflow), harvested from the DPCC Advance Search PM2.5 endpoint. DPCC reports this station series in local IST; this run retains only daily means with at least 18 valid hourly values." \
+            --min-observation-hours 18 \
+            --min-days 30 \
+            --output data/validation/coupled_aqi_validation.json
+      - name: Commit a changed report
+        run: |
+          # Keep reruns reviewable rather than committing a clock-only diff.
+          if test -f /tmp/coupled-aqi-before.json && python - <<'PY'
+          import json
+          import sys
+
+          with open("/tmp/coupled-aqi-before.json", encoding="utf-8") as handle:
+              before = json.load(handle)
+          with open("data/validation/coupled_aqi_validation.json", encoding="utf-8") as handle:
+              after = json.load(handle)
+          before.pop("generated_at_utc", None)
+          after.pop("generated_at_utc", None)
+          sys.exit(0 if before == after else 1)
+          PY
+          then
+            cp /tmp/coupled-aqi-before.json data/validation/coupled_aqi_validation.json
+            echo "validation values already current (timestamp retained)"
+            exit 0
+          fi
+          if test -z "$(git status --porcelain -- data/validation/coupled_aqi_validation.json)"; then
+            echo "validation report already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/validation/coupled_aqi_validation.json
+          git commit -m "Validate CAMS PM2.5 against Anand Vihar observations"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+      - name: Upload review inputs and report
+        uses: actions/upload-artifact@v4
+        with:
+          name: anand-vihar-caaqms-cams-validation
+          retention-days: 30
+          path: |
+            /tmp/anand-vihar-pm25.csv
+            data/validation/coupled_aqi_validation.json
