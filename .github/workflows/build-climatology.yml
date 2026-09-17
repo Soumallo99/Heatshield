@@ -1,8 +1,8 @@
 name: Build NCR climatology
 
-# A manually-run reproducible fetch.  This is useful when a developer is behind
-# a restrictive network: it produces an artifact for review, never silently
-# commits generated climate data from CI.
+# A reproducible fetch for developers behind a restrictive network. It always
+# produces an artifact for review; a same-repository PR may additionally commit
+# the small generated aggregate (never the raw provider response).
 on:
   workflow_dispatch:
   # The artifact is also built on a PR so a reviewer can inspect the exact
@@ -36,6 +36,11 @@ jobs:
         run: python -m pip install --disable-pip-version-check pandas requests numpy
       - name: Fetch and build
         run: |
+          # generated_at_utc intentionally records build time. Keep the prior
+          # aggregate so the commit step can avoid a timestamp-only push loop.
+          if test -f data/climatology_normals.json; then
+            cp data/climatology_normals.json /tmp/ncr-normal-before-build.json
+          fi
           python -m scripts.build_climatology --ncr \
             --save-raw /tmp/ncr-open-meteo-1991-2020.json \
             --output data/climatology_normals.json
@@ -46,6 +51,30 @@ jobs:
         env:
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
+          # Do not create a new PR commit just because generated_at_utc changed.
+          # A true normal/source/method change still goes through for review.
+          if test -f /tmp/ncr-normal-before-build.json && python - <<'PY'
+          import json
+          import sys
+
+          before_path = "/tmp/ncr-normal-before-build.json"
+          after_path = "data/climatology_normals.json"
+          try:
+              with open(before_path, encoding="utf-8") as handle:
+                  before = json.load(handle)
+              with open(after_path, encoding="utf-8") as handle:
+                  after = json.load(handle)
+          except (OSError, ValueError):
+              sys.exit(1)
+          before.pop("generated_at_utc", None)
+          after.pop("generated_at_utc", None)
+          sys.exit(0 if before == after else 1)
+          PY
+          then
+            cp /tmp/ncr-normal-before-build.json data/climatology_normals.json
+            echo "climatology values already current (timestamp retained)"
+            exit 0
+          fi
           if test -z "$(git status --porcelain -- data/climatology_normals.json)"; then
             echo "climatology already current"
             exit 0
