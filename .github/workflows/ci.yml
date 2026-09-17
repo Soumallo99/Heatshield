@@ -27,6 +27,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # The Python mobile contracts use Node to server-render the actual React
+      # screens and run Vite's phone bundle budget. Keep their dependencies in
+      # this job instead of replacing the checks with JSX string matching.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/web/package-lock.json
+      - name: Install mobile render dependencies
+        working-directory: frontend/web
+        run: npm ci
+
       - name: Run tests
         run: python -m pytest tests -q
 
