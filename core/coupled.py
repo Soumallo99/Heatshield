@@ -648,9 +648,11 @@ def heatwave_advance_payload(
         if daily.empty:
             raise KeyError(zone_id)
 
-    records = daily.copy()
+    # Provenance lives once at response level.  Repeating the long source and
+    # fallback reason on every daily row materially hurts a static-host payload.
+    records = daily.drop(columns=["data_source", "is_synthetic", "fetched_at"], errors="ignore").copy()
     records["date"] = records["date"].astype(str)
-    records = records.replace({np.nan: None})
+    records = records.astype(object).where(pd.notna(records), None)
     episode_rows = records[records["is_heatwave_episode"]]
     normal_rows = int(records["normal_tmax_c"].notna().sum())
     return {

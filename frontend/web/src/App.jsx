@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import HeatField from './components/HeatField'
-import Landing from './components/Landing'
-import Dashboard from './components/Dashboard'
-import Mobile from './components/Mobile'
+
+// Route-level chunks protect a phone cold-open from the dense operations
+// console (and its chart/map helpers). The map itself remains lazy inside the
+// dashboard, so no Leaflet code is fetched for citizen use.
+const Landing = lazy(() => import('./components/Landing'))
+const Dashboard = lazy(() => import('./components/Dashboard'))
+const PhoneApp = lazy(() => import('./mobile/PhoneApp'))
 import { EASE } from './motion'
 
 /**
@@ -17,13 +21,14 @@ import { EASE } from './motion'
  * offset — the outgoing page lifts away as the incoming one rises, which reads as
  * one continuous movement rather than two separate fades.
  */
-const ROUTES = { '': 'landing', dashboard: 'dashboard', mobile: 'mobile' }
+const ROUTES = { '': 'landing', dashboard: 'dashboard', mobile: 'phone', phone: 'phone' }
 
 function useRoute() {
-  const [route, setRoute] = useState(() => window.location.hash.replace('#/', '') || '')
+  const readRoute = () => ROUTES[window.location.hash.replace('#/', '') || ''] || ''
+  const [route, setRoute] = useState(readRoute)
   useEffect(() => {
     const onChange = () => {
-      setRoute(window.location.hash.replace('#/', '') || '')
+      setRoute(readRoute())
       // Each page starts at its own top. Without this, clicking Citizen from
       // the bottom of the long dashboard lands you in the new page's empty
       // scroll tail, which reads as "the tab didn't open".
@@ -51,18 +56,20 @@ export default function App() {
           exit={{ opacity: 0, y: -14 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          {route === 'dashboard' ? (
-            <Dashboard onExit={() => go('')} />
-          ) : route === 'mobile' ? (
-            <Mobile onExit={() => go('dashboard')} />
-          ) : (
-            <Landing onEnter={() => go('dashboard')} />
-          )}
+          <Suspense fallback={<div className="relative z-10 grid min-h-screen place-items-center text-[12px] text-white/50">Opening HeatShield…</div>}>
+            {route === 'dashboard' ? (
+              <Dashboard onExit={() => go('')} />
+            ) : route === 'phone' ? (
+              <PhoneApp onExit={() => go('dashboard')} />
+            ) : (
+              <Landing onEnter={() => go('dashboard')} />
+            )}
+          </Suspense>
         </motion.div>
       </AnimatePresence>
 
-      {/* persistent route switcher */}
-      <motion.nav
+      {/* The phone route carries its own thumb-reachable navigation. */}
+      {route !== 'phone' && <motion.nav
         className="fixed bottom-5 left-1/2 z-40 -translate-x-1/2"
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -72,7 +79,7 @@ export default function App() {
           {[
             ['', 'Overview'],
             ['dashboard', 'Operations'],
-            ['mobile', 'Citizen'],
+            ['phone', 'Citizen'],
           ].map(([r, label]) => (
             <button
               key={r}
@@ -92,12 +99,12 @@ export default function App() {
             </button>
           ))}
         </div>
-      </motion.nav>
+      </motion.nav>}
 
       {/* mobile entry hint on the dashboard */}
       {route === 'dashboard' && (
         <motion.button
-          onClick={() => go('mobile')}
+          onClick={() => go('phone')}
           className="fixed right-5 top-[68px] z-30 rounded-full border border-white/12 bg-ink-900/95 px-4 py-2 text-[11.5px] transition hover:border-white/30"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}

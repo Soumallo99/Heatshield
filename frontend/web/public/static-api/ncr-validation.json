@@ -1,0 +1,1 @@
+{"available":false,"how":"python -m scripts.validate_coupled_aqi --observations <cpcb.csv>","message":"No CPCB/CAAQMS validation report has been generated yet.","static_snapshot":true}

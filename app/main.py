@@ -189,7 +189,7 @@ def ncr_forecast(
     frame = frame.sort_values("timestamp_local").groupby("zone_id", group_keys=False).head(hours)
     weather_cols = [
         "zone_id", "zone_name", "lat", "lon", "timestamp_local", "temp_c", "rh_pct",
-        "wind_kmh", "precip_mm", "surface_pressure_hpa", "data_source", "is_synthetic", "fetched_at",
+        "wind_kmh", "precip_mm", "surface_pressure_hpa",
     ]
     return {
         "rows": int(len(frame)), "zone_id": zone_id,
@@ -211,7 +211,6 @@ def ncr_air_quality(
     air_cols = [
         "zone_id", "zone_name", "lat", "lon", "timestamp_local", "pm25_ugm3", "pm10_ugm3",
         "no2_ugm3", "o3_ugm3", "so2_ugm3", "provider_us_aqi", "aqi_india", "aqi_band",
-        "data_source", "is_synthetic", "fetched_at",
     ]
     return {
         "rows": int(len(frame)), "zone_id": zone_id,
@@ -234,7 +233,6 @@ def ncr_heat_aqi(
     cols = [
         "zone_id", "zone_name", "timestamp_local", "temp_c", "pm25_ugm3", "aqi_india", "aqi_band",
         "heat_multiplier", "heat_aqi_load", "heat_aqi_load_band", "ventilation_index",
-        "data_source", "is_synthetic", "fetched_at",
     ]
     return {
         "rows": int(len(frame)), "zone_id": zone_id,
@@ -257,7 +255,7 @@ def ncr_daily_route(zone_id: str | None = None):
         "data_source": str(frame["data_source"].iloc[0]) if len(frame) else "unavailable",
         "is_synthetic": bool(frame["is_synthetic"].iloc[0]) if len(frame) else True,
         "fallback_reason": fallback_reason,
-        "data": _records(daily),
+        "data": _records(daily.drop(columns=["data_source", "is_synthetic", "fetched_at"], errors="ignore")),
     }
 
 
