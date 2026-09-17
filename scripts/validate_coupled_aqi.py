@@ -169,9 +169,16 @@ def paired_metrics(paired: pd.DataFrame, event_threshold: float = 90.0) -> dict[
 
 
 def persistence_metrics(paired: pd.DataFrame, event_threshold: float = 90.0) -> dict[str, Any] | None:
-    """Yesterday-observed persistence baseline on the same daily record."""
+    """Yesterday-observed persistence baseline on genuinely adjacent dates.
+
+    A coverage-screened station record can have gaps. Reusing the last available
+    value over a multi-day gap would not be a ``yesterday`` baseline, so those
+    rows are excluded rather than flattering or penalising persistence.
+    """
     ordered = paired.sort_values("date").copy()
-    ordered["model_pm25_ugm3"] = ordered["observed_pm25_ugm3"].shift(1)
+    dates = pd.to_datetime(ordered["date"])
+    adjacent = dates.diff().eq(pd.Timedelta(days=1))
+    ordered["model_pm25_ugm3"] = ordered["observed_pm25_ugm3"].shift(1).where(adjacent)
     if ordered.dropna(subset=["model_pm25_ugm3"]).empty:
         return None
     return paired_metrics(ordered, event_threshold)
@@ -197,11 +204,17 @@ def make_report(
     # Keep enough rows to audit a report but not a whole government export.
     audit_rows = paired.tail(90).copy()
     audit_rows["date"] = audit_rows["date"].astype(str)
+    paired_period = {
+        "first_paired_date": str(paired["date"].min()),
+        "last_paired_date": str(paired["date"].max()),
+        "paired_days": model_metrics["n_days"],
+    }
     return {
         "schema_version": 1,
         "generated_at_utc": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
         "status": report_status,
         "station": station,
+        "paired_period": paired_period,
         "observed_source": {
             "provider": source_provider,
             "url": source_url,

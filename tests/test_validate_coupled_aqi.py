@@ -65,6 +65,15 @@ def test_metrics_use_error_and_csi_hss_not_bare_accuracy():
     assert "accuracy" not in metrics
 
 
+def test_persistence_baseline_does_not_cross_missing_calendar_days():
+    paired = pd.DataFrame({
+        "date": [pd.Timestamp("2025-01-01").date(), pd.Timestamp("2025-01-03").date()],
+        "observed_pm25_ugm3": [80.0, 100.0],
+        "model_pm25_ugm3": [70.0, 110.0],
+    })
+    assert validation.persistence_metrics(paired) is None
+
+
 def test_report_distinguishes_validated_concentration_from_parameterised_load(tmp_path):
     report = validation.make_report(
         validation.tidy_observations(_observations()), validation.tidy_model(_model()),
@@ -74,6 +83,9 @@ def test_report_distinguishes_validated_concentration_from_parameterised_load(tm
     parsed = json.loads(path.read_text())
 
     assert parsed["status"] == "validated-limited"
+    assert parsed["paired_period"] == {
+        "first_paired_date": "2025-01-01", "last_paired_date": "2025-01-04", "paired_days": 4,
+    }
     assert "CPCB" in parsed["what_is_validated"]
     assert "not fitted" in parsed["what_is_parameterised"]
     assert "accuracy" in parsed["not_reported"].lower()
