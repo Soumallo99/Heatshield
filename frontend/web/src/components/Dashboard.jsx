@@ -83,7 +83,7 @@ function SectionHead({ eyebrow, title, note, right }) {
   )
 }
 
-export default function Dashboard({ onExit }) {
+export default function Dashboard({ onExit, onDemo }) {
   const { reduced } = useMotionSafe()
   const [selectedId, setSelectedId] = useState(null)
   const [scenario, setScenario] = useState(0)
@@ -147,6 +147,15 @@ export default function Dashboard({ onExit }) {
           <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/30 sm:block">
             operations
           </span>
+          {onDemo && (
+            <button
+              onClick={onDemo}
+              title="Synthetic scenario mode — offline, labelled, not live data"
+              className="rounded-full border border-amber-300/35 bg-amber-300/[.08] px-3 py-1 text-[11px] font-medium text-amber-200/90 transition hover:border-amber-300/60 hover:bg-amber-300/[.14]"
+            >
+              Heat Risk Demo
+            </button>
+          )}
 
           <div className="flex-1" />
 

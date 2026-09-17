@@ -8,6 +8,9 @@ import HeatField from './components/HeatField'
 const Landing = lazy(() => import('./components/Landing'))
 const Dashboard = lazy(() => import('./components/Dashboard'))
 const PhoneApp = lazy(() => import('./mobile/PhoneApp'))
+// The demo ships in its own chunk: cold-opening Overview or Citizen never pays
+// for demo code, and the demo never needs the live API.
+const DemoApp = lazy(() => import('./demo/DemoApp'))
 import { EASE } from './motion'
 
 /**
@@ -21,7 +24,7 @@ import { EASE } from './motion'
  * offset — the outgoing page lifts away as the incoming one rises, which reads as
  * one continuous movement rather than two separate fades.
  */
-const ROUTES = { '': 'landing', dashboard: 'dashboard', mobile: 'phone', phone: 'phone' }
+const ROUTES = { '': 'landing', dashboard: 'dashboard', mobile: 'phone', phone: 'phone', demo: 'demo' }
 
 function useRoute() {
   const readRoute = () => ROUTES[window.location.hash.replace('#/', '') || ''] || ''
@@ -58,18 +61,21 @@ export default function App() {
         >
           <Suspense fallback={<div className="relative z-10 grid min-h-screen place-items-center text-[12px] text-white/50">Opening HeatShield…</div>}>
             {route === 'dashboard' ? (
-              <Dashboard onExit={() => go('')} />
+              <Dashboard onExit={() => go('')} onDemo={() => go('demo')} />
             ) : route === 'phone' ? (
               <PhoneApp onExit={() => go('dashboard')} />
+            ) : route === 'demo' ? (
+              <DemoApp onExit={() => go('')} />
             ) : (
-              <Landing onEnter={() => go('dashboard')} />
+              <Landing onEnter={() => go('dashboard')} onDemo={() => go('demo')} />
             )}
           </Suspense>
         </motion.div>
       </AnimatePresence>
 
-      {/* The phone route carries its own thumb-reachable navigation. */}
-      {route !== 'phone' && <motion.nav
+      {/* The phone route carries its own thumb-reachable navigation; the demo
+          route carries its own top-level controls. */}
+      {route !== 'phone' && route !== 'demo' && <motion.nav
         className="fixed bottom-5 left-1/2 z-40 -translate-x-1/2"
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -80,6 +86,7 @@ export default function App() {
             ['', 'Overview'],
             ['dashboard', 'Operations'],
             ['phone', 'Citizen'],
+            ['demo', 'Heat Demo'],
           ].map(([r, label]) => (
             <button
               key={r}
