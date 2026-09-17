@@ -1,10 +1,15 @@
 name: Validate observed NCR PM2.5
 
-# This is deliberately manual: it compares a CAMS *archive* series with a
-# named station export. It is a reproducible retrospective concentration check,
-# not an operational forecast-score job.
+# This is a reproducible retrospective concentration check, not an operational
+# forecast-score job. It runs when its code changes so a PR carries the actual
+# reviewed report; it can also be run manually after it reaches the default branch.
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/validate-observed-aqi.yml"
+      - "scripts/validate_coupled_aqi.py"
+      - "core/coupled.py"
 
 permissions:
   contents: write
@@ -16,9 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # A manually dispatched run checks out the selected branch, so its
-          # small review report can be committed back to that same branch.
-          ref: ${{ github.ref }}
+          # A pull_request checkout otherwise points at a detached merge ref,
+          # which cannot receive the reviewed report.
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -46,6 +51,11 @@ jobs:
             --min-days 30 \
             --output data/validation/coupled_aqi_validation.json
       - name: Commit a changed report
+        # Never grant a fork write access. The source export remains an
+        # artifact; only the small derived report enters Git.
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref || github.ref_name }}
         run: |
           # Keep reruns reviewable rather than committing a clock-only diff.
           if test -f /tmp/coupled-aqi-before.json && python - <<'PY'
@@ -73,7 +83,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/validation/coupled_aqi_validation.json
           git commit -m "Validate CAMS PM2.5 against Anand Vihar observations"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git push origin "HEAD:${HEAD_REF}"
       - name: Upload review inputs and report
         uses: actions/upload-artifact@v4
         with:
