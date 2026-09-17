@@ -13,7 +13,7 @@ import { ConnectionNotice, RefreshButton } from './LiveStatus'
 import { bandColour, bandText, EASE, spring, useMotionSafe } from '../motion'
 import { useLive, useRefreshShortcut } from '../live'
 import { ALERT_THRESHOLD, fetchAlerts, fetchGeo, fetchHourly, fetchRanking,
-         fetchWardRisk } from '../api'
+         fetchWardRisk, fetchDrill } from '../api'
 
 const SCENARIOS = [0, 2, 4, 6, 8]
 
@@ -45,6 +45,17 @@ function Driver({ label, value, unit, delay = 0 }) {
         <span className="ml-0.5 text-[10px] text-white/35">{unit}</span>
       </span>
     </motion.div>
+  )
+}
+
+function DrillStat({ label, value, unit }) {
+  return (
+    <div className="drill-stat panel--sheen rounded-xl border border-orange-300/15 bg-orange-300/[.04] p-3">
+      <div className="eyebrow">{label}</div>
+      <div className="mt-1 tnum text-[22px] font-semibold text-orange-100">
+        {value ?? '—'}<span className="ml-1 text-[10px] text-orange-100/55">{unit}</span>
+      </div>
+    </div>
   )
 }
 
@@ -87,13 +98,15 @@ export default function Dashboard({ onExit }) {
   const { reduced } = useMotionSafe()
   const [selectedId, setSelectedId] = useState(null)
   const [scenario, setScenario] = useState(0)
+  const [drill, setDrill] = useState(null)
   const [geo, setGeo] = useState(null)
   // `epoch` is the manual-refresh lever: bumping it re-calls every endpoint at
   // once. There is deliberately no interval — refresh is an explicit act.
   const [epoch, setEpoch] = useState(0)
 
-  const ranking = useLive(() => fetchRanking(scenario), [scenario, epoch])
-  const alerts = useLive(() => fetchAlerts(ALERT_THRESHOLD, 1, scenario), [scenario, epoch])
+  const ranking = useLive(() => fetchRanking(scenario, drill), [scenario, drill, epoch])
+  const alerts = useLive(() => fetchAlerts(ALERT_THRESHOLD, 1, scenario, drill), [scenario, drill, epoch])
+  const drillLive = useLive(() => (drill ? fetchDrill(drill) : null), [drill, epoch])
 
   const refreshAll = useCallback(() => setEpoch((e) => e + 1), [])
   useRefreshShortcut(refreshAll)
@@ -117,12 +130,12 @@ export default function Dashboard({ onExit }) {
   const wardId = selected?.ward_id ?? null
 
   const wardLive = useLive(
-    () => (wardId == null ? null : fetchWardRisk(wardId, scenario)),
-    [wardId, scenario, epoch]
+    () => (wardId == null ? null : fetchWardRisk(wardId, scenario, drill)),
+    [wardId, scenario, drill, epoch]
   )
   const hourlyLive = useLive(
-    () => (wardId == null ? null : fetchHourly(wardId, scenario)),
-    [wardId, scenario, epoch]
+    () => (wardId == null ? null : fetchHourly(wardId, scenario, drill)),
+    [wardId, scenario, drill, epoch]
   )
 
   const ward = wardLive.data
@@ -136,7 +149,7 @@ export default function Dashboard({ onExit }) {
     <div className="relative min-h-screen">
       {/* ---------------------------------------------------------- top bar */}
       <header
-        className="sticky top-0 z-40 backdrop-blur-md"
+        className="header-pulse sticky top-0 z-40 backdrop-blur-md"
         style={{ background: 'rgba(7,8,13,.72)', borderBottom: '1px solid rgba(255,255,255,.08)' }}
       >
         <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-4 gap-y-2 px-6 py-3">
@@ -163,15 +176,22 @@ export default function Dashboard({ onExit }) {
                 >
                   {scenario === s && (
                     <motion.span
-                      layoutId="scenarioPill"
-                      className="absolute inset-0 rounded-full bg-white/[.14]"
-                      transition={spring.layout}
+                      className="pill-pop absolute inset-0 rounded-full bg-white/[.14]"
                     />
                   )}
                   <span className="relative tnum">{s > 0 ? `+${s}°` : 'now'}</span>
                 </button>
               ))}
             </div>
+            <button
+              onClick={() => setDrill((d) => (d ? null : 'heatwave'))}
+              aria-pressed={drill === 'heatwave'}
+              className={`rounded-full border px-3 py-1 text-[11px] transition ${
+                drill ? 'border-orange-400/50 bg-orange-400/15 text-orange-200' : 'border-white/10 text-white/45'
+              }`}
+            >
+              {drill ? 'heatwave drill' : 'run drill'}
+            </button>
           </div>
 
           <RefreshButton
@@ -185,7 +205,32 @@ export default function Dashboard({ onExit }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1400px] px-6 py-7">
+      <main className="hero-halo mx-auto max-w-[1400px] px-6 py-7">
+        {drill && (
+          <motion.section
+            className="simulation-banner panel--sheen mb-6 rounded-2xl border border-orange-300/30 bg-orange-300/[.08] p-4"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="eyebrow text-orange-200">SIMULATION · NOT OBSERVED WEATHER</div>
+            <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2">
+              <strong className="display text-[20px] text-orange-50">
+                {drillLive.data?.profile?.label || 'Heatwave drill'}
+              </strong>
+              <span className="text-[11px] text-orange-100/60">Training scenario only — forecast data remains live</span>
+            </div>
+            <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-orange-50/65">
+              {drillLive.data?.profile?.description || 'A deterministic anomaly to rehearse an escalating heatwave response.'}
+            </p>
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
+              <DrillStat label="wards queued" value={drillLive.data?.warnings?.wards_queued} />
+              <DrillStat label="decision stability" value={drillLive.data?.accuracy?.decision_stability_pct} unit="%" />
+              <DrillStat label="mean lead" value={drillLive.data?.lead_time?.mean_days} unit="days" />
+              <DrillStat label="sensitivity" value={drillLive.data?.sensitivity?.risk_points_per_degree} unit="pts/°C" />
+              <DrillStat label="peak anomaly" value={drillLive.data?.peak_anomaly_c} unit="°C" />
+            </div>
+          </motion.section>
+        )}
         {/* ------------------------------------------- honest failure state */}
         <ConnectionNotice
           error={ranking.error}
@@ -513,7 +558,7 @@ export default function Dashboard({ onExit }) {
 
         <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.08] pt-5 text-[10.5px] text-white/25">
           <span>
-            scenario {scenario > 0 ? `+${scenario} °C` : 'now'} · threshold {ALERT_THRESHOLD} · 141 wards
+            {drill ? `SIMULATION · ${drillLive.data?.profile?.label || drill}` : 'observed forecast'} · scenario {scenario > 0 ? `+${scenario} °C` : 'now'} · threshold {ALERT_THRESHOLD} · 141 wards
           </span>
           <span className="tnum">
             data as of {ranking.lastUpdated ? ranking.lastUpdated.toLocaleString('en-IN', { hour12: false }) : '—'}

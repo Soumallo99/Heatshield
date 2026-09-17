@@ -19,6 +19,7 @@ from core import config
 from core.alerts import (DEFAULT_MIN_LEAD_DAYS, DEFAULT_RISK_THRESHOLD,
                          compose_message, dispatch, filter_already_sent,
                          find_active_now, find_upcoming_events)
+from core.config import DRILL_PROFILES
 from core.risk import compute_risk, daily_risk, risk_band, ward_ranking
 from core.subscribers import (add_subscriber as reg_add,
                               load_registry, opt_out as reg_opt_out,
@@ -201,19 +202,25 @@ def thermal_ward(ward_id: int, intensity: str = "moderate"):
 
 
 # ------------------------------------------------------------------ Phase 3
+def _drill(drill: str | None) -> str | None:
+    if drill is not None and drill not in DRILL_PROFILES:
+        raise HTTPException(400, f"unknown drill '{drill}'")
+    return drill
+
 @app.get("/risk/daily")
-def risk_daily(scenario_c: float = 0.0):
+def risk_daily(scenario_c: float = 0.0, drill: str | None = None):
     """Ward-day risk: peak risk score, band, exposure, excess-death estimate.
 
     `scenario_c` stress-tests the model (e.g. +6 for a heatwave what-if).
     """
-    d = daily_risk(get_forecast(), temp_offset_c=scenario_c)
+    drill = _drill(drill)
+    d = daily_risk(get_forecast(), temp_offset_c=scenario_c, drill=drill)
     d["date"] = d["date"].astype(str)
-    return {"rows": len(d), "scenario_c": scenario_c, "data": d.to_dict(orient="records")}
+    return {"rows": len(d), "scenario_c": scenario_c, "drill": drill, "data": d.to_dict(orient="records")}
 
 
 @app.get("/risk/ranking")
-def risk_ranking(scenario_c: float = 0.0, date: str | None = None):
+def risk_ranking(scenario_c: float = 0.0, date: str | None = None, drill: str | None = None):
     """
     League table, worst first, for the peak day in the window.
 
@@ -221,18 +228,20 @@ def risk_ranking(scenario_c: float = 0.0, date: str | None = None):
     show the coming heatwave, matching what /alerts/plan is warning about.
     Pass ?date=YYYY-MM-DD to pin a specific day.
     """
-    d = daily_risk(get_forecast(), temp_offset_c=scenario_c)
+    drill = _drill(drill)
+    d = daily_risk(get_forecast(), temp_offset_c=scenario_c, drill=drill)
     r = ward_ranking(d, date=date)
     chosen = str(r["date"].iloc[0]) if len(r) else None
     counts = r["risk_band"].value_counts().to_dict()
-    return {"date": chosen, "scenario_c": scenario_c,
+    return {"date": chosen, "scenario_c": scenario_c, "drill": drill,
             "band_counts": counts, "data": r.to_dict(orient="records")}
 
 
 @app.get("/risk/ward/{ward_id}")
-def risk_ward(ward_id: int, scenario_c: float = 0.0):
+def risk_ward(ward_id: int, scenario_c: float = 0.0, drill: str | None = None):
     """Single-ward risk summary for the detail panel / mobile view."""
-    d = daily_risk(get_forecast(), temp_offset_c=scenario_c)
+    drill = _drill(drill)
+    d = daily_risk(get_forecast(), temp_offset_c=scenario_c, drill=drill)
     w = d[d["ward_id"] == ward_id]
     if w.empty:
         raise HTTPException(404, f"ward_id {ward_id} not found")
@@ -241,6 +250,7 @@ def risk_ward(ward_id: int, scenario_c: float = 0.0):
     band, colour = risk_band(row["risk_score"])
     return {
         "ward_id": int(ward_id),
+        "drill": drill,
         "ward_name": row["ward_name"],
         "date": str(row["date"]),
         "risk_score": float(row["risk_score"]),
@@ -264,16 +274,17 @@ def risk_ward(ward_id: int, scenario_c: float = 0.0):
 
 @app.get("/risk")
 def risk(hours: int = Query(24, ge=1, le=24 * 16), ward_id: int | None = None,
-         scenario_c: float = 0.0):
+         scenario_c: float = 0.0, drill: str | None = None):
     """Hourly ward-level risk scores."""
-    df = compute_risk(get_forecast(), temp_offset_c=scenario_c)
+    drill = _drill(drill)
+    df = compute_risk(get_forecast(), temp_offset_c=scenario_c, drill=drill)
     if ward_id is not None and ward_id not in set(df["ward_id"]):
         raise HTTPException(404, f"ward_id {ward_id} not found")
     df = _window(df, hours, ward_id)
     out = df.copy()
     out["timestamp_local"] = out["timestamp_local"].dt.strftime("%Y-%m-%dT%H:%M")
     out["fetched_at"] = out["fetched_at"].astype(str)
-    return {"rows": len(out), "scenario_c": scenario_c, "data": out.to_dict(orient="records")}
+    return {"rows": len(out), "scenario_c": scenario_c, "drill": drill, "data": out.to_dict(orient="records")}
 
 
 # ------------------------------------------------------------------ Phase 5
@@ -282,6 +293,7 @@ def alerts_plan(
     threshold: float = DEFAULT_RISK_THRESHOLD,
     lead_days: int = DEFAULT_MIN_LEAD_DAYS,
     scenario_c: float = 0.0,
+    drill: str | None = None,
     only_unsent: bool = False,
 ):
     """
@@ -291,7 +303,8 @@ def alerts_plan(
     are today or in the past are excluded, because the intervention window has
     closed. `only_unsent=True` filters out anything already dispatched recently.
     """
-    daily = daily_risk(get_forecast(), temp_offset_c=scenario_c)
+    drill = _drill(drill)
+    daily = daily_risk(get_forecast(), temp_offset_c=scenario_c, drill=drill)
     events = find_upcoming_events(daily, min_lead_days=lead_days, risk_threshold=threshold)
     pending = filter_already_sent(events)
     active = find_active_now(daily, risk_threshold=threshold)
@@ -310,12 +323,65 @@ def alerts_plan(
         "threshold": threshold,
         "min_lead_days": lead_days,
         "scenario_c": scenario_c,
+        "drill": drill,
         "total_events": int(len(events)),
         "pending_after_dedupe": int(len(pending)),
         # wards already inside the event: a nowcast, not a warning
         "active_now": int(len(active)),
         "active_wards": [str(w) for w in active["ward_name"].head(12)] if len(active) else [],
         "data": records,
+    }
+
+
+@app.get("/risk/drill")
+def risk_drill(drill: str = "heatwave"):
+    """Operator drill summary for the dashboard's simulation readout."""
+    drill = _drill(drill)
+    base = daily_risk(get_forecast(), drill=drill)
+    plus = daily_risk(get_forecast(), temp_offset_c=1.0, drill=drill)
+    minus = daily_risk(get_forecast(), temp_offset_c=-1.0, drill=drill)
+    threshold = DEFAULT_RISK_THRESHOLD
+    events = find_upcoming_events(base, min_lead_days=1, risk_threshold=threshold)
+    def decisions(frame):
+        return set(zip(frame.loc[frame.risk_score >= threshold, "ward_id"],
+                       frame.loc[frame.risk_score >= threshold, "date"]))
+    stable = decisions(base)
+    compared = decisions(plus) | decisions(minus)
+    lead = (pd.to_datetime(events["event_date"]) - pd.Timestamp.now().normalize()).dt.days if len(events) else pd.Series(dtype=float)
+    plus_events = find_upcoming_events(plus, 1, threshold)
+    minus_events = find_upcoming_events(minus, 1, threshold)
+    # A score delta, rather than only a queue count, makes the sensitivity
+    # useful even when a one-degree perturbation does not cross the threshold.
+    score_delta = (plus["risk_score"] - minus["risk_score"]).abs().mean() / 2
+    profile = DRILL_PROFILES[drill]
+    lead_stats = {
+        "min_days": int(lead.min()) if len(lead) else None,
+        "mean_days": round(float(lead.mean()), 1) if len(lead) else None,
+        "max_days": int(lead.max()) if len(lead) else None,
+        "median_days": round(float(lead.median()), 1) if len(lead) else None,
+    }
+    return {
+        "drill": drill,
+        "profile": {
+            "label": profile["label"],
+            "description": profile["description"],
+        },
+        "warnings": {"wards_queued": int(len(events)),
+                     "events": events[["ward_id", "ward_name", "event_date", "lead_days",
+                                       "risk_score"]].to_dict(orient="records") if len(events) else []},
+        "accuracy": {
+            "decision_stability_pct": round(
+                100 * len(stable & decisions(plus) & decisions(minus)) / (len(compared) or 1), 1
+            ),
+        },
+        "lead_time": lead_stats,
+        "sensitivity": {
+            "minus_1c_events": int(len(minus_events)),
+            "base_events": int(len(events)),
+            "plus_1c_events": int(len(plus_events)),
+            "risk_points_per_degree": round(float(score_delta), 2),
+        },
+        "peak_anomaly_c": float(max(profile["anomalies_c"])),
     }
 
 

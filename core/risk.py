@@ -33,7 +33,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from core.config import RISK_BANDS
+from core.config import DRILL_PROFILES, RISK_BANDS
 from core.thermal import (
     globe_temperature,
     heat_index,
@@ -261,6 +261,19 @@ def risk_score(hazard, vulnerability) -> np.ndarray:
     return np.round(np.clip(h * amp, 0, 100), 1)
 
 
+def drill_anomaly(df: pd.DataFrame, drill: str | None = None) -> pd.Series:
+    """Return the configured temperature anomaly for each forecast row."""
+    if not drill:
+        return pd.Series(0.0, index=df.index)
+    if drill not in DRILL_PROFILES:
+        raise ValueError(f"unknown drill: {drill}")
+    dates = pd.to_datetime(df["timestamp_local"]).dt.date
+    first = dates.min()
+    profile = DRILL_PROFILES[drill]["anomalies_c"]
+    offsets = (dates - first).map(lambda d: profile[min(max(d.days, 0), len(profile) - 1)])
+    return offsets.astype(float)
+
+
 def risk_band(score) -> tuple[str, str]:
     """-> (band name, colour) using config.RISK_BANDS."""
     s = float(score)
@@ -289,13 +302,14 @@ def excess_deaths(population, wbgt_c) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 
 def compute_risk(df: pd.DataFrame, wards: pd.DataFrame | None = None,
-                 temp_offset_c: float = 0.0) -> pd.DataFrame:
+                 temp_offset_c: float = 0.0, drill: str | None = None) -> pd.DataFrame:
     """Hourly ward-level risk. `temp_offset_c` is for scenario/stress testing."""
     wards = load_wards() if wards is None else wards
     out = df.copy()
-    if temp_offset_c:
-        out["temp_c"] = out["temp_c"] + temp_offset_c
-        out["dewpoint_c"] = out["dewpoint_c"] + temp_offset_c
+    anomaly = drill_anomaly(out, drill)
+    if temp_offset_c or anomaly.any():
+        out["temp_c"] = out["temp_c"] + temp_offset_c + anomaly
+        out["dewpoint_c"] = out["dewpoint_c"] + temp_offset_c + anomaly
 
     out = apply_uhi(out, wards)
 
@@ -311,10 +325,10 @@ def compute_risk(df: pd.DataFrame, wards: pd.DataFrame | None = None,
 
 
 def daily_risk(df: pd.DataFrame, wards: pd.DataFrame | None = None,
-               temp_offset_c: float = 0.0) -> pd.DataFrame:
+               temp_offset_c: float = 0.0, drill: str | None = None) -> pd.DataFrame:
     """One row per ward-day: peak risk, band, exposure, illustrative excess deaths."""
     wards = load_wards() if wards is None else wards
-    r = compute_risk(df, wards, temp_offset_c=temp_offset_c)
+    r = compute_risk(df, wards, temp_offset_c=temp_offset_c, drill=drill)
     r["date"] = r["timestamp_local"].dt.date
 
     g = (r.groupby(["ward_id", "ward_name", "date"], as_index=False)

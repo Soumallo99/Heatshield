@@ -58,6 +58,11 @@ const pulseIcon = (colour) =>
 export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
   const geoRef = useRef(null)
   const [hover, setHover] = useState(null)
+  const [tilesFailed, setTilesFailed] = useState(false)
+  const cartoKey = import.meta.env.VITE_CARTO_KEY?.trim()
+  const tileUrl = cartoKey
+    ? `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?api_key=${cartoKey}`
+    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 
   const byId = useMemo(
     () => Object.fromEntries(wards.map((w) => [w.ward_id, w])),
@@ -101,7 +106,7 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
   }
 
   return (
-    <div className="relative min-w-0 overflow-hidden rounded-xl" style={{ height: 420 }}>
+    <div className="risk-map relative min-w-0 overflow-hidden rounded-xl" style={{ height: 420 }}>
       <MapContainer
         center={KOlkATA_CENTER}
         zoom={11}
@@ -109,11 +114,14 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
         attributionControl={false}
         style={{ height: '100%', width: '100%', background: '#0a0c14' }}
       >
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          subdomains="abcd"
-          maxZoom={19}
-        />
+        {!tilesFailed && (
+          <TileLayer
+            url={tileUrl}
+            subdomains={cartoKey ? ['a', 'b', 'c', 'd'] : ['a', 'b', 'c']}
+            maxZoom={19}
+            eventHandlers={{ tileerror: () => setTilesFailed(true) }}
+          />
+        )}
 
         <GeoJSON
           ref={geoRef}
@@ -147,10 +155,19 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
         <FitBounds geo={geo} />
         <FlyTo ward={byId[selectedId]} geo={geo} />
       </MapContainer>
+      <div className="radar-sweep pointer-events-none absolute inset-0 z-[450]" aria-hidden="true" />
+      {selectedId && <div className="selected-ward-aura pointer-events-none absolute inset-0 z-[451]" aria-hidden="true" />}
 
       {/* attribution rendered manually so it can't be hidden by the panel styling */}
+      {tilesFailed && (
+        <div className="vector-grid pointer-events-none absolute inset-0 z-[300] flex items-end justify-center pb-8">
+          <span className="rounded-full bg-black/65 px-3 py-1 text-[10px] text-white/55">
+            basemap unavailable · vector ward grid retained
+          </span>
+        </div>
+      )}
       <div className="pointer-events-none absolute bottom-1 right-2 z-[500] rounded bg-black/45 px-1.5 py-0.5 text-[9px] text-white/45">
-        © OpenStreetMap · © CARTO · wards: OpenCity/ODbL
+        © OpenStreetMap contributors · wards: OpenCity/ODbL{cartoKey ? ' · © CARTO' : ''}
       </div>
 
       {/* hover readout */}

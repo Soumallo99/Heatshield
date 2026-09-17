@@ -110,11 +110,12 @@ export default function Landing({ onEnter }) {
   const heroOpacity = useTransform(scrollY, [0, 420], [1, 0])
 
   const [epoch, setEpoch] = useState(0)
+  const [drill, setDrill] = useState(null)
   const refreshAll = () => setEpoch((e) => e + 1)
   useRefreshShortcut(refreshAll)
 
-  const ranking = useLive(() => fetchRanking(0), [epoch])
-  const alerts = useLive(() => fetchAlerts(ALERT_THRESHOLD, 1, 0), [epoch])
+  const ranking = useLive(() => fetchRanking(0, drill), [epoch, drill])
+  const alerts = useLive(() => fetchAlerts(ALERT_THRESHOLD, 1, 0, drill), [epoch, drill])
   const zones = useLive(() => fetchZones(), [epoch])
 
   const data = ranking.data?.data || []
@@ -179,6 +180,13 @@ export default function Landing({ onEnter }) {
             lastUpdated={ranking.lastUpdated}
             error={ranking.error}
           />
+          <button
+            className="ml-2 rounded-full border border-orange-300/30 px-3 py-1 text-[10px] uppercase tracking-[0.14em] text-orange-200/80"
+            onClick={() => setDrill((d) => (d ? null : 'heatwave'))}
+            aria-pressed={drill === 'heatwave'}
+          >
+            {drill ? 'Heatwave drill on' : 'Heatwave drill'}
+          </button>
           <button
             onClick={onEnter}
             className="rounded-full border border-white/15 bg-white/[.05] px-4 py-1.5 text-[12px] font-medium transition hover:border-white/30 hover:bg-white/[.1]"

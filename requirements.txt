@@ -2,6 +2,7 @@
 fastapi
 uvicorn[standard]
 requests
+httpx
 pandas
 
 # ---- Phase 2-3 ----

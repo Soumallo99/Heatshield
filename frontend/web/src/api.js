@@ -51,12 +51,12 @@ async function getJSON(path, { signal } = {}) {
 /* ------------------------------------------------------------------ api */
 
 /** Ward league table for the peak day in the window (`date` = that day). */
-export const fetchRanking = (scenario = 0) =>
-  getJSON(`/risk/ranking?scenario_c=${scenario}`)
+export const fetchRanking = (scenario = 0, drill = null) =>
+  getJSON(`/risk/ranking?scenario_c=${scenario}${drill ? `&drill=${encodeURIComponent(drill)}` : ''}`)
 
 /** Single-ward drivers + impact. */
-export const fetchWardRisk = (id, scenario = 0) =>
-  getJSON(`/risk/ward/${id}?scenario_c=${scenario}`)
+export const fetchWardRisk = (id, scenario = 0, drill = null) =>
+  getJSON(`/risk/ward/${id}?scenario_c=${scenario}${drill ? `&drill=${encodeURIComponent(drill)}` : ''}`)
 
 /** Ward registry (count must be 141). */
 export const fetchZones = () => getJSON('/zones')
@@ -65,8 +65,11 @@ export const fetchZones = () => getJSON('/zones')
 export const fetchHealth = () => getJSON('/health')
 
 // /risk carries the UHI-adjusted series (wbgt_adj_c); /thermal carries the raw grid value.
-export const fetchHourly = (wardId, scenario = 0) =>
-  getJSON(`/risk?hours=24&ward_id=${wardId}&scenario_c=${scenario}`)
+export const fetchHourly = (wardId, scenario = 0, drill = null) =>
+  getJSON(`/risk?hours=24&ward_id=${wardId}&scenario_c=${scenario}${drill ? `&drill=${encodeURIComponent(drill)}` : ''}`)
+
+export const fetchDrill = (drill = 'heatwave') =>
+  getJSON(`/risk/drill?drill=${encodeURIComponent(drill)}`)
 
 /** Ward boundary geometry — real KMC polygons, served statically so the
     service worker can cache them for offline use. A failure here degrades to
@@ -85,5 +88,5 @@ export const fetchGeo = async () => {
     Threshold mirrors core.alerts.DEFAULT_RISK_THRESHOLD. */
 export const ALERT_THRESHOLD = 60
 
-export const fetchAlerts = (threshold = ALERT_THRESHOLD, lead = 1, scenario = 0) =>
-  getJSON(`/alerts/plan?threshold=${threshold}&lead_days=${lead}&scenario_c=${scenario}`)
+export const fetchAlerts = (threshold = ALERT_THRESHOLD, lead = 1, scenario = 0, drill = null) =>
+  getJSON(`/alerts/plan?threshold=${threshold}&lead_days=${lead}&scenario_c=${scenario}${drill ? `&drill=${encodeURIComponent(drill)}` : ''}`)

@@ -35,7 +35,7 @@ cd frontend/web && npm install && cd ../..
 
 python -m scripts.refresh          # re-fetch live forecast + re-score all wards
 python -m scripts.refresh --offline # no network: replay the cached fetch (says so loudly)
-python -m pytest tests -q          # expect: 52 passed
+python -m pytest tests -q          # expect: 54 passed
 ```
 
 Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
@@ -53,7 +53,7 @@ Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
 | Ward-hours fetched per cycle | **20,304** (141 × 144 h) |
 | Ward-days scored | **846** (141 × 6 days) — see the window note below |
 | Open-Meteo requests per cycle | **4** (batched 40 coords/request) |
-| Tests | **52 passed** |
+| Tests | **54 passed** (including heatwave drill coverage) |
 | `/zones` count | **141** |
 | Alert threshold | **60.0** (`DEFAULT_RISK_THRESHOLD` in `core/alerts.py`) |
 | Default min lead | **1 day** (`DEFAULT_MIN_LEAD_DAYS`) |
@@ -122,7 +122,7 @@ app/main.py    FastAPI: /health /zones /risk/ranking /alerts/plan /subscribers* 
 scripts/       refresh · schedule · hindcast · build_wards · build_demographics · package
 frontend/web/  Vite + React + Framer Motion + Tailwind dashboard
 data/          wards, census, processed outputs, cache, subscribers.csv
-tests/         test_thermal (11) · test_alerts (15) · test_operations (26) = 52 total test cases
+tests/         test_thermal (11) · test_alerts (15) · test_operations (26) · test_drill (6) = 58 total test cases
 ```
 
 ---
@@ -220,7 +220,7 @@ Full detail in `DATA.md`.
 ## 10. Before you open a PR
 
 ```bash
-python -m pytest tests -q          # must be 52 passed
+python -m pytest tests -q          # must be 54 passed
 python -m scripts.refresh          # must still print 20,304 / 846
 cd frontend/web && npm run build   # must succeed
 ```

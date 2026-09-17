@@ -6,7 +6,7 @@ REM ============================================================================
 setlocal EnableDelayedExpansion
 
 echo.
-echo   HeatShield setup
+echo HeatShield setup (PWA dashboard; no Android tooling required)
 echo.
 
 REM ------------------------------------------------------------- 1. Python

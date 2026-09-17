@@ -25,6 +25,16 @@ PAST_DAYS = int(os.getenv("HS_PAST_DAYS", "1"))             # "now" context (use
 CACHE_TTL_MIN = int(os.getenv("HS_CACHE_TTL_MIN", "30"))   # don't hammer the free API
 BATCH_SIZE = int(os.getenv("HS_BATCH_SIZE", "40"))         # coords per HTTP request
 
+# Deterministic operator drill profiles. Values are day offsets, anchored to
+# the first date returned by the forecast window.
+DRILL_PROFILES = {
+    "heatwave": {
+        "label": "Heatwave drill",
+        "description": "A deterministic escalating heatwave anomaly for response rehearsal.",
+        "anomalies_c": [0.0, 0.0, 0.0, 1.5, 5.0, 8.5],
+    },
+}
+
 # Hourly variables we need now (Phase 1) + later (Phase 2 WBGT/Heat Index).
 # shortwave_radiation -> globe temperature (outdoor WBGT)
 # direct_normal_irradiance -> sun-angle / shade refinements
