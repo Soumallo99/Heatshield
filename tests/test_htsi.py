@@ -8,11 +8,9 @@ from __future__ import annotations
 
 import math
 
-import numpy as np
 import pandas as pd
 import pytest
 
-from core import htsi
 from core.htsi import (
     ASSUMPTION_NO_RADIATION,
     ASSUMPTION_NO_WIND,
@@ -25,7 +23,6 @@ from core.htsi import (
     htsi_score,
     thermal_metrics,
 )
-from core.thermal import heat_index
 
 
 # --------------------------------------------------------------------------- #

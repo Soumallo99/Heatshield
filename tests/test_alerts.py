@@ -19,7 +19,6 @@ from datetime import date, timedelta
 from pathlib import Path
 
 import pandas as pd
-import pytest
 
 from core.alerts import (
     DEFAULT_MIN_LEAD_DAYS,

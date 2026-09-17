@@ -5,7 +5,7 @@ import {
   TileLayer, Tooltip, useMap, useMapEvents,
 } from 'react-leaflet'
 import { bandColour } from '../motion'
-import { BASEMAPS, DEFAULT_BASEMAP, getBasemap, USING_KEYED_TILES } from '../basemaps'
+import { BASEMAPS, DEFAULT_BASEMAP, getBasemap, OSM_FALLBACK } from '../basemaps'
 
 /**
  * Ward risk map.
@@ -15,9 +15,9 @@ import { BASEMAPS, DEFAULT_BASEMAP, getBasemap, USING_KEYED_TILES } from '../bas
  *
  * Basemaps: see ../basemaps.js. Four keyless styles (Dark / Streets /
  * Satellite+labels / Terrain) at @2x where the provider offers it, so the map
- * reads as sharp and as complete as a consumer map app. Drop a
- * VITE_MAPTILER_KEY into .env and the same switcher silently upgrades to
- * higher-detail commercial tiles — no code change.
+ * reads as sharp and as complete as a consumer map app — with an automatic
+ * OpenStreetMap fallback if a tile CDN is unreachable. No API key is ever
+ * requested, so an "API key required" tile cannot appear.
  *
  * Why not Google tiles directly? Pulling mt{n}.google.com/vt breaks the Maps
  * ToS. The licensed route (Maps JS API / Map Tiles API) needs a billing key;
@@ -34,17 +34,6 @@ const KOLKATA_CENTER = [22.5726, 88.3639]
 // Hard bounds: the data is Kolkata-only, so let people zoom out to see context
 // but stop them drifting to the Atlantic.
 const MAX_BOUNDS = L.latLngBounds([21.9, 87.6], [23.2, 89.2])
-
-/* Emergency basemap: if the configured provider's tiles keep failing (invalid
-   or expired API key, blocked CDN), the map degrades to keyless CARTO tiles
-   instead of showing a field of "API key required" error tiles. */
-const KEYLESS_FALLBACK = {
-  url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-  subdomains: 'abcd',
-  maxZoom: 20,
-  maxNativeZoom: 20,
-  attribution: '© OpenStreetMap contributors · © CARTO',
-}
 
 // Mirrors core.risk band order (see bandColour in ../motion).
 const LEGEND = ['Normal', 'Caution', 'Danger', 'Critical', 'Extreme']
@@ -157,9 +146,11 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
   const [tileFailures, setTileFailures] = useState(0)
 
   const basemap = getBasemap(basemapId)
+  // If the selected tile CDN keeps failing (blocked network, hostile proxy),
+  // degrade to OpenStreetMap tiles on a different CDN — never broken tiles.
   const degraded = tileFailures > 6
   const effectiveBasemap = degraded
-    ? { ...basemap, ...KEYLESS_FALLBACK, id: `${basemap.id}-keyless`, labels: undefined }
+    ? { ...basemap, ...OSM_FALLBACK, id: `${basemap.id}-fallback`, labels: undefined }
     : basemap
   useEffect(() => { setTileFailures(0) }, [basemapId])
 
@@ -280,9 +271,9 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
           className="absolute left-3 top-3 z-[1000] max-w-[280px] rounded-lg border border-amber-300/40 bg-ink-950/90 px-3 py-2 text-[11px] leading-snug text-amber-200/90"
           role="status"
         >
-          Basemap tiles from the configured provider kept failing (invalid/expired API key or a
-          blocked CDN) — switched to keyless CARTO tiles so the risk map stays usable. Check
-          <code> frontend/web/.env</code> if you set <code>VITE_MAPTILER_KEY</code>/<code>VITE_THUNDERFOREST_KEY</code>.
+          Basemap tiles from the selected provider keep failing on this network — switched to
+          OpenStreetMap standard tiles so the risk map stays usable. Every basemap here is
+          keyless; no API key is requested anywhere.
         </div>
       )}
       <MapContainer
@@ -465,9 +456,8 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
                 </button>
               ))}
               <div className="note">
-                {USING_KEYED_TILES
-                  ? 'API key detected — high-detail tiles active.'
-                  : 'Keyless tiles. Add VITE_MAPTILER_KEY to .env for higher detail.'}
+                Keyless tiles only — CARTO, Esri and OpenTopoMap, with an automatic
+                OpenStreetMap fallback. No API key is used or required.
               </div>
             </div>
           )}

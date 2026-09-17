@@ -26,7 +26,7 @@ feed is a data task, not a code change.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import timezone
 import math
 from typing import Any, Iterable, Sequence
 
@@ -42,7 +42,6 @@ from core.coupled import (
     ncr_daily,
 )
 from core.health_impact import (
-    STATUS_PARAMETERISED,
     health_impact_band,
     health_impact_index,
     resolve_model_status,

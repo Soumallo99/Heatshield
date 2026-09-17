@@ -30,6 +30,8 @@ Run:  python -m core.risk                      # current conditions
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -431,7 +433,7 @@ if __name__ == "__main__":
     wards = load_wards()
 
     print("=" * 96)
-    print(f"PHASE 3 — Mortality Risk Index" + (f"   [scenario: {offset:+.0f} C]" if offset else ""))
+    print("PHASE 3 — Mortality Risk Index" + (f"   [scenario: {offset:+.0f} C]" if offset else ""))
     print("=" * 96)
 
     uhi = wards.assign(uhi_delta_c=uhi_delta(wards), vuln=vulnerability_index(wards))

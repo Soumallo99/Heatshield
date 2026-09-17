@@ -1,24 +1,20 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import { formatNumber, formatTemp, levelLabel, normaliseDemoPayload, text } from '../demo/contract.js'
 import { DemoScreen } from '../demo/screens.js'
+import { readJSON, staticURL } from '../staticApi.js'
 
 const DemoMap = lazy(() => import('../demo/DemoMap.jsx'))
-
-const BASE_PATH = import.meta.env.BASE_URL || './'
-const staticURL = (name) => `${BASE_PATH.replace(/\/?$/, '/')}static-api/${name}`
-
-async function readJSON(url, signal) {
-  const response = await fetch(url, { headers: { Accept: 'application/json' }, signal })
-  if (!response.ok) throw new Error(`${url} returned ${response.status}`)
-  return response.json()
-}
 
 /* Honesty first: the live advance-warning payload says whether it is a real
    forecast or the labelled synthetic outage exercise — the banner mirrors it. */
 function disclaimerFor(doc) {
-  return doc?.quality_state === 'live-forecast'
-    ? 'Live model forecast for Delhi NCR — operational-style advance warning. Not an official IMD declaration; the health-impact indicator is parameterised, not a validated mortality forecast.'
-    : 'Practice data (provider outage fallback) — not a live forecast or observation.'
+  if (doc?.quality_state === 'live-forecast') {
+    // Prefer the backend's own honest disclaimer; keep a local fallback.
+    return typeof doc.disclaimer === 'string' && doc.disclaimer.trim()
+      ? doc.disclaimer.trim()
+      : 'Live model forecast for Delhi NCR — operational-style advance warning. Not an official IMD declaration; the health-impact indicator is parameterised, not a validated mortality forecast.'
+  }
+  return 'Practice data (provider outage fallback) — not a live forecast or observation.'
 }
 
 /* /warnings/advance rows carry the SAME field contract as the demo warnings,
@@ -117,9 +113,17 @@ export default function DelhiOps() {
   }, [reloadToken])
 
   const zones = payload?.zones || []
+  /* Lead days come from the DATA, not a hard-coded 0–5: the live engine
+     currently issues leads 0–6 (yesterday-anchored window), and the demo
+     issues 0–5 — the button row must match whatever arrived. */
+  const leadDays = useMemo(() => {
+    const unique = [...new Set((payload?.warnings.rows || []).map((row) => row.lead_days))].sort((a, b) => a - b)
+    return unique.length ? unique : [0, 1, 2, 3, 4, 5]
+  }, [payload])
+  const activeLead = leadDays.includes(leadDay) ? leadDay : leadDays[Math.min(3, leadDays.length - 1)]
   const dayRows = useMemo(
-    () => (payload ? payload.warnings.rows.filter((row) => row.lead_days === leadDay) : []),
-    [payload, leadDay],
+    () => (payload ? payload.warnings.rows.filter((row) => row.lead_days === activeLead) : []),
+    [payload, activeLead],
   )
   const severeToday = useMemo(
     () => (payload ? payload.warnings.rows.filter((row) => row.alert_level === 'severe').length : 0),
@@ -145,7 +149,9 @@ export default function DelhiOps() {
       <header className="demo-header">
         <div className="demo-header__titles">
           <p className="demo-kicker">DELHI NCR · ZONE-LEVEL ADVANCE WARNINGS</p>
-          <h1>Delhi NCR operations — 8 zones, leads Day +0…+5</h1>
+          <h1>
+            Delhi NCR operations — {zones.length || 8} zones, leads Day +{leadDays[0]}…+{leadDays[leadDays.length - 1]}
+          </h1>
           {payload ? <p className="demo-disclaimer" role="status">{payload.disclaimer}</p> : null}
         </div>
       </header>
@@ -160,7 +166,9 @@ export default function DelhiOps() {
           <div className="demo-metric">
             <span className="demo-metric__label">Warning rows</span>
             <strong className="demo-metric__value">{formatNumber(payload.warnings.rows.length, 0)}</strong>
-            <span className="demo-metric__hint">{formatNumber(zones.length, 0)} zones × leads 0–5</span>
+            <span className="demo-metric__hint">
+              {formatNumber(zones.length, 0)} zones × leads {leadDays[0]}–{leadDays[leadDays.length - 1]}
+            </span>
           </div>
           <div className="demo-metric">
             <span className="demo-metric__label">Severe rows</span>
@@ -199,12 +207,12 @@ export default function DelhiOps() {
             <div className="demo-control">
               <span className="demo-control__label" id="delhi-lead-label">Lead day</span>
               <div className="demo-lead-row" role="group" aria-labelledby="delhi-lead-label">
-                {[0, 1, 2, 3, 4, 5].map((day) => (
+                {leadDays.map((day) => (
                   <button
                     key={day}
                     type="button"
-                    className={`demo-btn${day === leadDay ? ' is-active' : ''}`}
-                    aria-pressed={day === leadDay}
+                    className={`demo-btn${day === activeLead ? ' is-active' : ''}`}
+                    aria-pressed={day === activeLead}
                     onClick={() => setLeadDay(day)}
                   >
                     Day +{day}
@@ -240,7 +248,7 @@ export default function DelhiOps() {
           <div className="demo-body">
             <div className="demo-panel demo-panel--map">
               <h2 className="demo-panel__title">
-                GIS view — Day +{leadDay}
+                GIS view — Day +{activeLead}
                 <span className="demo-panel__sub"> zone grid points, not street-level observations</span>
               </h2>
               <Suspense fallback={<div className="demo-map demo-map--empty" aria-busy="true">Loading map…</div>}>
@@ -248,7 +256,7 @@ export default function DelhiOps() {
                   rows={dayRows}
                   zones={zones}
                   layer={layer}
-                  leadDay={leadDay}
+                  leadDay={activeLead}
                   selectedZoneId={zoneId}
                   showCooling={false}
                   onSelect={setZoneId}
@@ -260,7 +268,7 @@ export default function DelhiOps() {
               </p>
             </div>
             <div className="demo-panel demo-panel--screen">
-              <DemoScreen screen={view} payload={payload} selectedZoneId={zoneId} leadDay={leadDay} />
+              <DemoScreen screen={view} payload={payload} selectedZoneId={zoneId} leadDay={activeLead} />
             </div>
           </div>
         </>

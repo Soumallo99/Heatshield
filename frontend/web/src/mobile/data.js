@@ -1,10 +1,5 @@
 import { normalisePhonePayload } from './contract.js'
-
-// Vite's base is './' for the production bundle, so this remains inside a
-// GitHub Pages project subdirectory instead of accidentally requesting
-// https://<owner>.github.io/static-api/... at the domain root.
-const BASE_PATH = import.meta.env.BASE_URL || './'
-const staticURL = (name) => `${BASE_PATH.replace(/\/?$/, '/')}static-api/${name}`
+import { isStaticHost, readJSON as fetchJSON, staticURL } from '../staticApi.js'
 
 export class PhoneDataError extends Error {
   constructor(message) {
@@ -13,27 +8,7 @@ export class PhoneDataError extends Error {
   }
 }
 
-async function readJSON(url, signal) {
-  let response
-  try {
-    response = await fetch(url, { headers: { Accept: 'application/json' }, signal })
-  } catch (error) {
-    if (error?.name === 'AbortError') throw error
-    throw new PhoneDataError(`Unable to reach ${url}`)
-  }
-  if (!response.ok) throw new PhoneDataError(`${url} returned ${response.status}`)
-  try {
-    return await response.json()
-  } catch {
-    throw new PhoneDataError(`${url} returned invalid JSON`)
-  }
-}
-
-function isStaticHost() {
-  if (typeof window === 'undefined') return false
-  const host = window.location.hostname
-  return window.location.protocol === 'file:' || host.endsWith('.github.io') || new URLSearchParams(window.location.search).has('static')
-}
+const readJSON = (url, signal) => fetchJSON(url, signal, PhoneDataError)
 
 async function staticSnapshot(signal, city = 'delhi') {
   const file = city === 'kolkata' ? 'citizen-kolkata.json' : 'citizen.json'
@@ -68,5 +43,3 @@ export async function loadPhonePayload({ city = 'delhi', signal } = {}) {
     }
   }
 }
-
-export { staticURL }

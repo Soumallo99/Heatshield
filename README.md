@@ -340,19 +340,12 @@ consumer map does, and risk shading can be toggled off to read the streets under
 All four are **keyless** — clone and run, no signup, matching the rest of the project.
 Registry lives in [`frontend/web/src/basemaps.js`](frontend/web/src/basemaps.js).
 
-Even with an optional key configured, you can never land on a field of *"API key required"*
-error tiles: if the keyed provider keeps failing (bad/expired key, blocked CDN), `RiskMap`
-counts `tileerror`s and automatically degrades to keyless CARTO tiles with a visible notice
-explaining what happened and how to fix the key. The demo/Delhi map is keyless-only and shows
-an equivalent honest note if its CDN is unreachable.
-
-Optional upgrade: put a key in `.env` and the same switcher swaps in higher-detail
-commercial tiles with no code change.
-
-```bash
-VITE_MAPTILER_KEY=...        # MapTiler Streets / Satellite / Hybrid, labels to z22
-VITE_THUNDERFOREST_KEY=...   # adds an extra "Atlas" street style
-```
+**An *"API key required"* tile can never appear.** The optional keyed-provider upgrade
+(`VITE_MAPTILER_KEY` / `VITE_THUNDERFOREST_KEY`) has been removed from the shipped code —
+there is no key slot left to misconfigure. And if a tile CDN is unreachable (blocked
+network, hostile proxy), `RiskMap` counts `tileerror`s and automatically degrades to
+OpenStreetMap standard tiles on a *different* CDN with a visible notice; the demo/Delhi
+map does the same. Every map keeps rendering keyless, whatever the network does.
 
 **On "just use Google Maps":** pulling tiles from `mt{n}.google.com/vt` is a ToS
 violation and is not done here. The licensed route is the Maps JavaScript API or the
@@ -852,34 +845,23 @@ missing disclaimer, colour-only legends and non-composite motion.
 
 ---
 
-## Map API keys, installability & notification automation
+## Map keys, installability & notification automation
 
-### Map API keys — optional, the maps work keyless
+### Maps are keyless — no "API key required", ever
 
-Every map (operations dashboard and the Heat Risk Demo) renders out of the box with keyless
-CARTO/ESRI/OpenTopoMap tiles. If you want the higher-detail commercial basemaps, the **exact
-lines that read the keys** are in `frontend/web/src/basemaps.js`:
+Every map (operations dashboard, Heat Risk Demo, Delhi NCR ops) renders out of the box with
+keyless CARTO/Esri/OpenTopoMap tiles. The former *optional* commercial-key upgrade was
+**removed from the shipped code entirely**: a misconfigured, expired or placeholder key could
+paint the map with the provider's *"API key required"* error tiles, and a prototype must never
+depend on a key nobody has. There is now no tile-key slot anywhere — `frontend/web/src/basemaps.js`
+contains only keyless providers plus `OSM_FALLBACK` (automatic OpenStreetMap tiles on a
+different CDN when one is blocked, with an honest on-map notice; a test enforces that no keyed
+provider can creep back in).
 
-```js
-// frontend/web/src/basemaps.js — lines 23–24
-const MAPTILER_KEY = import.meta.env?.VITE_MAPTILER_KEY || ''
-const THUNDERFOREST_KEY = import.meta.env?.VITE_THUNDERFOREST_KEY || ''
-```
-
-You do **not** edit those lines — you supply the value through the environment:
-
-```bash
-cp frontend/web/.env.example frontend/web/.env    # gitignored
-# put your key in frontend/web/.env:
-#   VITE_MAPTILER_KEY=pk.xxxxxxxxxxxxxxxx
-npm run build                                      # or restart npm run dev
-```
-
-**Which key:** a free **MapTiler** API key — sign up at <https://cloud.maptiler.com> →
-*Account → Keys* (no billing required for the free tier). With it set, the dashboard's basemap
-picker automatically upgrades to MapTiler Streets / Satellite / Hybrid (wired at
-`basemaps.js` lines ~90–115). A **Thunderforest** key (<https://www.thunderforest.com>) is an
-optional extra street style. Never commit the `.env` file.
+If you genuinely want commercial tiles **for your own deployment**, add an entry to the
+registry in `basemaps.js` yourself — a plain `{ id, label, hint, url, attribution, … }` object
+consumed by `<TileLayer/>` — and keep the `tileerror` fallback behaviour in
+`RiskMap.jsx`/`DemoMap.jsx` intact so a bad key can never blank the map again.
 
 ### Using Google tiles (and why there is no Google key field)
 
@@ -891,8 +873,8 @@ comment at the top of `basemaps.js`). If you hold a billing-enabled key, the sup
 
 1. Keep the keyless CARTO/ESRI basemaps (visually very close, zero cost), or
 2. Take the MapTiler upgrade above (free tier), or
-3. Add a `google` entry to the `keyless`/keyed registry in `basemaps.js` using the official
-   Map Tiles API with its session flow — a self-contained change to that one file.
+3. Add a `google` entry to the registry in `basemaps.js` using the official Map Tiles API
+   with its session flow — a self-contained change to that one file.
 
 **For *location* ("find me on the map") no Google key is needed at all:** the citizen tab's 📍
 button uses the browser's built-in **Geolocation API** and matches your GPS fix to the nearest

@@ -95,8 +95,13 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
     return () => window.removeEventListener('beforeinstallprompt', onPrompt)
   }, [])
 
+  const refreshController = useRef(null)
   const refresh = useCallback(async () => {
+    // Abort an in-flight manual refresh before starting a new one, so rapid
+    // taps cannot land out of order.
+    refreshController.current?.abort()
     const controller = new AbortController()
+    refreshController.current = controller
     setStatus('loading')
     setError('')
     try {
@@ -111,7 +116,6 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
       setStatus('error')
       setError(fetchError?.message || 'Unable to load HeatShield data.')
     }
-    return () => controller.abort()
   }, [city])
 
   useEffect(() => {
@@ -245,7 +249,7 @@ export default function PhoneApp({ onExit, initialZoneId = '' }) {
       }
       setAlertsOn(true)
       writeAlertPref(true)
-      setNotice('Personal heat alerts ON for your selected locality — unhealthy heat+air load triggers one labelled notification per update.')
+      setNotice('Personal heat alerts ON for your selected locality — a heat-danger state sends one protective notification per update; otherwise you get a calm temperature/humidity/wind summary.')
     } catch {
       setNotice('Could not enable notifications in this browser.')
     }

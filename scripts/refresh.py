@@ -82,8 +82,6 @@ def main(offline: bool = False) -> None:
     print(f"Dates   : {daily['date'].min()} -> {daily['date'].max()}")
 
     # 4. What the alert engine will actually see.
-    from datetime import date
-
     from core.alerts import (
         DEFAULT_MIN_LEAD_DAYS,
         DEFAULT_RISK_THRESHOLD,

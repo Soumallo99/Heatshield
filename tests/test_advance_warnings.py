@@ -6,8 +6,6 @@ synthetic data — it never becomes an HTTP 500 on a warning route.
 """
 from __future__ import annotations
 
-from datetime import date, timedelta
-
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
@@ -16,7 +14,6 @@ import core.coupled as coupled
 import core.demo as demo
 from app.main import app
 from core.warnings import (
-    ACTION_MATRIX,
     ALERT_LEVELS,
     build_warning_rows,
     derive_alert_level,

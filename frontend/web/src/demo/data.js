@@ -1,10 +1,5 @@
 import { normaliseDemoPayload } from './contract.js'
-
-// Vite's base is './' in production, so the demo keeps working inside a
-// GitHub Pages project subdirectory. Browser code only ever uses relative
-// paths — the static host serves both the app and its snapshots.
-const BASE_PATH = import.meta.env.BASE_URL || './'
-const staticURL = (name) => `${BASE_PATH.replace(/\/?$/, '/')}static-api/${name}`
+import { isStaticHost, readJSON as fetchJSON, staticURL } from '../staticApi.js'
 
 export class DemoDataError extends Error {
   constructor(message) {
@@ -13,29 +8,7 @@ export class DemoDataError extends Error {
   }
 }
 
-async function readJSON(url, signal) {
-  let response
-  try {
-    response = await fetch(url, { headers: { Accept: 'application/json' }, signal })
-  } catch (error) {
-    if (error?.name === 'AbortError') throw error
-    throw new DemoDataError(`Unable to reach ${url}`)
-  }
-  if (!response.ok) throw new DemoDataError(`${url} returned ${response.status}`)
-  try {
-    return await response.json()
-  } catch {
-    throw new DemoDataError(`${url} returned invalid JSON`)
-  }
-}
-
-function isStaticHost() {
-  if (typeof window === 'undefined') return false
-  const host = window.location.hostname
-  return window.location.protocol === 'file:'
-    || host.endsWith('.github.io')
-    || new URLSearchParams(window.location.search).has('static')
-}
+const readJSON = (url, signal) => fetchJSON(url, signal, DemoDataError)
 
 async function staticBundle(scenarioId, signal) {
   const [scenarios, zones, forecast, thermal, warnings, notifications] = await Promise.all([
@@ -79,5 +52,3 @@ export async function loadDemoPayload(scenarioId, { signal } = {}) {
     }
   }
 }
-
-export { staticURL }

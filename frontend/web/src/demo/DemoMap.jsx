@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { AttributionControl, CircleMarker, MapContainer, TileLayer, Tooltip } from 'react-leaflet'
 import { bandColour, levelColour, levelLabel, formatNumber, formatTemp, text } from './contract.js'
+import { OSM_FALLBACK } from '../basemaps.js'
 
 /* Layer definitions: every value is paired with WORDS — colour is never the
    only channel (accessibility rule enforced by tests/test_demo_app.py). */
@@ -113,10 +114,12 @@ export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, sel
       >
         <AttributionControl position="bottomright" prefix={false} />
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          subdomains="abcd"
+          key={tilesDegraded ? 'osm' : 'carto'}
+          url={tilesDegraded ? OSM_FALLBACK.url : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'}
+          subdomains={tilesDegraded ? OSM_FALLBACK.subdomains : 'abcd'}
           maxZoom={20}
-          attribution="© OpenStreetMap contributors · © CARTO"
+          maxNativeZoom={tilesDegraded ? OSM_FALLBACK.maxNativeZoom : undefined}
+          attribution={tilesDegraded ? OSM_FALLBACK.attribution : '© OpenStreetMap contributors · © CARTO'}
           eventHandlers={{ tileerror: () => setTileFailures((n) => n + 1) }}
         />
         {markers.map(({ row, zone }) => {
@@ -161,8 +164,9 @@ export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, sel
       </MapContainer>
       {tilesDegraded ? (
         <p className="demo-note" role="status">
-          Basemap tiles are unreachable on this network (no API key is involved — these tiles are
-          keyless). The coloured risk markers above and the zone tables carry the full data.
+          The CARTO basemap is unreachable on this network — switched to OpenStreetMap standard
+          tiles (both keyless; no API key is involved anywhere). If that CDN is blocked too, the
+          coloured risk markers and the zone tables still carry the full data.
         </p>
       ) : null}
       <ul className="demo-map-legend" aria-label={`${layerDef.label} legend`}>

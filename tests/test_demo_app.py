@@ -192,9 +192,17 @@ def test_both_cities_are_switchable_in_dashboard_and_citizen_tab():
     # No quoted absolute URLs in the loader (comments explaining GitHub Pages
     # URLs are fine); every fetch target must be relative.
     assert not re.search(r"[\"']https?://", data)
-    # The Kolkata map renders with keyless tiles and degrades honestly.
+    # Hard map guarantee: the shipped registry contains NO keyed tile provider —
+    # an "API key required" tile cannot be requested because no keyed URL is
+    # ever built — and failing CDNs degrade to OpenStreetMap tiles instead.
+    basemaps_src = (WEB / "src" / "basemaps.js").read_text(encoding="utf-8")
+    lowered = basemaps_src.lower()
+    assert "maptiler" not in lowered and "thunderforest" not in lowered
+    assert "key=" not in lowered and "apikey" not in lowered
+    assert "OSM_FALLBACK" in basemaps_src
+    assert not (WEB / ".env.example").exists()  # keyed-tile env slot removed
     risk_map = (WEB / "src" / "components" / "RiskMap.jsx").read_text(encoding="utf-8")
-    assert "KEYLESS_FALLBACK" in risk_map and "tileerror" in risk_map
+    assert "OSM_FALLBACK" in risk_map and "tileerror" in risk_map
 
 
 def test_demo_is_route_level_code_split_and_prominently_linked():
@@ -205,7 +213,11 @@ def test_demo_is_route_level_code_split_and_prominently_linked():
     assert "onDemo" in landing and "Heat Risk Demo" in landing
     dashboard = (WEB / "src" / "components" / "Dashboard.jsx").read_text(encoding="utf-8")
     assert "onDemo" in dashboard and "Heat Risk Demo" in dashboard
-    # The demo data loader only ever uses relative URLs (static-host safe).
+    # The demo data loader only ever uses relative URLs (static-host safe),
+    # through the single shared static-snapshot helper.
     data = (WEB / "src" / "demo" / "data.js").read_text(encoding="utf-8")
     assert "http://" not in data and "https://" not in data
-    assert "'./api/demo/" in data and "static-api/" in data
+    assert "'./api/demo/" in data and "staticURL(" in data
+    shared = (WEB / "src" / "staticApi.js").read_text(encoding="utf-8")
+    assert "static-api/" in shared
+    assert not re.search(r"[\"']https?://", shared)

@@ -268,12 +268,14 @@ def dispatch(events: pd.DataFrame, dry_run: bool = True, to_numbers: list[str] |
     duty officers) instead of blasting one flat list. Falls back to the flat list
     for wards with no subscribers, so a ward is never silently skipped.
     """
+    # Lazy import: keeps this module importable standalone (no hard dependency
+    # on the subscribers store at import time).
+    from core.subscribers import recipients_for_ward
+
     if not dry_run:
         allowed, reason = live_send_allowed()
         if not allowed:
             raise PermissionError(reason)
-
-        from core.subscribers import recipients_for_ward  # local import: keeps the module importable standalone
 
     flat = to_numbers or ALERT_TO or ["dry-run"]
     records = []
@@ -282,7 +284,6 @@ def dispatch(events: pd.DataFrame, dry_run: bool = True, to_numbers: list[str] |
         body = compose_message(ev)
         if dry_run:
             if per_ward:
-                from core.subscribers import recipients_for_ward
                 targets = recipients_for_ward(ev["ward_id"]) or flat
             else:
                 targets = flat

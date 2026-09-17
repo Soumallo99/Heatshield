@@ -132,7 +132,8 @@ def _quality_line(row: dict[str, Any]) -> str:
 
 def compose_early_warning(row: dict[str, Any], audience_id: str) -> str:
     """Advance (1–5 day) warning copy for one audience."""
-    audience = AUDIENCES[audience_id]
+    if audience_id not in AUDIENCES:
+        raise KeyError(audience_id)
     level = _LEVEL_WORD.get(row.get("alert_level", "watch"), "WATCH")
     day = _weekday(row.get("target_date", ""))
     header = (

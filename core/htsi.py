@@ -37,7 +37,7 @@ Run standalone:  python -m core.htsi        (worked examples incl. missing input
 from __future__ import annotations
 
 import math
-from typing import Any, Iterable, Sequence
+from typing import Any, Sequence
 
 import numpy as np
 import pandas as pd

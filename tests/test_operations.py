@@ -12,17 +12,14 @@ in a demo.
 """
 from __future__ import annotations
 
-import os
 from datetime import datetime, timedelta
-from pathlib import Path
 
 import pandas as pd
 import pytest
 
 import core.alerts as alerts
 import core.subscribers as subs
-from core.alerts import (DEFAULT_MIN_LEAD_DAYS, DEFAULT_RISK_THRESHOLD,
-                         filter_already_sent, live_send_allowed)
+from core.alerts import filter_already_sent, live_send_allowed
 
 
 # --------------------------------------------------------------------------- #
