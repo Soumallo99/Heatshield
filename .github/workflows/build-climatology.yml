@@ -46,7 +46,7 @@ jobs:
         env:
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
-          if test -f data/climatology_normals.json && git diff --quiet -- data/climatology_normals.json; then
+          if test -z "$(git status --porcelain -- data/climatology_normals.json)"; then
             echo "climatology already current"
             exit 0
           fi
