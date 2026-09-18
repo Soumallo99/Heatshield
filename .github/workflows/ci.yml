@@ -39,10 +39,22 @@ jobs:
         working-directory: frontend/web
         run: npm ci
 
+      # The budget and installability tests measure real Vite output, so the
+      # build belongs here rather than inside a fixture: if it fails, the
+      # failing step says so by name. NODE_OPTIONS gives CesiumJS's ~4 MB bundle
+      # headroom, because an OOM here is silent apart from a non-zero exit.
+      - name: Build the frontend (the tests measure this output)
+        working-directory: frontend/web
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: npm run build
+
       # Failures are echoed as check-run annotations. The raw job log lives on a
       # host that some networks (and sandboxes) cannot reach; annotations are on
       # the API, so "which test broke" is answerable from `gh` alone.
       - name: Run tests
+        env:
+          HS_TEST_SKIP_BUILD: "1"
         run: |
           set -o pipefail
           if python -m pytest tests -q 2>&1 | tee /tmp/pytest.log; then
