@@ -276,6 +276,17 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
           keyless; no API key is requested anywhere.
         </div>
       )}
+      {/* Leaflet's attribution control is off so the map chrome stays ours — which
+          makes the credit ours to render. It follows `effectiveBasemap`, so when
+          the tiles degrade to OpenStreetMap the line changes with them: the map
+          must never credit a provider it is not drawing. */}
+      <div
+        className="map-credit pointer-events-none absolute bottom-1 right-2 z-[700] max-w-[78%] rounded bg-black/55 px-1.5 py-0.5 text-right text-[10px] leading-tight text-white/70"
+        role="note"
+        title={effectiveBasemap.attribution}
+      >
+        {effectiveBasemap.attribution}
+      </div>
       <MapContainer
         center={KOLKATA_CENTER}
         zoom={11}

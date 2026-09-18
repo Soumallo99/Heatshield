@@ -24,18 +24,51 @@ import './index.css'
  * scripts are exactly what an injected script would use. See index.html.
  */
 if ('serviceWorker' in navigator) {
+  // Did a worker already control this page when it loaded? A FIRST visit has no
+  // controller, and `clients.claim()` in the worker's activate step fires
+  // `controllerchange` then too — refreshing on that would reload every new
+  // visitor's first page for no reason at all.
+  const wasControlled = Boolean(navigator.serviceWorker.controller)
+
   window.addEventListener('load', () => {
     if (import.meta.env.PROD) {
+      // A deploy while somebody has the app open leaves a new worker waiting:
+      // the pages already loaded keep running the old build, and its chunk
+      // filenames are gone from the server. Promote the waiting worker the
+      // moment it finishes installing instead of waiting for every tab to close,
+      // then reload once so the running code matches what the server has.
+      const promote = (worker) => worker?.postMessage({ type: 'SKIP_WAITING' })
       navigator.serviceWorker
         .register('./sw.js', { scope: './' })
         .then((reg) => {
-          // Pick up a new worker as soon as one is waiting, without a full reload.
-          if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' })
+          if (reg.waiting) promote(reg.waiting)
+          reg.addEventListener('updatefound', () => {
+            const installing = reg.installing
+            installing?.addEventListener('statechange', () => {
+              if (installing.state === 'installed' && navigator.serviceWorker.controller) promote(installing)
+            })
+          })
         })
         .catch((err) => {
           // Offline capability is an enhancement, never a hard failure.
           warn(`service worker registration failed: ${err?.message || err}`)
         })
+
+      // Refresh at most once per page load, and not while somebody is typing:
+      // the subscriber box is the only place a reload mid-entry would cost a
+      // person their input. If a field has focus, look again shortly.
+      let refreshed = false
+      const typing = () => /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '')
+      const refreshForNewBuild = () => {
+        if (refreshed || !wasControlled) return
+        if (typing()) {
+          setTimeout(refreshForNewBuild, 2000)
+          return
+        }
+        refreshed = true
+        window.location.reload()
+      }
+      navigator.serviceWorker.addEventListener('controllerchange', refreshForNewBuild)
       return
     }
     navigator.serviceWorker

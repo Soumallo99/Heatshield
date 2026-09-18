@@ -176,7 +176,9 @@ def test_dispatch_recipient_lists_are_capped_and_sanitised():
     payload = DispatchIn(to_numbers=["+919876543210", "junk", "+919876543210", "12345"])
     assert payload.recipients == ["+919876543210"], "normalised, de-duplicated, junk dropped"
     # An oversized list is rejected outright rather than silently trimmed.
-    with pytest.raises(Exception):
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
         NotifyDispatchIn(to_numbers=[f"+9198765{i:05d}" for i in range(200)])
     assert len(NotifyDispatchIn(to_numbers=[f"+9198765{i:05d}" for i in range(50)]).recipients) == 50
 

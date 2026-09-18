@@ -36,6 +36,19 @@ export function resolveRoute(hash) {
 }
 
 /**
+ * The page a hash *key* names, for callers that hold a key rather than a hash.
+ *
+ * `go('')` is the Overview button: the key is the empty hash, and its page is
+ * the landing page. Without this the preloader looked up a chunk for `''`, found
+ * nothing and quietly skipped the head start — the press still worked, it just
+ * lost the half second the preload exists to win back.
+ */
+export function routeForTarget(target) {
+  const key = String(target ?? '').replace(/^#/, '').replace(/^\//, '').split('?')[0]
+  return ROUTES[key] || 'notfound'
+}
+
+/**
  * The section a link asked for, or null. The fragment cannot be left to the
  * browser here: `#/#sources` means the fragment is `/#sources`, which will
  * never match an element id.

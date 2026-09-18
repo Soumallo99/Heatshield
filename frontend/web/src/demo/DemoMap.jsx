@@ -114,6 +114,8 @@ export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, sel
         className="demo-map"
         aria-label={`Demo risk map, ${layerDef.label} layer, Day +${leadDay}`}
       >
+        {/* The credit follows the tiles actually drawn: switching to the
+            OpenStreetMap fallback switches the credit with them. */}
         <AttributionControl position="bottomright" prefix={false} />
         {/* Dark layer comes from the shared keyless registry (../basemaps.js):
             one place decides which providers may render, and the demo cannot

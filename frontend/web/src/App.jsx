@@ -1,22 +1,44 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import HeatField from './components/HeatField'
+import { CHUNK_NAMES, loadChunk, ROUTE_CHUNK } from './lazyRoute'
+import { EASE } from './motion'
+import pageMeta from './site-pages.json'
+import { anchorFromHash, resolveRoute, routeForTarget } from './routes'
 
 // Route-level chunks protect a phone cold-open from the dense operations
 // console (and its chart/map helpers). The map itself remains lazy inside the
 // dashboard, so no Leaflet code is fetched for citizen use.
-const Landing = lazy(() => import('./components/Landing'))
-const Dashboard = lazy(() => import('./components/Dashboard'))
-const PhoneApp = lazy(() => import('./mobile/PhoneApp'))
-// The demo ships in its own chunk: cold-opening Overview or Citizen never pays
-// for demo code, and the demo never needs the live API.
-const DemoApp = lazy(() => import('./demo/DemoApp'))
-// Privacy, Terms and the 404 page are text. They are lazy for the same reason
-// the demo is: a phone cold-open should not download a legal document.
-const StaticPage = lazy(() => import('./components/StaticPage'))
-import { EASE } from './motion'
-import pageMeta from './site-pages.json'
-import { anchorFromHash, resolveRoute } from './routes'
+//
+// Every importer goes through `loadChunk`: one memoised fetch per chunk, retried
+// once, and — if the chunk is genuinely gone — a single automatic reload, which
+// is the cure for the stale-deploy case that used to make the Citizen tab
+// unopenable until somebody reloaded by hand. Keying them by name also lets a
+// tab press start its own download before the route changes.
+const CHUNK_IMPORTERS = {
+  landing: () => import('./components/Landing'),
+  dashboard: () => import('./components/Dashboard'),
+  phone: () => import('./mobile/PhoneApp'),
+  // The demo ships in its own chunk: cold-opening Overview or Citizen never pays
+  // for demo code, and the demo never needs the live API.
+  demo: () => import('./demo/DemoApp'),
+  // Privacy, Terms and the 404 page are text; they share one chunk for the same
+  // reason, since a phone cold-open should not download a legal document.
+  static: () => import('./components/StaticPage'),
+}
+
+for (const name of Object.values(ROUTE_CHUNK)) {
+  if (!CHUNK_IMPORTERS[name]) throw new Error(`routes.js sends a visitor to the "${name}" chunk, which has no importer`)
+}
+for (const name of CHUNK_NAMES) {
+  if (!CHUNK_IMPORTERS[name]) throw new Error(`chunk "${name}" is declared but has no importer`)
+}
+
+const Landing = lazy(() => loadChunk('landing', CHUNK_IMPORTERS.landing))
+const Dashboard = lazy(() => loadChunk('dashboard', CHUNK_IMPORTERS.dashboard))
+const PhoneApp = lazy(() => loadChunk('phone', CHUNK_IMPORTERS.phone))
+const DemoApp = lazy(() => loadChunk('demo', CHUNK_IMPORTERS.demo))
+const StaticPage = lazy(() => loadChunk('static', CHUNK_IMPORTERS.static))
 
 /**
  * Minimal hash router.
@@ -93,7 +115,21 @@ function useRoute() {
     if (description) description.setAttribute('content', meta.description)
   }, [route])
 
-  return { route, go: (r) => { window.location.hash = `#/${r}` } }
+  // The chunk request goes out *before* the hash changes, so the download
+  // overlaps the re-render instead of starting after it.
+  return { route, go: (r) => { startRouteChunk(r); window.location.hash = `#/${r}` } }
+}
+
+/**
+ * Start the chunk a navigation target needs, without waiting for it.
+ *
+ * The target is a hash key ('dashboard', '' for the Overview button), so it goes
+ * through `routeForTarget` first: `ROUTE_CHUNK['']` is undefined and the preload
+ * would be skipped for exactly the button that returns a citizen to the front page.
+ */
+function startRouteChunk(target) {
+  const name = ROUTE_CHUNK[target] ?? ROUTE_CHUNK[routeForTarget(target)]
+  if (name) loadChunk(name, CHUNK_IMPORTERS[name]).catch(() => undefined)
 }
 
 export default function App() {
@@ -103,32 +139,38 @@ export default function App() {
     <div className="grain relative min-h-screen">
       <HeatField />
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={route}
-          className="relative z-10"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -14 }}
-          transition={{ duration: 0.5, ease: EASE }}
-        >
-          <Suspense fallback={<div className="relative z-10 grid min-h-screen place-items-center text-[12px] text-white/50">Opening HeatShield…</div>}>
-            {route === 'dashboard' ? (
-              <Dashboard onExit={() => go('')} onDemo={() => go('demo')} />
-            ) : route === 'phone' ? (
-              <PhoneApp onExit={() => go('dashboard')} />
-            ) : route === 'demo' ? (
-              <DemoApp onExit={() => go('')} />
-            ) : route === 'privacy' || route === 'terms' ? (
-              <StaticPage page={route} />
-            ) : route === 'notfound' ? (
-              <StaticPage page="notfound" />
-            ) : (
-              <Landing onEnter={() => go('dashboard')} onDemo={() => go('demo')} />
-            )}
-          </Suspense>
-        </motion.div>
-      </AnimatePresence>
+      {/*
+        Enter-only transition, deliberately. This used to be
+        `AnimatePresence mode="wait"`, which does not mount the incoming page
+        until the outgoing one has animated away — so pressing a tab waited out
+        an animation before it even asked for the next page's code, and a
+        reload was the only way through when that fetch then failed. Now the new
+        page mounts at once and fades in over the old one: the same 0.5 s of
+        motion, without depending on an animation completing first.
+      */}
+      <motion.div
+        key={route}
+        className="relative z-10"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: EASE }}
+      >
+        <Suspense fallback={<div className="relative z-10 grid min-h-screen place-items-center text-[12px] text-white/50">Opening HeatShield…</div>}>
+          {route === 'dashboard' ? (
+            <Dashboard onExit={() => go('')} onDemo={() => go('demo')} />
+          ) : route === 'phone' ? (
+            <PhoneApp onExit={() => go('dashboard')} />
+          ) : route === 'demo' ? (
+            <DemoApp onExit={() => go('')} />
+          ) : route === 'privacy' || route === 'terms' ? (
+            <StaticPage page={route} />
+          ) : route === 'notfound' ? (
+            <StaticPage page="notfound" />
+          ) : (
+            <Landing onEnter={() => go('dashboard')} onDemo={() => go('demo')} />
+          )}
+        </Suspense>
+      </motion.div>
 
       {/* The phone route carries its own thumb-reachable navigation; the demo
           route carries its own top-level controls. */}

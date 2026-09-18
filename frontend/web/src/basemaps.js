@@ -30,20 +30,42 @@
  * and leaving a grey hole.
  */
 
+/*
+ * ATTRIBUTION IS A LICENCE TERM, NOT DECORATION — and it has to name the data
+ * actually being drawn.
+ *
+ * Every string below is copied from the `copyrightText` field of the ArcGIS
+ * service it is attached to (verified 2026-09-18 against
+ * `.../<service>/MapServer?f=json`) or from the provider's own licence page.
+ * Do not tidy them up and do not share one string between two services: the
+ * Dark Gray Canvas is HERE/Garmin/OSM data and the World Imagery is
+ * Maxar/Earthstar imagery, and crediting one for the other is both wrong and a
+ * breach of the terms we are using the tiles under. The previous version of this
+ * file did exactly that — the default basemap advertised Maxar imagery that
+ * appears nowhere in it.
+ */
 const OSM_ATTR = '© OpenStreetMap contributors'
-const ESRI_ATTR = 'Imagery © Esri, Maxar, Earthstar Geographics'
+
+/** Canvas/World_Dark_Gray_Base + its Reference labels overlay. */
+const ESRI_DARK_ATTR =
+  'Sources: Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community'
+
+/** World_Street_Map — the long form is the service's own copyrightText. */
 const ESRI_STREETS_ATTR =
-  '© Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS user community'
+  'Sources: Esri, HERE, Garmin, USGS, Intermap, INCREMENT P, NRCan, Esri Japan, METI, ' +
+  'Esri China (Hong Kong), Esri Korea, Esri (Thailand), NGCC, © OpenStreetMap contributors, ' +
+  'and the GIS User Community'
+
+/** World_Imagery, drawn with Reference/World_Boundaries_and_Places on top. */
+const ESRI_IMAGERY_ATTR =
+  'Imagery: Esri, Maxar, Earthstar Geographics, and the GIS User Community · ' +
+  'Labels: Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community'
 
 /** ArcGIS Server REST cached-map tile URL. Note `{z}/{y}/{x}` — ArcGIS
  *  addresses tiles row-first; Leaflet substitutes in any order, so the
  *  template stays a plain string with no extra shim. */
 const ARCGIS = (service) =>
   `https://server.arcgisonline.com/ArcGIS/rest/services/${service}/MapServer/tile/{z}/{y}/{x}`
-
-/** Retina (@2x) tiles where the provider supports them — this is most of what
- *  makes a Leaflet map look as sharp as a commercial map on a modern display. */
-const R = '{r}'
 
 /** Ordered list shown in the map's layer switcher. */
 export const BASEMAPS = [
@@ -54,7 +76,7 @@ export const BASEMAPS = [
     url: ARCGIS('Canvas/World_Dark_Gray_Base'),
     maxZoom: 20,
     maxNativeZoom: 16,
-    attribution: ESRI_ATTR,
+    attribution: ESRI_DARK_ATTR,
     labels: {
       url: ARCGIS('Canvas/World_Dark_Gray_Reference'),
       maxZoom: 20,
@@ -80,7 +102,7 @@ export const BASEMAPS = [
     url: ARCGIS('World_Imagery'),
     maxZoom: 20,
     maxNativeZoom: 19,
-    attribution: ESRI_ATTR,
+    attribution: ESRI_IMAGERY_ATTR,
     labels: {
       // Reference overlay: real place/boundary labels out to z12 only, the way
       // the Esri hybrid map uses it. Past z12 Leaflet upscales the last label
@@ -95,11 +117,16 @@ export const BASEMAPS = [
     id: 'terrain',
     label: 'Terrain',
     hint: 'OpenTopoMap — relief + contours',
-    url: `https://{s}.tile.opentopomap.org/{z}/{x}/{y}${R}.png`,
+    // Plain tiles only. OpenTopoMap documents exactly one URL
+    // (`https://{a|b|c}.tile.opentopomap.org/{z}/{x}/{y}.png`) with no retina
+    // variant, so a `@2x` request — which Leaflet builds from `{r}` whenever
+    // `detectRetina` meets a high-DPI screen — would 404, trip the tile-failure
+    // counter, and silently swap a working Terrain map for the OSM fallback.
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
     subdomains: 'abc',
     maxZoom: 20,
     maxNativeZoom: 17,
-    attribution: `${OSM_ATTR} · SRTM · © OpenTopoMap (CC-BY-SA)`,
+    attribution: `Map data: ${OSM_ATTR}, SRTM · Map style: © OpenTopoMap (CC-BY-SA)`,
     light: true,
     overlayOpacity: 0.45,
   },
