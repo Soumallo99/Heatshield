@@ -85,13 +85,16 @@ def one_request(url: str, path: str, predicate) -> Result:
     return result
 
 
-def run(url: str, users: int, per_user: int, print_every: int = 0) -> list[Result]:
+def run(url: str, users: int, per_user: int, pinned: str | None = None) -> list[Result]:
     results: list[Result] = []
     lock = threading.Lock()
 
     def worker(index: int) -> None:
         for round_number in range(per_user):
-            path, predicate = CHECKS[(index + round_number) % len(CHECKS)]
+            if pinned:
+                path, predicate = pinned, None
+            else:
+                path, predicate = CHECKS[(index + round_number) % len(CHECKS)]
             outcome = one_request(url, path, predicate)
             with lock:
                 results.append(outcome)
@@ -144,10 +147,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--url", default="http://127.0.0.1:8000", help="API base URL")
     parser.add_argument("--users", type=int, default=12, help="concurrent clients")
     parser.add_argument("--per-user", type=int, default=4, help="requests per client")
+    parser.add_argument(
+        "--path",
+        default=None,
+        help="pin every request to one path, to measure the same-page crowd (e.g. /risk/ranking?scenario_c=0)",
+    )
     args = parser.parse_args(argv)
 
     print(f"{args.users} concurrent clients x {args.per_user} requests against {args.url}\n")
-    return report(run(args.url, args.users, args.per_user))
+    return report(run(args.url, args.users, args.per_user, pinned=args.path))
 
 
 if __name__ == "__main__":

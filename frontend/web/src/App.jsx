@@ -41,9 +41,24 @@ function useRoute() {
   const scrollToAnchor = () => {
     const anchor = anchorFromHash(window.location.hash)
     if (!anchor) return
-    requestAnimationFrame(() => {
-      document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    // The target may not exist yet: every page is a lazy chunk, so a link from
+    // the 404 page arrives here before Landing has mounted. One frame is not
+    // enough — keep looking for about a second, then give up quietly rather than
+    // scrolling to the top (which would look like the link did nothing).
+    let tries = 0
+    const seek = () => {
+      const target = document.getElementById(anchor)
+      if (target) {
+        target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
+        return
+      }
+      if (tries < 60) {
+        tries += 1
+        requestAnimationFrame(seek)
+      }
+    }
+    requestAnimationFrame(seek)
   }
 
   useEffect(() => {

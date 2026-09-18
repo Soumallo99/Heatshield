@@ -9,6 +9,7 @@ against a running server as well (see README, "Before you deploy").
 from __future__ import annotations
 
 import threading
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -209,3 +210,20 @@ def test_concurrent_subscriptions_from_different_people_all_land(tmp_path):
     # already-recorded number. Losing a *concurrent* insert is why the registry
     # is described as single-operator in README, not presented as a database.
     assert df["phone"].is_unique, "no duplicate rows may be created under concurrency"
+
+
+def test_the_suite_does_not_write_into_tracked_data():
+    """A test run must not rewrite the repository's own data files.
+
+    The dispatch routes append a row per recipient, and the route sweep in
+    tests/test_route_smoke.py posts to them with a token. Before `HS_ALERT_LOG`
+    existed in conftest, one full run added 4,224 dry-run rows to the tracked
+    `data/processed/alert_log.csv` — a diff nobody asked for, in the one file
+    that records who was warned. This test is the receipt.
+    """
+    from core import alerts
+
+    root = Path(__file__).resolve().parents[1]
+    resolved = alerts.LOG_PATH.resolve()
+    assert root not in resolved.parents, f"the suite writes to tracked data: {resolved}"
+    assert resolved.parent.exists(), "the scratch directory must exist before the first dispatch"

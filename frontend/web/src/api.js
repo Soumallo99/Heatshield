@@ -39,30 +39,43 @@ async function getJSON(path, { signal } = {}) {
   // not an eternal skeleton. Caller aborts (unmount / new scenario) still pass
   // through as AbortError so existing callers keep ignoring them.
   const guard = withTimeout(signal)
-  let res
   try {
-    res = await fetch(`${BASE}${path}`, { headers: { Accept: 'application/json' }, signal: guard.signal })
-  } catch (err) {
-    if (guard.timedOut()) {
-      throw new ApiError(`HeatShield API did not answer within ${REQUEST_TIMEOUT_MS / 1000}s (${path})`, 504)
+    let res
+    try {
+      res = await fetch(`${BASE}${path}`, { headers: { Accept: 'application/json' }, signal: guard.signal })
+    } catch (err) {
+      if (guard.timedOut()) {
+        throw new ApiError(`HeatShield API did not answer within ${REQUEST_TIMEOUT_MS / 1000}s (${path})`, 504)
+      }
+      if (err?.name === 'AbortError') throw err
+      // fetch rejects with a TypeError for connection refused / DNS / CORS.
+      throw new ApiError(`cannot reach the HeatShield API (${path})`, null)
     }
-    if (err?.name === 'AbortError') throw err
-    // fetch rejects with a TypeError for connection refused / DNS / CORS.
-    throw new ApiError(`cannot reach the HeatShield API (${path})`, null)
+    if (!res.ok) throw new ApiError(`HeatShield API returned ${res.status} (${path})`, res.status)
+
+    let body
+    try {
+      // Still inside the deadline: headers arriving is not the same as an answer.
+      body = await res.json()
+    } catch (err) {
+      if (guard.timedOut()) {
+        throw new ApiError(`HeatShield API stopped answering within ${REQUEST_TIMEOUT_MS / 1000}s (${path})`, 504)
+      }
+      if (err?.name === 'AbortError') throw err
+      throw new ApiError(`HeatShield API returned invalid JSON (${path})`, res.status)
+    }
+
+    // The service worker (public/sw.js) answers a failed /api fetch with HTTP 200
+    // and this shape when it has nothing cached. Treating that as data would paint
+    // an empty dashboard with a green "live" dot — the exact lie this file exists
+    // to prevent. It is a failure, so it raises like one.
+    if (body && body.stale === true && body.error) {
+      throw new ApiError(`offline: ${body.error} (${path})`, 503)
+    }
+    return body
   } finally {
     guard.cleanup()
   }
-  if (!res.ok) throw new ApiError(`HeatShield API returned ${res.status} (${path})`, res.status)
-
-  const body = await res.json()
-  // The service worker (public/sw.js) answers a failed /api fetch with HTTP 200
-  // and this shape when it has nothing cached. Treating that as data would paint
-  // an empty dashboard with a green "live" dot — the exact lie this file exists
-  // to prevent. It is a failure, so it raises like one.
-  if (body && body.stale === true && body.error) {
-    throw new ApiError(`offline: ${body.error} (${path})`, 503)
-  }
-  return body
 }
 
 /* ------------------------------------------------------------------ api */

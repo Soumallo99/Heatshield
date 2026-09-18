@@ -29,7 +29,10 @@ import pandas as pd
 from core.config import (ALERT_TO, ALLOW_LIVE_SEND, TWILIO_FROM, TWILIO_SID,
                         TWILIO_TOKEN)
 
-LOG_PATH = Path("data/processed/alert_log.csv")
+# Where sent alerts are recorded. Overridable because the test suite (and any
+# scripted rehearsal) posts to the dispatch route: without a knob, running the
+# tests appended thousands of dry-run rows to the repository's own log file.
+LOG_PATH = Path(os.environ.get("HS_ALERT_LOG", "data/processed/alert_log.csv"))
 
 # --------------------------------------------------------------------------- #
 # Config

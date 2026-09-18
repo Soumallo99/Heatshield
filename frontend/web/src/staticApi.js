@@ -8,7 +8,7 @@
  * never hard-codes an absolute origin.
  */
 
-const BASE_PATH = import.meta.env.BASE_URL || './'
+const BASE_PATH = import.meta.env?.BASE_URL || './'
 
 /**
  * URL of anything copied verbatim from `public/` — the ward GeoJSON, an icon,
@@ -75,22 +75,30 @@ export function withTimeout(signal, ms = REQUEST_TIMEOUT_MS) {
   }
 }
 
-export async function readJSON(url, signal, ErrorClass = Error) {
-  const guard = withTimeout(signal)
-  let response
+export async function readJSON(url, signal, ErrorClass = Error, { timeoutMs = REQUEST_TIMEOUT_MS } = {}) {
+  const guard = withTimeout(signal, timeoutMs)
   try {
-    response = await fetch(url, { headers: { Accept: 'application/json' }, signal: guard.signal })
-  } catch (error) {
-    if (guard.timedOut()) throw new ErrorClass(`${url} did not answer within ${REQUEST_TIMEOUT_MS / 1000}s`)
-    if (error?.name === 'AbortError') throw error
-    throw new ErrorClass(`Unable to reach ${url}`)
+    let response
+    try {
+      response = await fetch(url, { headers: { Accept: 'application/json' }, signal: guard.signal })
+    } catch (error) {
+      if (guard.timedOut()) throw new ErrorClass(`${url} did not answer within ${timeoutMs / 1000}s`)
+      if (error?.name === 'AbortError') throw error
+      throw new ErrorClass(`Unable to reach ${url}`)
+    }
+    if (!response.ok) throw new ErrorClass(`${url} returned ${response.status}`)
+    try {
+      // The deadline deliberately still applies here. A server that sends
+      // headers and then trickles the body (or stops mid-stream) is the same
+      // hang from the user's side; clearing the timer after the headers would
+      // leave the spinner running forever.
+      return await response.json()
+    } catch (error) {
+      if (guard.timedOut()) throw new ErrorClass(`${url} did not finish answering within ${timeoutMs / 1000}s`)
+      if (error?.name === 'AbortError') throw error
+      throw new ErrorClass(`${url} returned invalid JSON`)
+    }
   } finally {
     guard.cleanup()
-  }
-  if (!response.ok) throw new ErrorClass(`${url} returned ${response.status}`)
-  try {
-    return await response.json()
-  } catch {
-    throw new ErrorClass(`${url} returned invalid JSON`)
   }
 }

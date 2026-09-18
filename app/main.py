@@ -7,20 +7,22 @@ Docs: http://localhost:8000/docs
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import datetime
 from uuid import uuid4
 
 import pandas as pd
 from zoneinfo import ZoneInfo
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request
 from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
+from core.response_cache import ResponseCache
 from core.security import (RateLimiter, client_key, redact_phone, require_admin,
                            sanitise_phone_list)
 
@@ -43,7 +45,7 @@ from core.subscribers import (add_subscriber as reg_add,
                               load_registry, opt_out as reg_opt_out,
                               recipients_for_ward, registry_stats)
 from core.thermal import classify_wbgt, compute_thermal, daily_thermal, heatwave_flags, work_rest
-from core.weather import daily_peak, get_forecast, load_wards
+from core.weather import UpstreamError, daily_peak, get_forecast, load_wards
 
 # The interactive schema is a map of every route, including the administrative
 # ones. Useful locally, needless exposure on a public deployment — so it is on by
@@ -81,6 +83,11 @@ if _ORIGINS:
 
 # Requests per client per minute on the whole API. Enumeration of the registry
 # and repeated dispatch attempts are the things this is here to make boring.
+# Answers to the public reads, kept for as long as they are allowed to be cached.
+# Per-process, like the limiter: see core/response_cache.py for what it does and
+# what it deliberately does not.
+answer_cache = ResponseCache(config.RESPONSE_CACHE_MAX_AGE)
+
 # Compression. The ranking payload is a few hundred kB of JSON for 141 wards and
 # the exports are larger; text compresses about 8:1. Added last so it wraps
 # everything else, including the guard's own error responses. Small bodies are
@@ -132,11 +139,73 @@ def _cache_seconds(path: str) -> int:
     return 0
 
 
+@app.exception_handler(UpstreamError)
+async def _upstream_unavailable(request: Request, exc: UpstreamError) -> JSONResponse:
+    """503, not 500: the weather provider is down, this server is fine.
+
+    The distinction matters on the screen. A 500 sends an operator looking for a
+    bug in HeatShield; a 503 that says why sends them to the provider's status
+    page, and tells a visitor honestly that the numbers are unavailable rather
+    than broken. Cached runs never land here — only a live fetch can.
+    """
+    logger.warning("upstream weather unavailable on %s: %s", request.url.path, exc)
+    return JSONResponse(
+        {
+            "detail": "the weather provider is unavailable right now",
+            "upstream": str(exc)[:500],
+            "remedy": (
+                "cached runs are unaffected — retry later, or run "
+                "scripts/refresh.py once the provider recovers"
+            ),
+        },
+        status_code=503,
+    )
+
+
+def _base_headers(request_id: str) -> dict[str, str]:
+    """Headers every response carries, cached or fresh."""
+    return {
+        "X-Request-ID": request_id,
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "no-referrer",
+        "X-Frame-Options": "DENY",
+    }
+
+
+def _cacheable_headers(headers) -> dict[str, str]:
+    """The response headers worth replaying from cache.
+
+    Content-Type carries the media type, Content-Encoding says whether the bytes
+    are gzipped, and Vary tells a shared cache that the encoding matters. The
+    rest (length, cache-control, request id) is recomputed per request.
+    """
+    keep = ("content-type", "content-encoding", "vary", "etag", "last-modified")
+    return {key: value for key, value in headers.items() if key.lower() in keep}
+
+
+async def _store_answer(key: str, response, ttl: int):
+    """Keep a copy of a 200 for the next reader, and return it unchanged.
+
+    Reading `body_iterator` consumes it, so the response is rebuilt from the
+    bytes we just buffered. Only 200s are stored: an error is not an answer, and
+    caching one would turn a transient failure into a two-minute outage.
+    """
+    if response.status_code != 200:
+        return response
+
+    body = b"".join([chunk async for chunk in response.body_iterator])
+    headers = dict(response.headers)
+    answer_cache.set(key, body, headers.get("content-type", "application/json"),
+                     _cacheable_headers(headers), ttl)
+    return Response(content=body, status_code=response.status_code, headers=headers)
+
+
 @app.middleware("http")
 async def guard(request: Request, call_next):
-    """Rate limit, body-size cap, docs lock, security headers, request ids.
+    """Rate limit, body-size cap, docs lock, cache, security headers, request ids.
 
-    Order matters: cheap rejections happen before anything touches pandas.
+    Order matters: cheap rejections happen before anything touches pandas, and a
+    cache hit happens before anything runs at all.
     """
     request_id = uuid4().hex[:12]
     request.state.request_id = request_id
@@ -156,8 +225,61 @@ async def guard(request: Request, call_next):
             headers={"Retry-After": str(retry_after)},
         )
 
+    # A credentialed request is never cached, in either direction: an operator's
+    # view must not be served to the next visitor, and must not be stored under a
+    # key a visitor can reach.
+    authenticated = any(
+        request.headers.get(header) for header in ("X-HeatShield-Token", "X-API-Key", "Authorization")
+    )
+    # A cross-origin request is answered without the shared cache. The CORS
+    # middleware sits *inside* this one, so a body replayed from here would reach
+    # the browser without its Access-Control-Allow-Origin header — the request
+    # would be blocked on a cache hit and allowed on a miss, which is worse than
+    # either. Our own pages are same-origin, so this costs the crowd nothing.
+    cross_origin = bool(request.headers.get("origin"))
+    ttl = _cache_seconds(request.url.path) if request.method == "GET" else 0
+    cache_key = None
+    flight = None
+    if ttl and not authenticated and not cross_origin:
+        cache_key = ResponseCache.key(
+            request.url.path, request.url.query, request.headers.get("accept-encoding", ""), ttl
+        )
+        entry = answer_cache.get(cache_key)
+        if entry is not None:
+            return Response(
+                content=entry.body,
+                headers={**entry.headers, **_base_headers(request_id), "X-Cache": "HIT",
+                         "Cache-Control": f"public, max-age={ttl}, stale-while-revalidate=60"},
+            )
+
+        # Single flight. The same page opened by thirty people at once is the
+        # normal pattern during a heat wave; it must not be computed thirty
+        # times. Waiters sleep rather than block — this is the event loop — and
+        # take over if the owner dies, so one failure cannot strand the rest.
+        flight, owner = answer_cache.claim(cache_key)
+        if not owner:
+            # The waiting bound is generous on purpose. A cold compute of the
+            # heaviest public read takes ~9 s on one worker, and a waiter that
+            # gives up early does not get its answer faster — it starts a second
+            # copy of the same work and makes the whole burst slower, which is
+            # exactly what the first version of this did (p95 17.7 s, cold).
+            for _ in range(600):                     # ~24 s, then compute it anyway
+                if flight.is_set():
+                    break
+                await asyncio.sleep(0.04)
+            entry = answer_cache.get(cache_key)
+            if entry is not None:
+                return Response(
+                    content=entry.body,
+                    headers={**entry.headers, **_base_headers(request_id), "X-Cache": "COALESCED",
+                             "Cache-Control": f"public, max-age={ttl}, stale-while-revalidate=60"},
+                )
+            flight = answer_cache.takeover(cache_key, flight)
+
     try:
         response = await call_next(request)
+        if cache_key is not None:
+            response = await _store_answer(cache_key, response, ttl)
     except Exception:  # noqa: BLE001 — deliberate catch-all: log, name it, say nothing
         # A traceback in the response body is an information leak; nothing at
         # all is worse. Log the whole thing against the request id and hand the
@@ -168,6 +290,9 @@ async def guard(request: Request, call_next):
             status_code=500,
             headers={"X-Request-ID": request_id, "Cache-Control": "no-store"},
         )
+    finally:
+        if cache_key is not None:
+            answer_cache.release(cache_key)
 
     if response.status_code >= 500:
         logger.error("server error %s on %s %s (request %s)",
@@ -177,16 +302,8 @@ async def guard(request: Request, call_next):
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("Referrer-Policy", "no-referrer")
     response.headers.setdefault("X-Frame-Options", "DENY")
-
-    # Cache-Control: private reads stay no-store. A public GET is cacheable only
-    # when the request carried no credential — an authenticated reader must not
-    # be able to poison a shared cache for the next visitor.
-    seconds = _cache_seconds(request.url.path) if request.method == "GET" else 0
-    authenticated = any(
-        request.headers.get(header) for header in ("X-HeatShield-Token", "X-API-Key", "Authorization")
-    )
-    if seconds and response.status_code == 200 and not authenticated:
-        response.headers.setdefault("Cache-Control", f"public, max-age={seconds}, stale-while-revalidate=60")
+    if ttl and response.status_code == 200 and not authenticated:
+        response.headers.setdefault("Cache-Control", f"public, max-age={ttl}, stale-while-revalidate=60")
     else:
         response.headers.setdefault("Cache-Control", "no-store")
     return response
@@ -201,6 +318,19 @@ DATE_PATTERN = r"^\d{4}-\d{2}-\d{2}$"
 
 # Shorthand: the admin gate on the routes that read personal data or can send.
 AdminOnly = Depends(require_admin)
+
+def live_fetch_guard(request: Request, use_cache: bool = True) -> None:
+    """A forced live fetch is an operator action, not a visitor one.
+
+    `?use_cache=false` skips the cache and calls Open-Meteo directly, with three
+    retries and backoff between them. Left open, any anonymous client could drive
+    that loop as often as it liked — burning our upstream quota (which is free but
+    rate-limited) and holding a worker thread for seconds per call. The operator
+    who wants current weather has a token (and `scripts/refresh.py`); everyone
+    else gets the cached run, which is what the UI uses anyway.
+    """
+    if not use_cache:
+        require_admin(request)
 
 
 def _now_local() -> pd.Timestamp:
@@ -300,7 +430,11 @@ def zones():
 def forecast(
     hours: int = Query(24, ge=1, le=24 * 16, description="Hours from most recent past hour"),
     ward_id: Annotated[int | None, Query(ge=1, le=WARD_MAX)] = None,
-    use_cache: bool = True,
+    use_cache: bool = Query(
+        True,
+        description="Serve the cached run. `false` forces a live upstream fetch and requires the admin token",
+    ),
+    _live: Annotated[None, Depends(live_fetch_guard)] = None,
 ):
     """Hourly raw weather for all wards (Phase 1 output)."""
     df = get_forecast(use_cache=use_cache)
@@ -919,7 +1053,7 @@ def thermal(
 
 
 @app.get("/thermal/daily")
-def thermal_daily(region: str = "coastal"):
+def thermal_daily(region: Literal["coastal", "plains", "hills"] = "coastal"):
     """Daily peak WBGT / HI per ward + IMD heatwave flags. The Phase 3+4 input."""
     d = heatwave_flags(daily_thermal(get_forecast()), region=region)
     d["date"] = d["date"].astype(str)

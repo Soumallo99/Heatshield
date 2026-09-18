@@ -14,7 +14,7 @@ import json
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 
 import pandas as pd
 import requests
@@ -51,6 +51,16 @@ def load_wards(path: Path | str = config.WARDS_CSV) -> pd.DataFrame:
 def _chunks(seq: Sequence, n: int) -> Iterable[Sequence]:
     for i in range(0, len(seq), n):
         yield seq[i : i + n]
+
+
+class UpstreamError(RuntimeError):
+    """Open-Meteo could not be reached, or refused to answer.
+
+    A distinct type so the API can answer 503 ("the weather service is
+    unavailable right now") rather than 500 ("this server has a bug"). Those two
+    mean very different things to whoever is reading the screen, and only one of
+    them is our fault. `app/main.py` registers the handler.
+    """
 
 
 def fetch_raw(
@@ -92,7 +102,9 @@ def fetch_raw(
                 last_err = exc
                 time.sleep(1.5 * (attempt + 1))
         else:
-            raise RuntimeError(f"Open-Meteo fetch failed after {retries} attempts: {last_err}")
+            raise UpstreamError(
+                f"Open-Meteo fetch failed after {retries} attempts: {last_err}"
+            ) from last_err
     return out
 
 
@@ -346,9 +358,9 @@ def fetch_archive_raw(
                 last_err = exc
                 time.sleep(1.5 * (attempt + 1))
         else:
-            raise RuntimeError(
+            raise UpstreamError(
                 f"Open-Meteo archive fetch failed after {retries} attempts: {last_err}"
-            )
+            ) from last_err
     return out
 
 

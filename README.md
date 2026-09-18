@@ -978,7 +978,7 @@ prototype grows a privacy policy it does not honour.
 | Content honesty | remove unsupported claims, remove fake reviews, proper page sources, copyright on images, third-party embeds, check tracking | Done — `src/components/Sources.jsx` lists every dataset, licence and limitation next to the landing page; `llms.txt` tells assistants not to present this as an official service. No reviews exist anywhere. No stock or generated imagery (the share card is drawn by `scripts/make_social_card.py` from the app's own palette). No embeds: no iframes, no third-party scripts; map tiles are images under their own licences. Tracking: none — `localStorage` holds UI preferences only |
 | Accessibility | colour contrast, alt text, fix accessibility, keyboard-friendly forms, clear button labels | Done — `npm run a11y`, enforced in CI. It found 105 problems: 61 Tailwind opacities and 16 stylesheet colours below WCAG AA (footer and legal text worst, at 12px), all raised to passing while keeping the hierarchy; `prefers-contrast: more` drops translucency entirely. 47 controls all carry an accessible name; click handlers on non-interactive elements fail the audit; `<img>` without `alt` fails it (the app has none — icons are SVG/emoji); the ward search and every demo control is labelled |
 | Reliability | error handling, loading states, empty states, failed requests, API timeouts, uptime monitoring, error logging, simultaneous users, backup restoration, duplicate subscribers | Done — loading/empty/failed states were already explicit (`MapSkeleton`, `LiveStatus`, `—` for a missing number, "API unreachable" rather than a fabricated curve); **every fetch now has a 15 s deadline** (`withTimeout`, `src/staticApi.js`); monitoring, error reporting, backups and the concurrency test are the subsections below. Duplicate subscribers: the registry is keyed on the normalised E.164 number, and the tests add the same person in five spellings and get one row. **Duplicate payments: not applicable** — no payments |
-| Performance | compress files, cache repeat requests, reduce huge JS bundles, no production source maps, remove vite/react from the browser | Done — gzip on the API (47 kB ranking payload → 6.4 kB on the wire), `Cache-Control` on public reads, `build.sourcemap: false`, and the 4.18 MB Cesium chunk is lazy-only and never on a citizen's cold open (budget gate: 111,784 gz bytes, limit 122,880). `scripts/test-routes.mjs` fails if any dev-only logging survives into the shipped bundles |
+| Performance | compress files, cache repeat requests, reduce huge JS bundles, no production source maps, remove vite/react from the browser | Done — gzip on the API (47 kB ranking payload → 6.4 kB on the wire), `Cache-Control` on public reads, an in-process answer cache with single-flight (48 identical concurrent requests: p95 11.2 s → 12 ms once warm, measured in **Simultaneous users** below), `build.sourcemap: false`, and the 4.18 MB Cesium chunk is lazy-only and never on a citizen's cold open (budget gate: 111,784 gz bytes, limit 122,880). `scripts/test-routes.mjs` fails if any dev-only logging survives into the shipped bundles |
 | Anti-abuse | rate limiting, API limits, spending caps | Done where it applies — in-process limiter (120/min/client, `Retry-After`), every numeric input bounded, request-body cap, docs locked once a token exists. **Spending caps: not applicable** — there is no payment surface; the only thing that spends money is SMS, and that path is admin-gated, dry-run by default and double-locked (`--live` + data must be genuinely live) |
 | Serving & protection | hide keys, check env vars, keys in git, auth, admin routes, user permissions, sanitise inputs, XSS, SQLi, DB rules, file uploads, CSRF, CORS, cookies, debug mode, production settings | See **Security** above — the full findings table, each fix pinned by a test. **Not applicable, with reasons:** SQLi and database rules (there is no database; state is CSV read through pandas), file uploads (there is no upload path at all), secure cookies and CSRF (no cookies and no cookie-based auth — the API takes a header token, which a cross-site form cannot set), user permissions (no accounts, so permissions are "public read" versus "admin token"). Debug mode is off by construction: docs locked, source maps off, zero console output in the shipped bundles, `.env` gitignored |
 | Console | fix console errors | Done — `src/log.js` is the only file that touches the console, gated on `import.meta.env.DEV` so the minifier deletes it; the test asserts no app bundle contains a single `console.*` call |
@@ -1064,14 +1064,34 @@ python scripts/loadtest.py --url http://127.0.0.1:8000 --users 12 --per-user 4
 
 | 48 requests, 12 concurrent clients | p50 | p90 | p95 | errors |
 |---|---|---|---|---|
-| one uvicorn worker (default) | 1234 ms | 2397 ms | 3021 ms | 0 |
-| `uvicorn --workers 2` | 246 ms | 2169 ms | 2550 ms | 0 |
+| one uvicorn worker, mixed endpoints (default) | 1234 ms | 2397 ms | 3021 ms | 0 |
+| `uvicorn --workers 2`, mixed endpoints | 246 ms | 2169 ms | 2550 ms | 0 |
 
-No errors and no cross-request contamination in either run. The lesson is the expected one: the
+No errors and no cross-request contamination in either run. The expected lesson is in there: the
 heavy endpoints are pandas computations, so run **more than one worker** in production
-(`uvicorn app.main:app --workers 4`) — that is the whole scaling story for a single-node
-deployment. The rate limiter is per-process, so behind multiple workers use a shared limiter or a
-proxy; that caveat is also in **Security**.
+(`uvicorn app.main:app --workers 4`).
+
+The unexpected lesson came from testing the pattern a heat warning actually produces — everybody
+opening *the same page* at once, which the table above cannot see because it spreads clients across
+seven different endpoints:
+
+```bash
+python scripts/loadtest.py --url http://127.0.0.1:8000 --users 12 --per-user 4 \
+  --path "/risk/ranking?scenario_c=0"     # the same 48 requests, all to one endpoint
+```
+
+| 48 identical requests, 12 concurrent clients | p50 | p90 | p95 | max | mean |
+|---|---|---|---|---|---|
+| before the answer cache (measured on `main`) | 1247 ms | 11019 ms | 11205 ms | 11300 ms | 3550 ms |
+| cold cache (first burst after a restart) | 16 ms | 9313 ms | 9316 ms | 9322 ms | 2337 ms |
+| cache warm (any burst in the next 2 minutes) | 12 ms | 14 ms | 15 ms | 41 ms | 16 ms |
+
+One cold `/risk/ranking?scenario_c=0` costs 9.3 s of pandas on one worker. Serving the same bytes to
+forty-eight people who want them at the same moment used to cost that, forty-eight times over, in
+sequence: the p95 of 11.2 s *is* the queue. Now the first request computes, everyone else waits for
+that same answer instead of starting a second copy, and for the following two minutes the endpoint
+answers in milliseconds. Nothing about it is a database or a bigger box — see
+`core/response_cache.py`, and the rules that keep it honest in `tests/test_response_cache.py`.
 
 ### Caching and compression
 
@@ -1083,8 +1103,37 @@ proxy; that caveat is also in **Security**.
   data leak, not a performance win. A request carrying a credential (`X-API-Key`,
   `X-HeatShield-Token`, `Authorization`) is never cached, so an authenticated read cannot poison a
   shared cache for the next visitor.
+* **An in-process answer cache** (`core/response_cache.py`, added after the measurement above):
+  a repeat GET for the same path and query within the window is answered from memory — 1.3 ms
+  instead of 9.3 s for the ranking. A burst of identical requests is *coalesced*: one computes,
+  the rest wait for that same answer rather than starting forty-eight copies of the same pandas
+  work. It stores only whole 200s, only for GETs, only under the same paths as the `Cache-Control`
+  rule, never for a credentialed request (an operator's view must not be served to the next
+  visitor), never for a cross-origin request (CORS sits inside this middleware, so a replayed body
+  would reach the browser without its `Access-Control-Allow-Origin`), and never anything larger
+  than 512 kB across at most 128 keys — a cache that can be filled by a hostile query is an
+  amplification primitive, not an optimisation. Every response carries `X-Cache: HIT` or
+  `COALESCED` when it did not come from a fresh computation, so this is observable rather than
+  assumed.
 * One knob: `HS_RESPONSE_CACHE_MAX_AGE=0` turns the header off entirely and every response goes
-  back to `no-store`.
+  back to `no-store`. The cache follows the same knob, and a longer window (a forecast run changes
+  once per cycle, not once per two minutes) is a reasonable deployment choice:
+
+  ```bash
+  HS_RESPONSE_CACHE_MAX_AGE=600 uvicorn app.main:app --workers 4
+  ```
+
+* After a deploy or a `scripts/refresh.py` run, warm the paths a first visitor needs instead of
+  letting them pay the 9 s:
+
+  ```bash
+  python scripts/warmup.py --url http://127.0.0.1:8000
+  ```
+
+  It exits non-zero if a path fails, which makes it a usable last step of a deploy rather than a
+  comforting log line. The cache is **per process**, like the limiter: with `--workers 4` each
+  worker holds its own copy, so a burst that lands on four workers computes at most four times, not
+  forty-eight.
 
 ## Map keys, installability & notification automation
 

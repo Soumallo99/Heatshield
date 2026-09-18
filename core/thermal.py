@@ -278,8 +278,7 @@ def daily_thermal(df: pd.DataFrame) -> pd.DataFrame:
     g["stress_band"] = [c["band"] for c in cls]
     g["stress_colour"] = [c["colour"] for c in cls]
     g["work_rest"] = [work_rest(v) for v in g["wbgt_peak_c"]]
-    g = g.round(2).sort_values(["date", "ward_id"]).reset_index(drop=True)
-    return g
+    return g.round(2).sort_values(["date", "ward_id"]).reset_index(drop=True)
 
 
 # --------------------------------------------------------------------------- #

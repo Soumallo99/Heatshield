@@ -12,8 +12,11 @@ ask for this fixture instead of reading `dist/` directly.
 """
 from __future__ import annotations
 
+import atexit
 import os
+import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -30,9 +33,18 @@ WEB = ROOT / "frontend" / "web"
 #   * HS_RATE_LIMIT_PER_MIN=0 — a limiter that counts every request would turn
 #     the suite's own request volume into 429s. The limiter itself is exercised
 #     directly (tests/test_security.py) rather than by accident here.
+#   * HS_ALERT_LOG — the dispatch routes append every send to this file, and the
+#     sweep in tests/test_route_smoke.py posts to them. Pointing it at a
+#     throwaway directory is the difference between a test run and a test run
+#     that quietly rewrites `data/processed/alert_log.csv`, which is exactly what
+#     happened before this line existed.
 ADMIN_TOKEN = "test-admin-token"
 os.environ.setdefault("HS_ADMIN_TOKEN", ADMIN_TOKEN)
 os.environ.setdefault("HS_RATE_LIMIT_PER_MIN", "0")
+
+_TEST_SCRATCH = Path(tempfile.mkdtemp(prefix="heatshield-tests-"))
+os.environ.setdefault("HS_ALERT_LOG", str(_TEST_SCRATCH / "alert_log.csv"))
+atexit.register(shutil.rmtree, _TEST_SCRATCH, ignore_errors=True)
 
 
 @pytest.fixture(scope="session")

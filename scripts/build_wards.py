@@ -46,7 +46,8 @@ WATER_TAGS = {("natural", "water"), ("natural", "wetland")}
 
 
 def load_population() -> pd.DataFrame:
-    rows = json.load(open(POP_SRC))["results"]["bindings"]
+    with open(POP_SRC) as handle:
+        rows = json.load(handle)["results"]["bindings"]
     out = []
     for r in rows:
         label = r["wLabel"]["value"]
@@ -78,7 +79,8 @@ def main() -> int:
             return 1
 
     print("loading ward polygons…")
-    wards_gj = json.load(open(WARDS_SRC))
+    with open(WARDS_SRC) as handle:
+        wards_gj = json.load(handle)
     pop = load_population()
     print(f"  {len(wards_gj['features'])} polygons, {len(pop)} population records")
 
@@ -126,7 +128,8 @@ def main() -> int:
     bpts = None
     if BUILD_SRC.exists():
         print("loading OSM buildings (100 MB, be patient)…")
-        gj = json.load(open(BUILD_SRC))
+        with open(BUILD_SRC) as handle:
+            gj = json.load(handle)
         lons, lats = [], []
         for el in gj.get("elements", []):
             c = el.get("center")
@@ -149,18 +152,21 @@ def main() -> int:
         area_km2 = abs(geod.geometry_area_perimeter(g)[0]) / 1e6
         c = g.representative_point()
 
-        def covered(tree, pool):
+        def covered(geom, tree, pool):
+            # `geom` is a parameter, not the loop variable: a closure over `g`
+            # works only while the call happens in the same iteration, and
+            # breaks silently the moment anything defers it.
             if tree is None:
                 return 0.0
             tot = 0.0
-            for cand in tree.query(g):
-                inter = g.intersection(pool[int(cand)] if isinstance(cand, (int, np.integer)) else cand)
+            for cand in tree.query(geom):
+                inter = geom.intersection(pool[int(cand)] if isinstance(cand, (int, np.integer)) else cand)
                 if not inter.is_empty:
                     tot += abs(geod.geometry_area_perimeter(inter)[0]) / 1e6
             return tot
 
-        green_km2 = covered(green_tree, green_polys)
-        water_km2 = covered(water_tree, water_polys)
+        green_km2 = covered(g, green_tree, green_polys)
+        water_km2 = covered(g, water_tree, water_polys)
 
         n_b = 0
         if btree is not None:
