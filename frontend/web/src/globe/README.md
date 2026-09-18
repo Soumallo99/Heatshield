@@ -37,7 +37,8 @@ Bilawal Sidhu), snapshotted at commit **`0d41b6be5490db1f10a171f238be75db4d4ec3b
 1. **Keyless.** `sources.js` contains exactly two stacks, both credential-free.
    The viewer boots with `baseLayer: false`, so Cesium's token-hungry default
    imagery is never constructed. There is no key slot anywhere in this
-   directory — a test enforces that (`tests/test_demo_app.py`).
+   directory — enforced by `tests/test_globe_view.py` (and the repo-wide
+   no-`key=`/`apikey` scan in `tests/test_demo_app.py`).
 2. **Degrading loudly, never silently.** Esri failure → OSM tiles with an
    on-map notice. Terrain failure → smooth ellipsoid with an on-map notice.
    No WebGL → the component says so and the 2D map is still there.
@@ -48,6 +49,10 @@ Bilawal Sidhu), snapshotted at commit **`0d41b6be5490db1f10a171f238be75db4d4ec3b
    boot set. The `citizen phone app stays 2D` rule is a gate, not a promise.
 
 ## Runtime assets
+
+Every runtime asset path named by the built chunk is checked against the copied
+directory (`tests/test_globe_view.py::test_built_globe_runtime_assets_resolve`),
+because a missing worker is silent in a browser: terrain simply never loads.
 
 `public/cesium/` (Workers, Assets, ThirdParty, Widgets) is copied out of
 `node_modules/cesium` by `frontend/web/scripts/copy-cesium-assets.mjs`, wired to

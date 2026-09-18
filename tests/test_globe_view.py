@@ -259,3 +259,36 @@ def test_globe_serves_both_cities_with_the_same_layers_the_2d_maps_use():
     assert "selectedId={selected?.ward_id}" in dashboard
     assert "onSelect={setSelectedId}" in dashboard
     assert "selectedId={zoneId}" in delhi and "onSelect={(id) => setZoneId(String(id))}" in delhi
+
+
+# ------------------------------------------------- runtime assets after a build
+# CesiumJS resolves its workers, textures and WASM through
+# `window.CESIUM_BASE_URL`, which src/globe/cesiumBase.js points at
+# `public/cesium/`. A browser is the only other way to notice a missing file,
+# and the failure mode is silent (terrain and geometry just never load), so the
+# built chunk is checked against the copied directory instead.
+
+
+def test_built_globe_runtime_assets_resolve():
+    dist = WEB / "dist"
+    chunks = sorted((dist / "assets").glob("cesium-*.js"))
+    assert chunks, "run npm run build first"
+    chunk = chunks[0].read_text(encoding="utf-8", errors="ignore")
+
+    # CesiumJS reads these two at runtime: the global is the override that makes
+    # a bundled copy resolvable, and the prefix is how it names worker modules
+    # (workers cannot be enumerated from the bundle — the name is built by
+    # string concatenation — so the prefix plus the copied directory is the
+    # check that means anything).
+    assert "CESIUM_BASE_URL" in chunk, "bundled CesiumJS no longer consults the base-URL global"
+    assert "Workers/" in chunk, "bundled CesiumJS no longer builds worker URLs from a prefix"
+    assert (dist / "cesium" / "Workers").is_dir()
+    assert any((dist / "cesium" / "Workers").glob("*.js")), "no worker files copied"
+
+    # Every asset path the chunk names must exist where CESIUM_BASE_URL points.
+    referenced = set(
+        re.findall(r"[\"']((?:Workers|Assets|ThirdParty|Widgets)/[^\"'`]+)[\"']", chunk)
+    )
+    assert referenced, "expected the Cesium chunk to name runtime assets"
+    missing = sorted(path for path in referenced if not (dist / "cesium" / path).exists())
+    assert not missing, f"referenced runtime assets are not shipped: {missing[:5]}"

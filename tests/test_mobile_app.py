@@ -199,6 +199,12 @@ def test_built_site_is_installable_and_has_an_offline_shell():
         assert (dist / icon["src"]).exists(), icon["src"]
 
     worker = (dist / "sw.js").read_text(encoding="utf-8")
+    # The built worker must be the bumped one: a stale dist/ would otherwise
+    # "pass" installation checks while every installed phone keeps the old build.
+    source_worker = (WEB / "public" / "sw.js").read_text(encoding="utf-8")
+    version = re.search(r"const VERSION = '(heatshield-phone-v\d+)'", source_worker)
+    assert version, "sw.js must declare a versioned cache name"
+    assert f"const VERSION = '{version.group(1)}'" in worker, "rebuild after bumping sw VERSION"
     for shell_entry in ("./", "./index.html", "./manifest.webmanifest", "./offline.html"):
         assert f"'{shell_entry}'" in worker, shell_entry
     assert (dist / "offline.html").exists()
