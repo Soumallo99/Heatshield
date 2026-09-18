@@ -14,12 +14,31 @@
  * that (a) the dev server never claims to be the production origin, and (b) the
  * crawler files and the HTML cannot drift apart.
  */
+import { createHash } from 'node:crypto'
+
 import { generate, siteUrl } from '../scripts/gen-site-meta.mjs'
 
 export const SITE_NAME = 'HeatShield'
 export const SITE_DESCRIPTION =
   'Ward-level extreme heat early warning and human thermal stress (WBGT) mapping ' +
   'for Kolkata (141 KMC wards) and Delhi NCR. Keyless open data, no API keys.'
+
+/**
+ * CSP hash for the one inline block in the document.
+ *
+ * `script-src 'self'` is deliberately tight — no `unsafe-inline`, no `eval`.
+ * The structured-data block is `<script type="application/ld+json">`, which per
+ * the HTML spec is a *data block*, not a script, so script-src should not apply
+ * to it at all. "Should not" is not a guarantee across browsers and CSP
+ * implementations, and a heat-warning page that logs a violation on every load
+ * is both alarming and, if enforced, missing its structured data. So the build
+ * computes the sha256 of exactly this block and lists it in the policy: the
+ * strictest possible allowance for one known, build-generated payload, with no
+ * `unsafe-inline` and no nonce to leak.
+ */
+export function cspHash(text) {
+  return `'sha256-${createHash('sha256').update(text, 'utf8').digest('base64')}'`
+}
 
 function tags(url) {
   const image = `${url}social-card.png`
@@ -58,6 +77,10 @@ function tags(url) {
     ],
   }
 
+  // Serialised once: the tag content, the CSP hash and the tests all read this
+  // same string, so the policy cannot drift from the payload.
+  const structuredDataJson = JSON.stringify(structuredData)
+
   return [
     { tag: 'link', attrs: { rel: 'canonical', href: url } },
     { tag: 'meta', attrs: { property: 'og:type', content: 'website' } },
@@ -91,10 +114,27 @@ function tags(url) {
     {
       tag: 'script',
       attrs: { type: 'application/ld+json' },
-      children: JSON.stringify(structuredData),
+      children: structuredDataJson,
       injectTo: 'head',
     },
   ]
+}
+
+/**
+ * Add the structured-data hash to the CSP meta tag.
+ *
+ * Only `script-src` is touched, and only to append one hash-source; every other
+ * directive is left exactly as authored. If the tag or the directive is missing
+ * the HTML is returned untouched — a build must not invent a policy, and
+ * tests/test_security.py fails loudly if the policy is ever absent.
+ */
+export function withCspHash(html, hash) {
+  // The tag is authored across several lines in index.html, so the whitespace
+  // between attributes is \s+, not a single space.
+  const meta = /(<meta\s+http-equiv="Content-Security-Policy"\s+content=")([^"]+)(")/.exec(html)
+  if (!meta || meta[2].includes(hash)) return html
+  const policy = meta[2].replace(/script-src 'self'/, `script-src 'self' ${hash}`)
+  return html.slice(0, meta.index) + meta[1] + policy + meta[3] + html.slice(meta.index + meta[0].length)
 }
 
 export function siteMeta() {
@@ -117,7 +157,9 @@ export function siteMeta() {
     transformIndexHtml: {
       order: 'pre',
       handler(html) {
-        return { html, tags: tags(url) }
+        const injected = tags(url)
+        const block = injected.find((entry) => entry.attrs?.type === 'application/ld+json')
+        return { html: withCspHash(html, cspHash(block.children)), tags: injected }
       },
     },
     // The crawler files are written on every build (and on `vite dev`, so the

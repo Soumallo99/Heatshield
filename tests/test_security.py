@@ -11,6 +11,7 @@ deploys — and the disabled-by-default behaviour is asserted explicitly below.
 """
 from __future__ import annotations
 
+import base64
 import importlib
 import re
 
@@ -205,6 +206,9 @@ def test_responses_carry_security_headers(client):
     assert headers["x-content-type-options"] == "nosniff"
     assert headers["x-frame-options"] == "DENY"
     assert headers["referrer-policy"] == "no-referrer"
+    # Public geography reads are deliberately cacheable (see
+    # tests/test_server_hygiene.py); personal and administrative ones are not.
+    headers = client.get("/subscribers", headers=ADMIN).headers
     assert headers["cache-control"] == "no-store"
 
 
@@ -274,13 +278,23 @@ def test_the_page_forbids_inline_and_third_party_scripts(built_site):
     assert "object-src 'none'" in policy
     assert "base-uri 'self'" in policy
 
-    # No inline script survives the build, so the policy is enforceable rather
-    # than aspirational.
+    # Exactly one inline block may exist — the JSON-LD structured data — and it
+    # must be the payload the CSP hash covers. Anything else would force
+    # 'unsafe-inline'. The plugin computes the sha256 at build time
+    # (plugins/siteMeta.js) so the policy cannot drift from the block.
+    import hashlib
+
     inline = [
-        block for tag, block in re.findall(r"<script([^>]*)>([\s\S]*?)</script>", html)
+        (tag, block) for tag, block in re.findall(r"<script([^>]*)>([\s\S]*?)</script>", html)
         if "src=" not in tag and block.strip()
     ]
-    assert not inline, f"inline scripts would need 'unsafe-inline': {inline[:1]}"
+    assert len(inline) == 1, f"expected only the structured-data block, found {len(inline)}"
+    tag, block = inline[0]
+    assert 'type="application/ld+json"' in tag, f"unexpected inline script: {tag}"
+    digest = "sha256-" + base64.b64encode(hashlib.sha256(block.encode()).digest()).decode()
+    assert f"'{digest}'" in policy, "the CSP must hash the structured-data block it ships"
+    script_src = re.search(r"script-src([^;]*)", policy).group(1)
+    assert "unsafe-inline" not in script_src, "an inline script policy is a hole, not a fix"
     assert re.search(r'src="\./assets/[^"]+\.js"', html), "app bundle still loads"
 
 
@@ -321,6 +335,8 @@ def test_app_code_contacts_only_the_hosts_it_is_supposed_to(built_site):
         "fonts.googleapis.com", "fonts.gstatic.com",
         "www.w3.org",                  # SVG namespace inside inline data URIs
         "github.com",                  # provenance link in the demo credits
+        "www.openstreetmap.org",       # OSM attribution link in the sources list
+                                       # (a link a reader clicks, not a fetch)
         "localhost", "127.0.0.1",      # documented dev-only API target
         "reactjs.org",                 # React's error-decoder URL in a message string
     }

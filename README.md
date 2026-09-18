@@ -934,7 +934,7 @@ is fixed and pinned by a test in `tests/test_security.py` (named for the failure
 | Registry fields went into a CSV unescaped | A name starting with `=` or `@` is a spreadsheet formula that runs when an operator opens the file (CWE-1236) | Text fields are neutralised, length-capped and stripped of control characters before they are stored |
 | `/docs`, `/openapi.json`, `/redoc` published the full route map | A free plan of attack, dispatch endpoints included | Off once `HS_ADMIN_TOKEN` is set (dev keeps them; `HS_ENABLE_DOCS=1` forces either way) |
 | No rate limiting anywhere | Registry enumeration, repeated dispatch attempts | In-process limiter (120 req/min/client, `HS_RATE_LIMIT_PER_MIN`), `Retry-After` on 429, plus a request-body cap (`HS_MAX_BODY_BYTES`) |
-| No security headers | — | `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `Cache-Control: no-store` on every response |
+| No security headers | — | `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `Cache-Control: no-store` by default — public reads are cacheable for two minutes, credentials never are (see *Caching and compression*) |
 
 **Fail closed.** With no `HS_ADMIN_TOKEN` configured, the administrative routes answer 503
 naming the variable — a deployment that forgets to set one refuses those requests instead of
@@ -945,11 +945,14 @@ HS_ADMIN_TOKEN=dev python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 **The page itself.** GitHub Pages cannot set response headers, so the policy ships in the HTML:
-a `Content-Security-Policy` meta tag allowing scripts from this origin only (`script-src 'self'`,
-no `unsafe-inline`, no `unsafe-eval`, `object-src 'none'`, `base-uri 'self'`). To make that
+a `Content-Security-Policy` meta tag allowing scripts from this origin only (`script-src 'self'`, no
+`unsafe-inline`, no `unsafe-eval`, `object-src 'none'`, `base-uri 'self'`), plus the build-computed
+sha256 of the single inline block (the JSON-LD structured data, which is a data block rather than a
+script — the hash means the policy is exactly as strict as it claims even in implementations that
+apply `script-src` to it). To make that
 enforceable, the service-worker registration lives in `src/main.jsx` rather than an inline
-`<script>` block. `tests/test_security.py` asserts the policy, that no inline script survives the
-build, and that HeatShield's own bundles contact only the hosts they are supposed to (tiles,
+`<script>` block. `tests/test_security.py` asserts the policy, that the only inline block is the hashed JSON-LD,
+ and that HeatShield's own bundles contact only the hosts they are supposed to (tiles,
 terrain, fonts) — a new analytics beacon or CDN script fails that test.
 
 **What this does not do.** The limiter is in-process, so a determined flood needs something in
@@ -958,7 +961,131 @@ terminating proxy's job — `frame-ancestors` is ignored in a meta tag. And secr
 Git: `.env` is ignored, `.env.example` carries names only, and the only credential in the
 project (Twilio) has no default value anywhere.
 
+## Before you deploy — the launch checklist, answered
+
+A launch-readiness pass, item by item. Every line is one of three honest answers:
+**done** (with the file or test that proves it), **already there** (with the check that keeps it
+true), or **not applicable** — with the reason. Inventing a feature to tick a box is how a
+prototype grows a privacy policy it does not honour.
+
+### What applies, and how it is verified
+
+| Area | Items | Answer |
+|---|---|---|
+| Custom domain | custom domain, HTTPS | Done — one variable, `VITE_SITE_URL`; HTTPS is the host's (Pages issues and renews the certificate). Steps below |
+| SEO | meta descriptions, unique page titles, canonical tags, structured data, sitemap.xml, robots.txt, llms.txt, social share images, favicon, internal links, custom 404, unique heading per page | Done — `frontend/web/plugins/siteMeta.js` + `scripts/gen-site-meta.mjs` generate all of it from the site URL; each page sets its own title and description from `src/site-pages.json`; `scripts/test-routes.mjs` fails on a duplicate title or a page missing metadata. **Local business schema is deliberately absent**: there is no business behind this deployment, and inventing one would be a lie in machine-readable form. The JSON-LD is `WebApplication` + `SoftwareSourceCode` with the datasets cited |
+| Legal | privacy policy, terms & conditions, business details, local laws, cookie policy, refund policy, form consent | Privacy and Terms are published (`#/privacy`, `#/terms`) and state what is collected, what is not, and the science's limits. **Refund policy: not applicable** — the project takes no payments. **Cookie policy: not applicable** — there are no cookies, no analytics and no third-party scripts (verified by grep and by the CSP allow-list test), so a cookie banner would introduce the storage it warns about. **Business details: deliberately not invented** — the Terms says plainly that no operator identity ships with the source and that a deployer must add their own. **Form consent:** the only data entry in the product is the opt-in SMS registry, which is admin/CLI-only and documented as requiring the person's own message |
+| Content honesty | remove unsupported claims, remove fake reviews, proper page sources, copyright on images, third-party embeds, check tracking | Done — `src/components/Sources.jsx` lists every dataset, licence and limitation next to the landing page; `llms.txt` tells assistants not to present this as an official service. No reviews exist anywhere. No stock or generated imagery (the share card is drawn by `scripts/make_social_card.py` from the app's own palette). No embeds: no iframes, no third-party scripts; map tiles are images under their own licences. Tracking: none — `localStorage` holds UI preferences only |
+| Accessibility | colour contrast, alt text, fix accessibility, keyboard-friendly forms, clear button labels | Done — `npm run a11y`, enforced in CI. It found 105 problems: 61 Tailwind opacities and 16 stylesheet colours below WCAG AA (footer and legal text worst, at 12px), all raised to passing while keeping the hierarchy; `prefers-contrast: more` drops translucency entirely. 47 controls all carry an accessible name; click handlers on non-interactive elements fail the audit; `<img>` without `alt` fails it (the app has none — icons are SVG/emoji); the ward search and every demo control is labelled |
+| Reliability | error handling, loading states, empty states, failed requests, API timeouts, uptime monitoring, error logging, simultaneous users, backup restoration, duplicate subscribers | Done — loading/empty/failed states were already explicit (`MapSkeleton`, `LiveStatus`, `—` for a missing number, "API unreachable" rather than a fabricated curve); **every fetch now has a 15 s deadline** (`withTimeout`, `src/staticApi.js`); monitoring, error reporting, backups and the concurrency test are the subsections below. Duplicate subscribers: the registry is keyed on the normalised E.164 number, and the tests add the same person in five spellings and get one row. **Duplicate payments: not applicable** — no payments |
+| Performance | compress files, cache repeat requests, reduce huge JS bundles, no production source maps, remove vite/react from the browser | Done — gzip on the API (47 kB ranking payload → 6.4 kB on the wire), `Cache-Control` on public reads, `build.sourcemap: false`, and the 4.18 MB Cesium chunk is lazy-only and never on a citizen's cold open (budget gate: 111,784 gz bytes, limit 122,880). `scripts/test-routes.mjs` fails if any dev-only logging survives into the shipped bundles |
+| Anti-abuse | rate limiting, API limits, spending caps | Done where it applies — in-process limiter (120/min/client, `Retry-After`), every numeric input bounded, request-body cap, docs locked once a token exists. **Spending caps: not applicable** — there is no payment surface; the only thing that spends money is SMS, and that path is admin-gated, dry-run by default and double-locked (`--live` + data must be genuinely live) |
+| Serving & protection | hide keys, check env vars, keys in git, auth, admin routes, user permissions, sanitise inputs, XSS, SQLi, DB rules, file uploads, CSRF, CORS, cookies, debug mode, production settings | See **Security** above — the full findings table, each fix pinned by a test. **Not applicable, with reasons:** SQLi and database rules (there is no database; state is CSV read through pandas), file uploads (there is no upload path at all), secure cookies and CSRF (no cookies and no cookie-based auth — the API takes a header token, which a cross-site form cannot set), user permissions (no accounts, so permissions are "public read" versus "admin token"). Debug mode is off by construction: docs locked, source maps off, zero console output in the shipped bundles, `.env` gitignored |
+| Console | fix console errors | Done — `src/log.js` is the only file that touches the console, gated on `import.meta.env.DEV` so the minifier deletes it; the test asserts no app bundle contains a single `console.*` call |
+
+### Turn on a custom domain
+
+1. Point DNS at GitHub Pages (`CNAME` record for `heatshield.example` → `soumallo99.github.io`).
+2. Repository **Settings → Pages**: set **Source: GitHub Actions**, then enter the custom domain
+   and tick *Enforce HTTPS*.
+3. Build with the domain, so every generated URL follows it:
+
+   ```bash
+   VITE_SITE_URL=https://heatshield.example/ npm run build
+   ```
+
+   In CI this belongs in `deploy-pages.yml` as a variable (`VITE_SITE_URL`), so a redeploy never
+   reverts the canonical URL to `*.github.io`.
+4. Verify the four generated artefacts in one go:
+
+   ```bash
+   for f in robots.txt sitemap.xml llms.txt social-card.png; do
+     curl -s -o /dev/null -w "%{http_code} %{url_effective}\n" "https://heatshield.example/$f"
+   done
+   ```
+
+No trace of the old domain is left behind: canonical, `og:url`, `og:image`, the JSON-LD `@id`s,
+`robots.txt`'s `Sitemap:` line and every `<loc>` in `sitemap.xml` are generated from that one value.
+
+### Uptime monitoring
+
+`.github/workflows/uptime.yml` probes the site, its crawler files and (if configured) the API's
+`/health` **and** a real `/risk/ranking` payload every six hours; a failure notifies repository
+watchers by email. Set `PUBLIC_SITE_URL` and `PUBLIC_API_URL` under
+*Settings → Variables → Actions*.
+
+Two limits worth knowing: GitHub pauses scheduled workflows after 60 days without repository
+activity, and a runner only proves the site is reachable from the public internet. For a real
+deployment point Uptime Kuma, healthchecks.io or a synthetic check at the same URLs — `/health`
+for liveness, `/risk/ranking?scenario_c=0` for "the data layer still answers", which is the
+distinction that matters: a process can be up while the warning pipeline is dead.
+
+### Error logging
+
+Server side, every response carries `X-Request-ID` and anything that fails is logged against it
+(`heatshield.api` logger) — an operator reading a screenshot can quote one id and find the
+traceback. Unhandled errors return `{"detail": "internal error", "request_id": …}` and never a
+traceback.
+
+Client side, `src/log.js` is the single seam:
+
+* set `VITE_ERROR_REPORT_URL` at build time and every report is POSTed there as JSON (beacon
+  first, so a page being closed still gets it out) — any collector that accepts a JSON body works;
+* leave it unset and reports stay in an on-device ring buffer, readable as `__HS_ERRORS__` in the
+  console of the phone that misbehaved. Nothing is written to storage or cookies, so this adds no
+  consent surface.
+
+### Backups, and a restore that has actually been tested
+
+```bash
+python scripts/backup.py backup                    # -> backups/<utc-stamp>/ with MANIFEST.json
+python scripts/backup.py verify backups/<stamp>    # checksums, detects corruption
+python scripts/backup.py restore backups/<stamp>   # verifies, then writes back (needs --yes)
 ```
+
+The manifest carries a sha256 per file, so a restore proves it is putting back the bytes that were
+saved. It refuses to restore a corrupt snapshot rather than half-applying it, and records an absent
+file as absent instead of silently skipping it. `tests/test_backup_restore.py` covers the round
+trip: delete the registry, restore it, get identical bytes.
+
+What is in scope is `data/subscribers.csv` (the one irreplaceable file: a lost opt-out row means
+texting someone who asked to be left alone), the computed `data/processed/*.csv` runs including
+the alert log, and the 36 kB forecast cache. `data/raw/` is re-downloadable and not copied.
+
+### Simultaneous users — measured, not assumed
+
+`scripts/loadtest.py` fires concurrent clients at the public reads and checks that no payload
+contradicts the request it answered (a scenario-4 page showing scenario-0 numbers would be a wrong
+warning, not a slow one) and that nothing 5xx's.
+
+```bash
+python scripts/loadtest.py --url http://127.0.0.1:8000 --users 12 --per-user 4
+```
+
+| 48 requests, 12 concurrent clients | p50 | p90 | p95 | errors |
+|---|---|---|---|---|
+| one uvicorn worker (default) | 1234 ms | 2397 ms | 3021 ms | 0 |
+| `uvicorn --workers 2` | 246 ms | 2169 ms | 2550 ms | 0 |
+
+No errors and no cross-request contamination in either run. The lesson is the expected one: the
+heavy endpoints are pandas computations, so run **more than one worker** in production
+(`uvicorn app.main:app --workers 4`) — that is the whole scaling story for a single-node
+deployment. The rate limiter is per-process, so behind multiple workers use a shared limiter or a
+proxy; that caveat is also in **Security**.
+
+### Caching and compression
+
+* **gzip** (`GZipMiddleware`, ≥1 kB): the 141-ward ranking payload goes out at 6.4 kB instead of
+  47 kB. Static assets are GitHub Pages' business and it already compresses them.
+* **`Cache-Control`**: public reads get `public, max-age=120, stale-while-revalidate=60`
+  (`/health` 30 s, `/demo/*` 10 min). Everything under `/subscribers`, anything that mutates or
+  sends, and anything administrative stays `no-store` — a subscriber list in a shared cache is a
+  data leak, not a performance win. A request carrying a credential (`X-API-Key`,
+  `X-HeatShield-Token`, `Authorization`) is never cached, so an authenticated read cannot poison a
+  shared cache for the next visitor.
+* One knob: `HS_RESPONSE_CACHE_MAX_AGE=0` turns the header off entirely and every response goes
+  back to `no-store`.
+
 ## Map keys, installability & notification automation
 
 ### Maps are keyless — no "API key required", ever

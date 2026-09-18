@@ -1,0 +1,96 @@
+# Uptime probe. The checklist item is "uptime monitoring" — for a warning
+# system the point is not vanity metrics, it is noticing that the thing people
+# rely on has stopped answering *before* a citizen opens it during a heat wave.
+#
+# This checks the two surfaces that matter and fails loudly when either is not
+# healthy. A failed scheduled run notifies the repository watchers by email,
+# which is the cheapest alerting that needs no account anywhere.
+#
+# Configure the targets once, under Settings → Secrets and variables → Actions →
+# Variables (they are URLs, so they are variables, not secrets):
+#
+#   PUBLIC_SITE_URL  e.g. https://soumallo99.github.io/Heatshield/
+#   PUBLIC_API_URL   e.g. https://api.example.org        (optional)
+#
+# Two honest limits, stated rather than hidden:
+#   * GitHub disables scheduled workflows in a repository with no activity for
+#     60 days, and this repository does not have a heartbeat commit, so a very
+#     quiet fork stops being monitored. A self-hosted monitor (Uptime Kuma,
+#     healthchecks.io) has no such limit and is a one-line swap.
+#   * The probe runs from GitHub's runners, so it proves the site is reachable
+#     from the public internet — not from a phone on a congested cell.
+name: Uptime
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"   # every six hours, off the hour to dodge the rush
+  workflow_dispatch:
+    inputs:
+      site_url:
+        description: Override the site URL for this run
+        required: false
+        type: string
+      api_url:
+        description: Override the API URL for this run
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    env:
+      SITE: ${{ inputs.site_url || vars.PUBLIC_SITE_URL || 'https://soumallo99.github.io/Heatshield/' }}
+      API: ${{ inputs.api_url || vars.PUBLIC_API_URL || '' }}
+    steps:
+      - name: Site answers and serves the app
+        run: |
+          set -euo pipefail
+          # Follow redirects, fail on any non-2xx, and keep the timing.
+          body=$(curl --silent --show-error --location --max-time 30 \
+                 --write-out '\n%{http_code} %{time_total}' "$SITE")
+          status=$(echo "$body" | tail -1 | awk '{print $1}')
+          seconds=$(echo "$body" | tail -1 | awk '{print $2}')
+          echo "site: HTTP $status in ${seconds}s — $SITE"
+          [ "$status" = "200" ] || { echo "::error::site returned HTTP $status"; exit 1; }
+          # A 200 that is not the app (a parked page, a broken rewrite) is still an outage.
+          echo "$body" | grep -qi "HeatShield" || { echo "::error::the response does not look like HeatShield"; exit 1; }
+
+      - name: Crawler files are reachable
+        run: |
+          set -euo pipefail
+          for path in robots.txt sitemap.xml llms.txt social-card.png; do
+            code=$(curl --silent --output /dev/null --location --max-time 30 \
+                   --write-out '%{http_code}' "${SITE%/}/$path")
+            echo "$path: HTTP $code"
+            [ "$code" = "200" ] || { echo "::error::$path returned HTTP $code"; exit 1; }
+          done
+
+      - name: API health and a real payload
+        if: env.API != ''
+        run: |
+          set -euo pipefail
+          health=$(curl --silent --show-error --max-time 30 --write-out '\n%{http_code}' "${API%/}/health")
+          code=$(echo "$health" | tail -1)
+          echo "api /health: HTTP $code"
+          [ "$code" = "200" ] || { echo "::error::API health returned HTTP $code"; exit 1; }
+          # /health can answer while the data layer is broken, so ask for a real
+          # payload too — a warning system that cannot produce a ranking is down.
+          ranking=$(curl --silent --show-error --max-time 60 --write-out '\n%{http_code}' "${API%/}/risk/ranking?scenario_c=0")
+          code=$(echo "$ranking" | tail -1)
+          echo "api /risk/ranking: HTTP $code"
+          [ "$code" = "200" ] || { echo "::error::/risk/ranking returned HTTP $code"; exit 1; }
+          echo "$ranking" | grep -q '"risk_score"' || { echo "::error::ranking payload is empty"; exit 1; }
+
+      - name: Summary
+        run: |
+          {
+            echo "### Uptime probe"
+            echo ""
+            echo "| target | result |"
+            echo "|---|---|"
+            echo "| \`${{ env.SITE }}\` | ok |"
+            [ -n "${{ env.API }}" ] && echo "| \`${{ env.API }}\` | ok |" || true
+          } >> "$GITHUB_STEP_SUMMARY"

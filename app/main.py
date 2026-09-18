@@ -7,7 +7,9 @@ Docs: http://localhost:8000/docs
 """
 from __future__ import annotations
 
+import logging
 from datetime import datetime
+from uuid import uuid4
 
 import pandas as pd
 from zoneinfo import ZoneInfo
@@ -16,6 +18,7 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request
 from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 
 from core.security import (RateLimiter, client_key, redact_phone, require_admin,
@@ -78,17 +81,65 @@ if _ORIGINS:
 
 # Requests per client per minute on the whole API. Enumeration of the registry
 # and repeated dispatch attempts are the things this is here to make boring.
+# Compression. The ranking payload is a few hundred kB of JSON for 141 wards and
+# the exports are larger; text compresses about 8:1. Added last so it wraps
+# everything else, including the guard's own error responses. Small bodies are
+# skipped — gzip on a 200-byte reply costs more than it saves.
+app.add_middleware(GZipMiddleware, minimum_size=1024)
+
 limiter = RateLimiter(config.RATE_LIMIT_PER_MIN)
 
 _DOC_PATHS = {"/docs", "/openapi.json", "/redoc", "/docs/oauth2-redirect"}
 
+# One logger, one place to look. Without this an unhandled exception in a route
+# reaches the client as a bare "Internal Server Error" with nothing in the
+# server log tying it to a request — the worst kind of bug report.
+logger = logging.getLogger("heatshield.api")
+
+# Responses that may be cached, in seconds. A public read built from the last
+# computed run is the same for every visitor until the next forecast cycle, so
+# a repeat request (a phone reopening the tab, a second reader) should not pay
+# for the computation again.
+#
+# Deliberately absent: anything that can contain personal data
+# (/subscribers*), anything that sends or mutates, and every administrative
+# route. Those keep the `no-store` default.
+_CACHEABLE_READS = {
+    "/health": 30,
+    "/risk": config.RESPONSE_CACHE_MAX_AGE,
+    "/risk/": config.RESPONSE_CACHE_MAX_AGE,
+    "/thermal": config.RESPONSE_CACHE_MAX_AGE,
+    "/thermal/": config.RESPONSE_CACHE_MAX_AGE,
+    "/alerts/plan": config.RESPONSE_CACHE_MAX_AGE,
+    "/ncr/": config.RESPONSE_CACHE_MAX_AGE,
+    "/warnings/advance": config.RESPONSE_CACHE_MAX_AGE,
+    "/zones": config.RESPONSE_CACHE_MAX_AGE,
+    "/wards": config.RESPONSE_CACHE_MAX_AGE,
+    "/demo/": 600,
+    # NB: nothing under /subscribers appears here, not even the aggregate stats.
+    # A path family that is cacheable in one place and forbidden in another is a
+    # rule waiting to be broken by the next field someone adds to it.
+}
+
+
+def _cache_seconds(path: str) -> int:
+    """Cache lifetime for a GET path, 0 when it must not be cached."""
+    if config.RESPONSE_CACHE_MAX_AGE <= 0:
+        return 0
+    for prefix, seconds in _CACHEABLE_READS.items():
+        if path == prefix or path.startswith(prefix):
+            return min(seconds, config.RESPONSE_CACHE_MAX_AGE)
+    return 0
+
 
 @app.middleware("http")
 async def guard(request: Request, call_next):
-    """Rate limit, body-size cap, docs lock, security headers.
+    """Rate limit, body-size cap, docs lock, security headers, request ids.
 
     Order matters: cheap rejections happen before anything touches pandas.
     """
+    request_id = uuid4().hex[:12]
+    request.state.request_id = request_id
     if not config.ENABLE_DOCS and request.url.path in _DOC_PATHS:
         return JSONResponse({"detail": "API documentation is disabled on this deployment"},
                             status_code=404)
@@ -105,11 +156,39 @@ async def guard(request: Request, call_next):
             headers={"Retry-After": str(retry_after)},
         )
 
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception:  # noqa: BLE001 — deliberate catch-all: log, name it, say nothing
+        # A traceback in the response body is an information leak; nothing at
+        # all is worse. Log the whole thing against the request id and hand the
+        # client a JSON error it can quote.
+        logger.exception("unhandled error on %s %s (request %s)", request.method, request.url.path, request_id)
+        return JSONResponse(
+            {"detail": "internal error", "request_id": request_id},
+            status_code=500,
+            headers={"X-Request-ID": request_id, "Cache-Control": "no-store"},
+        )
+
+    if response.status_code >= 500:
+        logger.error("server error %s on %s %s (request %s)",
+                     response.status_code, request.method, request.url.path, request_id)
+
+    response.headers.setdefault("X-Request-ID", request_id)
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("Referrer-Policy", "no-referrer")
     response.headers.setdefault("X-Frame-Options", "DENY")
-    response.headers.setdefault("Cache-Control", "no-store")
+
+    # Cache-Control: private reads stay no-store. A public GET is cacheable only
+    # when the request carried no credential — an authenticated reader must not
+    # be able to poison a shared cache for the next visitor.
+    seconds = _cache_seconds(request.url.path) if request.method == "GET" else 0
+    authenticated = any(
+        request.headers.get(header) for header in ("X-HeatShield-Token", "X-API-Key", "Authorization")
+    )
+    if seconds and response.status_code == 200 and not authenticated:
+        response.headers.setdefault("Cache-Control", f"public, max-age={seconds}, stale-while-revalidate=60")
+    else:
+        response.headers.setdefault("Cache-Control", "no-store")
     return response
 
 

@@ -221,7 +221,12 @@ def test_both_cities_are_switchable_in_dashboard_and_citizen_tab():
 
 def test_demo_is_route_level_code_split_and_prominently_linked():
     app = (WEB / "src" / "App.jsx").read_text(encoding="utf-8")
-    assert "demo: 'demo'" in app
+    # The route table moved to src/routes.js when the router became a pure,
+    # testable function (scripts/test-routes.mjs); App.jsx must use it rather
+    # than carrying a second copy.
+    routes = (WEB / "src" / "routes.js").read_text(encoding="utf-8")
+    assert "demo: 'demo'" in routes
+    assert "from './routes'" in app and "resolveRoute(" in app
     assert "const DemoApp = lazy" in app
     landing = (WEB / "src" / "components" / "Landing.jsx").read_text(encoding="utf-8")
     assert "onDemo" in landing and "Heat Risk Demo" in landing

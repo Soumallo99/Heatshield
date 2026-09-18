@@ -83,6 +83,11 @@ ENABLE_DOCS = (_ENABLE_DOCS in {"1", "true", "yes"}) if _ENABLE_DOCS else not AD
 RATE_LIMIT_PER_MIN = int(os.getenv("HS_RATE_LIMIT_PER_MIN", "120"))
 # Largest accepted request body, in bytes. Bodies are small JSON documents.
 MAX_BODY_BYTES = int(os.getenv("HS_MAX_BODY_BYTES", str(256 * 1024)))
+# How long a public read endpoint may be cached by a browser or proxy, in
+# seconds. The data behind them changes at most once per forecast cycle, so a
+# repeat visitor should not wait for pandas twice. 0 turns the header off and
+# every response goes back to `no-store`.
+RESPONSE_CACHE_MAX_AGE = int(os.getenv("HS_RESPONSE_CACHE_MAX_AGE", "120"))
 # Set when the app runs behind a trusted reverse proxy, so X-Forwarded-For can be
 # believed for rate-limiting purposes.
 TRUST_PROXY = os.getenv("HS_TRUST_PROXY", "").strip().lower() in {"1", "true", "yes"}
