@@ -39,10 +39,20 @@ def test_route_chunks_are_loaded_through_the_retrying_loader():
 
 
 def test_a_tab_press_starts_the_download_before_the_route_changes():
+    """Inside `go`, the chunk request goes out before the hash is written.
+
+    Order matters: the fetch overlaps the re-render instead of following it. The
+    assertion is written against the body of `go` rather than the whole file, so
+    it keeps meaning the same thing when the internals are refactored — which is
+    exactly what happened when the route stopped depending on the browser's
+    `hashchange` echo and `go` grew a second statement.
+    """
     app = (WEB / "src" / "App.jsx").read_text(encoding="utf-8")
-    assert "startRouteChunk(r)" in app
-    # Order matters: the fetch overlaps the re-render instead of following it.
-    assert app.index("startRouteChunk(r)") < app.index("window.location.hash = `#/${r}`")
+    start = app.index("const go = (r) => {")
+    body = app[start:app.index("\n  }", start)]
+    assert "startRouteChunk(r)" in body, "the press must start the download"
+    assert "window.location.hash = next" in body, "the hash is still written (deep links, back button)"
+    assert body.index("startRouteChunk(r)") < body.index("window.location.hash = next")
 
 
 def test_the_page_swap_does_not_wait_for_an_exit_animation():
@@ -168,7 +178,7 @@ def test_each_basemap_credits_the_provider_it_actually_draws():
                  "Esri China (Hong Kong)", "Esri Korea", "Esri (Thailand)", "NGCC"):
         assert name in source, f"{name} is part of the World Street Map credit"
     # World_Imagery, and the labels drawn over it.
-    assert "Imagery: Esri, Maxar, Earthstar Geographics, and the GIS User Community" in source
+    assert "Imagery: Esri, Vantor, Earthstar Geographics, and the GIS User Community" in source
     assert "Labels: Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community" in source
     # OpenTopoMap requires both its own credit and OpenStreetMap's, in the
     # wording its page specifies ("Map data: © OpenStreetMap contributors, SRTM
@@ -186,7 +196,7 @@ def test_each_basemap_credits_the_provider_it_actually_draws():
     # The wrong-credit regression, stated directly: the default basemap must not
     # advertise imagery it does not contain.
     dark_block = source.split("id: 'dark'", 1)[1].split("id: 'streets'", 1)[0]
-    assert "Maxar" not in dark_block, "the dark canvas draws no Maxar imagery"
+    assert "Vantor" not in dark_block, "the dark canvas draws no satellite imagery"
 
 
 def test_the_map_shows_the_credit_of_the_layer_on_screen():

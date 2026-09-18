@@ -77,6 +77,24 @@ def _build() -> subprocess.CompletedProcess[str]:
     return last
 
 
+@pytest.fixture(autouse=True)
+def _empty_the_answer_cache():
+    """No test may be answered by another test's cached response.
+
+    The API keeps a short-lived in-process cache of the public reads (two
+    minutes, which is right in production and wrong inside one pytest process).
+    Without this, a test that exercises a *cold* path — the Kolkata brief with
+    no forecast cache, say — can be handed a warm response built seconds earlier
+    by a different test, and the failure it exists to catch moves somewhere
+    else. Ordering-dependent passes are worse than failures.
+    """
+    from app.main import answer_cache
+
+    answer_cache.clear()
+    yield
+    answer_cache.clear()
+
+
 @pytest.fixture(scope="session")
 def built_site() -> Path:
     """`frontend/web/dist` from a build of the current sources.

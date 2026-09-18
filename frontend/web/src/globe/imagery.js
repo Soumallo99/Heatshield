@@ -15,11 +15,13 @@
 import * as Cesium from 'cesium'
 
 export const ESRI_ATTRIBUTION_HTML =
-  '<a href="https://www.esri.com" target="_blank" rel="noopener">Powered by Esri</a> — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+  '<a href="https://www.esri.com" target="_blank" rel="noopener">Powered by Esri</a> — Source: Esri, Vantor, Earthstar Geographics, and the GIS User Community'
 
 export const OSM_ATTRIBUTION = '© OpenStreetMap contributors'
 
-/** Keyless ArcGIS World Imagery (Maxar / Earthstar Geographics). */
+/** Keyless ArcGIS World Imagery (Vantor / Earthstar Geographics).
+ *  The credit string mirrors the service's own `copyrightText`, which named
+ *  Maxar until the imagery supplier was renamed to Vantor (checked 2026-09-18). */
 const ESRI_WORLD_IMAGERY_URL =
   'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
 

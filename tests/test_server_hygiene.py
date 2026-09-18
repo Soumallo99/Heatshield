@@ -67,6 +67,24 @@ def test_public_reads_are_cacheable(client: TestClient):
     assert "stale-while-revalidate" in response.headers["cache-control"]
 
 
+def test_the_citizen_brief_is_cacheable_and_served_from_the_cache_when_repeated(client: TestClient):
+    """The biggest public read on the phone path, twice: pay for it once.
+
+    Both halves matter. The first response proves the rule covers /citizen/
+    (it shipped as `no-store`, so every cold open of the Kolkata brief rebuilt a
+    365 kB document); the second proves the repeat really comes out of the
+    answer cache rather than merely carrying a header.
+    """
+    first = client.get("/citizen/kolkata")
+    assert first.status_code == 200
+    assert first.headers["cache-control"].startswith("public, max-age=")
+
+    second = client.get("/citizen/kolkata")
+    assert second.status_code == 200
+    assert second.headers.get("x-cache") == "HIT", "the repeat was recomputed"
+    assert second.content == first.content, "a cached answer must be the same answer"
+
+
 def test_personal_and_administrative_reads_are_never_cacheable(client: TestClient):
     """A subscriber list in a shared cache is a data leak, not a performance win."""
     for path, headers in (("/subscribers", ADMIN), ("/subscribers/stats", {})):

@@ -343,7 +343,7 @@ export default function HeatGlobe({
 
       <div className="globe-foot">
         <p className="globe-attribution">
-          Imagery © Esri, Maxar, Earthstar Geographics (keyless) · OSM fallback © OpenStreetMap
+          Imagery © Esri, Vantor, Earthstar Geographics (keyless) · OSM fallback © OpenStreetMap
           contributors · Terrain: Re:Earth / Mapterhorn quantized mesh (CC BY 4.0), ellipsoid on
           failure · Globe: CesiumJS (Apache-2.0) · globe bootstrap derived from gods-eye-view (MIT)
           — see THIRD-PARTY.md. No API key is used or required anywhere on this map.

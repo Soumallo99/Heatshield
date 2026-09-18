@@ -35,14 +35,15 @@
  * actually being drawn.
  *
  * Every string below is copied from the `copyrightText` field of the ArcGIS
- * service it is attached to (verified 2026-09-18 against
- * `.../<service>/MapServer?f=json`) or from the provider's own licence page.
+ * service it is attached to (verified against
+ * `.../<service>/MapServer?f=json`; last full pass 2026-09-18) or from the
+ * provider's own licence page.
  * Do not tidy them up and do not share one string between two services: the
  * Dark Gray Canvas is HERE/Garmin/OSM data and the World Imagery is
- * Maxar/Earthstar imagery, and crediting one for the other is both wrong and a
- * breach of the terms we are using the tiles under. The previous version of this
- * file did exactly that — the default basemap advertised Maxar imagery that
- * appears nowhere in it.
+ * Vantor/Earthstar satellite imagery, and crediting one for the other is both
+ * wrong and a breach of the terms we are using the tiles under. The previous
+ * version of this file did exactly that — the default basemap advertised
+ * satellite imagery that appears nowhere in it.
  */
 const OSM_ATTR = '© OpenStreetMap contributors'
 
@@ -56,9 +57,15 @@ const ESRI_STREETS_ATTR =
   'Esri China (Hong Kong), Esri Korea, Esri (Thailand), NGCC, © OpenStreetMap contributors, ' +
   'and the GIS User Community'
 
-/** World_Imagery, drawn with Reference/World_Boundaries_and_Places on top. */
+/** World_Imagery, drawn with Reference/World_Boundaries_and_Places on top.
+ *
+ *  The imagery line is the service's current `copyrightText` as of 2026-09-18:
+ *  "Source: Esri, Vantor, Earthstar Geographics, and the GIS User Community".
+ *  Esri renamed the imagery supplier (Maxar → Vantor) in the service metadata;
+ *  if this string and the service disagree again, the service wins — check
+ *  `.../World_Imagery/MapServer?f=json` before editing. */
 const ESRI_IMAGERY_ATTR =
-  'Imagery: Esri, Maxar, Earthstar Geographics, and the GIS User Community · ' +
+  'Imagery: Esri, Vantor, Earthstar Geographics, and the GIS User Community · ' +
   'Labels: Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community'
 
 /** ArcGIS Server REST cached-map tile URL. Note `{z}/{y}/{x}` — ArcGIS
@@ -119,9 +126,10 @@ export const BASEMAPS = [
     hint: 'OpenTopoMap — relief + contours',
     // Plain tiles only. OpenTopoMap documents exactly one URL
     // (`https://{a|b|c}.tile.opentopomap.org/{z}/{x}/{y}.png`) with no retina
-    // variant, so a `@2x` request — which Leaflet builds from `{r}` whenever
-    // `detectRetina` meets a high-DPI screen — would 404, trip the tile-failure
-    // counter, and silently swap a working Terrain map for the OSM fallback.
+    // variant — so the template must stay free of Leaflet's `{r}` token: on a
+    // high-DPI screen Leaflet would substitute `@2x` (Browser.retina), the tile
+    // would 404, trip the tile-failure counter, and silently swap a working
+    // Terrain map for the OSM fallback.
     url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
     subdomains: 'abc',
     maxZoom: 20,

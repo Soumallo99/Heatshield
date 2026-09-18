@@ -119,6 +119,13 @@ _CACHEABLE_READS = {
     "/thermal/": config.RESPONSE_CACHE_MAX_AGE,
     "/alerts/plan": config.RESPONSE_CACHE_MAX_AGE,
     "/ncr/": config.RESPONSE_CACHE_MAX_AGE,
+    # The Kolkata citizen brief is the second-largest public read in the API
+    # (~365 kB raw, ~9 kB on the wire, rebuilt from the committed forecast cache
+    # on every request). It is the same document for every visitor and carries
+    # no personal field — the opt-in registry lives under /subscribers, which
+    # stays deliberately uncacheable — so a phone reopening its tab should not
+    # pay for the rebuild.
+    "/citizen/": config.RESPONSE_CACHE_MAX_AGE,
     "/warnings/advance": config.RESPONSE_CACHE_MAX_AGE,
     "/zones": config.RESPONSE_CACHE_MAX_AGE,
     "/wards": config.RESPONSE_CACHE_MAX_AGE,

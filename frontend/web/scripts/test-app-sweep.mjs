@@ -60,13 +60,50 @@ function stubEnvironment(window) {
   globalThis.requestAnimationFrame = window.requestAnimationFrame.bind(window)
   globalThis.cancelAnimationFrame = window.cancelAnimationFrame.bind(window)
   globalThis.getComputedStyle = window.getComputedStyle.bind(window)
-  // React and the animation library reach for DOM constructors by name
-  // (SVGElement for an icon, HTMLDivElement for a motion node). Copy the
-  // window's own uppercase constructors across rather than guessing the list,
-  // which is what left `SVGElement is not defined` in an earlier version of
-  // this file. Anything Node already defines (Response, URL, Blob) is kept.
+  // React and the animation library reach for DOM constructors by name, as bare
+  // globals (SVGElement for an icon, HTMLDivElement for a motion node), so jsdom's
+  // constructors have to exist on `globalThis` — not merely on `window`.
+  //
+  // Enumerating `Object.getOwnPropertyNames(window)` is NOT a reliable way to
+  // find them: on Node 20 jsdom's `SVGElement` is reachable through the window's
+  // prototype chain rather than as an own property, so a copy loop that walks own
+  // properties silently copies nothing and the bundle dies later with
+  // "SVGElement is not defined" — which is what turned CI red on Node 20 while
+  // passing on Node 22 locally. Read each constructor by name instead, and check
+  // afterwards that the ones the app needs are really there.
+  const REQUIRED_DOM_GLOBALS = [
+    'Node', 'Element', 'HTMLElement', 'SVGElement', 'HTMLDivElement', 'HTMLSpanElement',
+    'DocumentFragment', 'Text', 'Comment', 'Event', 'CustomEvent', 'MouseEvent',
+    'KeyboardEvent', 'FocusEvent', 'InputEvent', 'NodeList',
+    'HTMLCollection', 'DOMRect', 'DOMTokenList', 'Document', 'MutationObserver',
+  ]
+  for (const name of REQUIRED_DOM_GLOBALS) {
+    if (typeof globalThis[name] === 'function') continue   // Node's own Response/URL/Blob win
+    const value = window[name]
+    if (typeof value === 'function') globalThis[name] = value
+  }
+  // AbortController and AbortSignal must come from jsdom's realm even though Node
+  // has its own. jsdom validates the `{ signal }` option of addEventListener with
+  // its own AbortSignal, so a Node-created signal is rejected outright:
+  // "parameter 3 dictionary has member 'signal' that is not of type 'AbortSignal'".
+  // The app only ever does `new AbortController()`, so there is nothing Node's
+  // version provides that this loses — and a single realm is the point of a DOM
+  // stub. (Node 20 surfaced this; Node 22 happened not to.)
+  for (const name of ['AbortController', 'AbortSignal']) {
+    if (typeof window[name] === 'function') globalThis[name] = window[name]
+  }
+
+  // jsdom implements MouseEvent but not PointerEvent; the animation library
+  // feature-detects it by name, so give it a MouseEvent-shaped stand-in rather
+  // than asserting something jsdom has never provided.
+  if (typeof globalThis.PointerEvent !== 'function') {
+    const base = globalThis.MouseEvent || globalThis.Event
+    globalThis.PointerEvent = window.PointerEvent = class PointerEvent extends base {}
+  }
+  // Anything else the window has that Node does not — best effort, and silent for
+  // the non-writable ones (`globalThis.name`, `globalThis.length`).
   for (const name of Object.getOwnPropertyNames(window)) {
-    if (!/^[A-Z]/.test(name) || name in globalThis) continue
+    if (!/^[A-Z]/.test(name) || typeof globalThis[name] === 'function') continue
     const value = window[name]
     if (typeof value !== 'function') continue
     try {
@@ -74,6 +111,13 @@ function stubEnvironment(window) {
     } catch {
       /* non-writable global — the app does not need every one of them */
     }
+  }
+  for (const name of [...REQUIRED_DOM_GLOBALS, 'PointerEvent', 'AbortController', 'AbortSignal']) {
+    assert.equal(
+      typeof globalThis[name],
+      'function',
+      `${name} is missing from the DOM stub: the app would fail later with a ReferenceError, far from the cause`,
+    )
   }
   for (const target of [globalThis, window]) {
     target.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} }
@@ -113,7 +157,7 @@ function stubEnvironment(window) {
   window.scrollTo = () => {}   // jsdom throws "Not implemented" otherwise
 }
 
-async function mountApp() {
+async function mountApp(options = {}) {
   const dir = await mkdtemp(path.join(tmpdir(), 'hs-shell-'))
   const outfile = path.join(dir, 'bundle.js')
   const entry = path.join(dir, 'entry.jsx')
@@ -169,6 +213,16 @@ async function mountApp() {
     virtualConsole,
   })
   stubEnvironment(dom.window)
+
+  if (options.dropHashChange) {
+    // A browser that never hands the event back: a background tab being
+    // throttled, an event coalesced away in a burst of navigation, or a listener
+    // attached a frame too late. The press itself must still open the page — the
+    // reported bug was a press whose only effect was to schedule this event.
+    const originalAdd = dom.window.addEventListener.bind(dom.window)
+    dom.window.addEventListener = (type, ...rest) =>
+      (type === 'hashchange' ? undefined : originalAdd(type, ...rest))
+  }
 
   const pageErrors = []
   const consoleNoise = []
@@ -236,6 +290,31 @@ test('the Citizen tab opens on the press, from a cold start, with no reload', as
   assert.ok(opened, `the Citizen page never appeared: "${text(app.window).slice(0, 200)}"`)
   assert.ok(Date.now() - started < 4000, 'the Citizen page took longer than a person would wait')
   assert.equal(app.reloads(), 0, 'the Citizen tab needed a reload — that is the reported bug')
+  assert.deepEqual(app.pageErrors, [])
+})
+
+test('the Citizen tab opens even if the browser never delivers hashchange', async (t) => {
+  // The regression test for the reported bug. Routing through the hash is fine
+  // as a *record* of where the visitor is, but a press must not depend on
+  // hearing the browser's echo of it: when that echo is lost the screen simply
+  // does not change, and reloading the page (which re-reads the hash on mount)
+  // is the only way through.
+  const app = await mountApp({ dropHashChange: true })
+  t.after(() => app.cleanup())
+
+  const mounted = await waitFor(() => navButtons(app.window).length >= 4)
+  assert.ok(mounted, `the shell never mounted (${text(app.window).slice(0, 120)})`)
+
+  const started = Date.now()
+  assert.ok(clickByText(app.window, 'Citizen'), 'the Citizen tab is not on screen')
+  const opened = await waitFor(() => phoneShell(app.window), 4000)
+
+  assert.ok(
+    opened,
+    `the Citizen tab did nothing without a hashchange event: "${text(app.window).slice(0, 200)}"`,
+  )
+  assert.ok(Date.now() - started < 1500, 'the press should change the page at once, not after a transition')
+  assert.equal(app.reloads(), 0)
   assert.deepEqual(app.pageErrors, [])
 })
 

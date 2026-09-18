@@ -83,19 +83,26 @@ function useRoute() {
     requestAnimationFrame(seek)
   }
 
-  useEffect(() => {
-    const onChange = () => {
-      const anchor = anchorFromHash(window.location.hash)
-      setRoute(readRoute())
-      if (anchor) {
-        scrollToAnchor()
-        return
-      }
-      // Each page starts at its own top. Without this, clicking Citizen from
-      // the bottom of the long dashboard lands you in the new page's empty
-      // scroll tail, which reads as "the tab didn't open".
-      window.scrollTo(0, 0)
+  /**
+   * Apply a hash: move the route and put the new page at its own top.
+   *
+   * Used by the hashchange listener *and* by `go` below, so there is exactly one
+   * definition of what "navigate to this hash" means.
+   */
+  const applyHash = (hash) => {
+    setRoute(resolveRoute(hash))
+    if (anchorFromHash(hash)) {
+      scrollToAnchor()
+      return
     }
+    // Each page starts at its own top. Without this, clicking Citizen from the
+    // bottom of the long dashboard lands you in the new page's empty scroll
+    // tail, which reads as "the tab didn't open".
+    window.scrollTo(0, 0)
+  }
+
+  useEffect(() => {
+    const onChange = () => applyHash(window.location.hash)
     // A deep link straight into a section must land there on first paint too.
     if (anchorFromHash(window.location.hash)) scrollToAnchor()
     window.addEventListener('hashchange', onChange)
@@ -115,9 +122,30 @@ function useRoute() {
     if (description) description.setAttribute('content', meta.description)
   }, [route])
 
-  // The chunk request goes out *before* the hash changes, so the download
-  // overlaps the re-render instead of starting after it.
-  return { route, go: (r) => { startRouteChunk(r); window.location.hash = `#/${r}` } }
+  /**
+   * Navigate on a press.
+   *
+   * The route is updated **here**, not only through the `hashchange` listener.
+   * Waiting for the browser to hand the event back works almost every time, and
+   * the times it does not are the reported bug: "when I press on the Citizens tab
+   * I have to reload the page unless it won't open". A press whose only effect is
+   * to schedule an event has no fallback — if that event is missed, coalesced,
+   * throttled in a background tab, or arrives before the listener is attached,
+   * the page simply does not change until something re-reads the hash, and a
+   * reload is exactly that. The hash is still set, because deep links and the
+   * back button are part of the contract; the difference is that the app no
+   * longer depends on hearing its own echo.
+   *
+   * The chunk request goes out first, so the download overlaps the re-render.
+   */
+  const go = (r) => {
+    startRouteChunk(r)
+    const next = `#/${r}`
+    if (window.location.hash !== next) window.location.hash = next
+    applyHash(next)
+  }
+
+  return { route, go }
 }
 
 /**
