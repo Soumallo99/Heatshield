@@ -15,7 +15,7 @@ import HourlyChart from './HourlyChart'
 import Odometer from './Odometer'
 import StatsStrip from './StatsStrip'
 import TopWardsTable from './TopWardsTable'
-import { ConnectionNotice, RefreshButton } from './LiveStatus'
+import { ConnectionNotice, RefreshButton, SnapshotNotice } from './LiveStatus'
 import { bandColour, bandText, EASE, spring, useMotionSafe } from '../motion'
 import { useLive, useRefreshShortcut } from '../live'
 import { ALERT_THRESHOLD, fetchAlerts, fetchGeo, fetchHourly, fetchRanking,
@@ -271,6 +271,14 @@ export default function Dashboard({ onExit, onDemo }) {
           lastUpdated={ranking.lastUpdated}
           onRetry={refreshAll}
           busy={ranking.loading}
+        />
+
+        {/* Data arrived, but from the shipped snapshot rather than the API:
+            real numbers, frozen date. Both maps and the table show it, so the
+            disclosure sits above all of them. */}
+        <SnapshotNotice
+          snapshot={ranking.data?.static_snapshot ? ranking.data : null}
+          onRetry={refreshAll}
         />
 
         {/* -------------------------------------------------------- alert */}

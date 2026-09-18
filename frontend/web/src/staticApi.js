@@ -10,8 +10,16 @@
 
 const BASE_PATH = import.meta.env.BASE_URL || './'
 
+/**
+ * URL of anything copied verbatim from `public/` — the ward GeoJSON, an icon,
+ * a generated snapshot. Never a document-root path: this app is deployed under
+ * a repository subdirectory on GitHub Pages (`/Heatshield/`), where `/data/…`
+ * escapes the app and 404s.
+ */
+export const publicURL = (name) => `${BASE_PATH.replace(/\/?$/, '/')}${name.replace(/^\//, '')}`
+
 /** URL of a generated snapshot in `public/static-api/`. */
-export const staticURL = (name) => `${BASE_PATH.replace(/\/?$/, '/')}static-api/${name}`
+export const staticURL = (name) => publicURL(`static-api/${name}`)
 
 /**
  * True when there is no FastAPI proxy worth asking first: a `file://` open, a

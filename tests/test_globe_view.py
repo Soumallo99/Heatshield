@@ -21,6 +21,7 @@ credentials they refuse to use, and those explanations are the point.
 """
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -291,3 +292,53 @@ def test_built_globe_runtime_assets_resolve(built_site):
     assert referenced, "expected the Cesium chunk to name runtime assets"
     missing = sorted(path for path in referenced if not (dist / "cesium" / path).exists())
     assert not missing, f"referenced runtime assets are not shipped: {missing[:5]}"
+
+
+# ------------------------------------------------ deployed from a subdirectory
+# GitHub Pages serves a project site from /<repo>/, which is the deployment this
+# project documents. Three separate things have to hold there, and each one was
+# missing or broken at some point while building this feature:
+#   1. ward geometry fetched through a document-root path (/data/…) escapes the
+#      app and 404s — no polygons, in either map;
+#   2. the ranking table has no static counterpart — polygons but no colours;
+#   3. an unlabelled fallback — real numbers that read as live.
+# The sandbox has no browser, so this asserts the wiring and the shipped files;
+# the runtime half is a manual check (see README → "3D globe").
+
+
+def test_operations_map_survives_a_static_subdirectory_host():
+    api = (SRC / "api.js").read_text(encoding="utf-8")
+    # 1. geometry, subdirectory-safe
+    assert "publicURL('data/kolkata_wards.geojson')" in api
+    assert "fetch('/data/" not in api and 'fetch("/data/' not in api
+    # 2. ranking falls back to the exported snapshot
+    assert "isStaticHost()" in api
+    assert "rankingSnapshot" in api and "static_snapshot: true" in api
+    assert "risk-ranking-" in api
+
+    # 3. and the fallback announces itself on screen
+    dashboard = (SRC / "components" / "Dashboard.jsx").read_text(encoding="utf-8")
+    assert "SnapshotNotice" in dashboard
+    assert "ranking.data?.static_snapshot" in dashboard
+    status = (SRC / "components" / "LiveStatus.jsx").read_text(encoding="utf-8")
+    assert "export function SnapshotNotice" in status
+    assert "this deployment has no live API" in status
+
+
+def test_every_shipped_ranking_snapshot_can_colour_the_globe():
+    """The globe's choropleth needs a band and a score per ward, on disk.
+
+    Checked against the files that ship (not the exporter) so a snapshot that
+    was never regenerated after a schema change fails here rather than on the
+    deployed site, where it would look like a styling bug.
+    """
+    snapshots = sorted((WEB / "public" / "static-api").glob("risk-ranking-*.json"))
+    assert snapshots, "run python -m scripts.export_static"
+    for path in snapshots:
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        assert doc.get("date"), f"{path.name} has no date to label the snapshot with"
+        rows = doc.get("data") or []
+        assert len(rows) == 141, f"{path.name}: {len(rows)} wards"
+        for row in rows[:20]:
+            assert row["risk_band"] and row["risk_score"] is not None
+            assert row["lat"] and row["lon"]

@@ -567,8 +567,9 @@ npm run budget
 
 `export_static.py` materialises the whole public catalogue — the nine `/ncr/*`
 routes, `/heatwave/advance`, `/warnings/advance`, `/notifications/preview`,
-`/citizen/kolkata` and all six `/demo/*` payload families (18 files) — in
-`frontend/web/public/static-api/` (31 exports). `citizen-kolkata.json` is a
+`/citizen/kolkata`, `/risk/ranking` (one snapshot per scenario button) and all
+six `/demo/*` payload families — in `frontend/web/public/static-api/`
+(36 exports). `citizen-kolkata.json` is a
 secondary, on-demand payload (~45 KB gzipped): it is fetched only when the user
 switches the citizen tab to Kolkata, so it stays out of the cold-open budget by
 design. The phone and demo clients use
@@ -577,9 +578,40 @@ the live relative `/api` first before falling back to those labelled snapshots.
 The export catalogue is checked against FastAPI routes (`--check`) so adding a
 new endpoint cannot silently become a static-host 404.
 
-The production Vite base, manifest, service-worker registration and cache keys
-are all relative (`./`), which keeps a project deployed at
-`https://<owner>.github.io/Heatshield/` inside its own path. The current budget
+The operations console is the exception that proves the rule: it is *live-first
+by design*, and its per-ward detail (`/risk/ward/{id}`, hourly series) has no
+snapshot on purpose — a frozen exposure number without its series would be worse
+than the honest "API unreachable" state. What *is* exported is the ward ranking,
+because otherwise both operations maps would draw 141 uncoloured polygons with
+no explanation; when that snapshot is what you are looking at, the console says
+so in as many words (**SnapshotNotice**: *"Saved forecast run — this deployment
+has no live API"*, with the run's date and scenario).
+
+The production Vite base, manifest, service-worker registration, cache keys and
+**every data path** are relative (`./`), which keeps a project deployed at
+`https://<owner>.github.io/Heatshield/` inside its own path. That last part is
+load-bearing and was wrong once: the ward GeoJSON was fetched as
+`/data/kolkata_wards.geojson`, a document-root request that escapes a project
+subdirectory — on Pages that 404s, and both maps lose their polygons. Public
+assets now go through `publicURL()` in `src/staticApi.js`, and the API base is
+`./api` rather than `/api` so the service worker's network-first data cache is
+inside its scope too.
+
+### Deploying to GitHub Pages
+
+`.github/workflows/deploy-pages.yml` builds the frontend and publishes
+`frontend/web/dist` on every push to `main`. It exists rather than a
+"deploy from branch" setting because the globe's runtime assets
+(`dist/cesium/{Workers,Assets,ThirdParty,Widgets}`, ~7 MB) are **build output**:
+they are gitignored and produced by `npm run build` → `prebuild` →
+`scripts/copy-cesium-assets.mjs`, so a branch that only stores sources would
+serve a 3D globe with no workers and no terrain. The workflow also fails
+explicitly if those assets or the Cesium widget stylesheet are missing, and
+prints the forecast run date the deployed maps will show.
+
+One-time setup: **Settings → Pages → Build and deployment → Source: GitHub
+Actions** (the REST API reports 404 for `/repos/<owner>/<repo>/pages` until that
+is done — the deploy job fails with "Pages is not enabled"). The current budget
 gate limits the actual phone cold-open set (entry + React + motion + phone chunk
 + CSS, never Leaflet, never the demo chunk) to **120 KiB gzip** and the initial
 citizen snapshot to **45 KiB uncompressed**. The checked build is currently
@@ -933,8 +965,9 @@ maskable icons; service worker caches everything for offline use).
 - **iPhone/iPad:** Safari → Share → **Add to Home Screen** (Apple does not expose the install
   prompt to web apps).
 - **A real, store-style APK/AAB:** package the deployed PWA with **PWABuilder** —
-  1. Deploy the site (GitHub Pages works: `scripts/export_static` + `npm run build`, relative
-     paths already configured).
+  1. Deploy the site — `.github/workflows/deploy-pages.yml` does it on push to `main`
+     (enable **Settings → Pages → Source: GitHub Actions** once). Relative paths, the
+     service worker and the static snapshots are already wired for the subdirectory URL.
   2. Go to <https://www.pwabuilder.com>, enter your deployed URL (e.g.
      `https://<owner>.github.io/Heatshield/#/phone`).
   3. *Package For Stores → Android → Generate* → download the **signed APK** (or the AAB for

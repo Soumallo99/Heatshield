@@ -15,7 +15,15 @@
  * the last computed run from data/processed/*.csv, so "offline" means
  * "last known data", clearly timestamped — never fabricated numbers.
  */
-const BASE = '/api'
+import { isStaticHost, publicURL, readJSON, staticURL } from './staticApi.js'
+
+/* Relative, not '/api': this app is deployed under a repository subdirectory
+ * (https://<owner>.github.io/<repo>/), where a document-root path leaves the
+ * app — and leaves the service worker's scope, so its network-first data cache
+ * (public/sw.js: inScope('api/')) can never answer. Resolving relative to the
+ * document keeps /api on a dev server and /<repo>/api on a static host, which is
+ * what the phone and demo layers already do. */
+const BASE = './api'
 
 /** Thrown for any non-2xx or transport failure, with the status when known. */
 class ApiError extends Error {
@@ -50,9 +58,36 @@ async function getJSON(path, { signal } = {}) {
 
 /* ------------------------------------------------------------------ api */
 
-/** Ward league table for the peak day in the window (`date` = that day). */
-export const fetchRanking = (scenario = 0) =>
-  getJSON(`/risk/ranking?scenario_c=${scenario}`)
+/** Ward league table for the peak day in the window (`date` = that day).
+ *
+ * Live-first, with the exported snapshot as the fallback. GitHub Pages serves
+ * files, not a FastAPI process, so /risk/* can only 404 there; the exporter
+ * (scripts/export_static.py) writes one snapshot per scenario button. The
+ * snapshot is a real computed run — but it is frozen at its export date, so the
+ * payload is marked and the console says so on screen (SnapshotNotice). Per-ward
+ * detail (/risk/ward/…) deliberately has no snapshot: one stale exposure number
+ * without its series beside it would be worse than an honest failure.
+ */
+async function rankingSnapshot(scenario, signal) {
+  const doc = await readJSON(staticURL(`risk-ranking-${scenario}.json`), signal, ApiError)
+  return { ...doc, static_snapshot: true }
+}
+
+export async function fetchRanking(scenario = 0, { signal } = {}) {
+  if (isStaticHost()) return rankingSnapshot(scenario, signal)
+  try {
+    return await getJSON(`/risk/ranking?scenario_c=${scenario}`, { signal })
+  } catch (error) {
+    if (error?.name === 'AbortError') throw error
+    try {
+      return await rankingSnapshot(scenario, signal)
+    } catch (snapshotError) {
+      if (snapshotError?.name === 'AbortError') throw snapshotError
+      // The live failure is the real story; the missing snapshot is not.
+      throw error
+    }
+  }
+}
 
 /** Single-ward drivers + impact. */
 export const fetchWardRisk = (id, scenario = 0) =>
@@ -70,7 +105,10 @@ export const fetchHourly = (wardId, scenario = 0) =>
     "no boundaries" (the map still draws markers), so it resolves to null. */
 export const fetchGeo = async () => {
   try {
-    const r = await fetch('/data/kolkata_wards.geojson')
+    // publicURL, not '/data/…': on GitHub Pages the app lives under
+    // /<repo>/, so a document-root path leaves the app and 404s — taking the
+    // ward polygons (and with them the 2D and 3D choropleths) with it.
+    const r = await fetch(publicURL('data/kolkata_wards.geojson'))
     if (!r.ok) throw new ApiError(`geojson ${r.status}`, r.status)
     return await r.json()
   } catch {
