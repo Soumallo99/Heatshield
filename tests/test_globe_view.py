@@ -269,10 +269,9 @@ def test_globe_serves_both_cities_with_the_same_layers_the_2d_maps_use():
 # built chunk is checked against the copied directory instead.
 
 
-def test_built_globe_runtime_assets_resolve():
-    dist = WEB / "dist"
+def test_built_globe_runtime_assets_resolve(built_site):
+    dist = built_site
     chunks = sorted((dist / "assets").glob("cesium-*.js"))
-    assert chunks, "run npm run build first"
     chunk = chunks[0].read_text(encoding="utf-8", errors="ignore")
 
     # CesiumJS reads these two at runtime: the global is the override that makes

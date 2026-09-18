@@ -163,12 +163,13 @@ def test_static_host_paths_are_relative_and_phone_is_code_split():
     assert "heatshield-phone-v1" not in worker
 
 
-def test_phone_bundle_budget_after_real_vite_build():
-    """Run the same budget gate developers run; no asset-name assumptions in Python."""
-    build = subprocess.run(
-        ["npm", "run", "build"], cwd=WEB, text=True, capture_output=True, check=False
-    )
-    assert build.returncode == 0, build.stdout + build.stderr
+def test_phone_bundle_budget_after_real_vite_build(built_site):
+    """Run the budget gate against a real Vite build; no asset-name assumptions.
+
+    `built_site` performs the build (once per session, shared with the other
+    tests that read dist/) — a developer's `npm run build && npm run budget`,
+    with the build hoisted so it cannot run after the tests that need it.
+    """
     budget = subprocess.run(
         ["npm", "run", "budget"], cwd=WEB, text=True, capture_output=True, check=False
     )
@@ -177,7 +178,7 @@ def test_phone_bundle_budget_after_real_vite_build():
     assert "static citizen payload:" in budget.stdout
 
 
-def test_built_site_is_installable_and_has_an_offline_shell():
+def test_built_site_is_installable_and_has_an_offline_shell(built_site):
     """What `npm run build` must produce for the APK/PWA test round.
 
     Installability is a set of concrete files, not a vibe: a manifest with the
@@ -185,8 +186,7 @@ def test_built_site_is_installable_and_has_an_offline_shell():
     and — because the whole app is served from a repository subdirectory on
     GitHub Pages — relative paths everywhere.
     """
-    dist = WEB / "dist"
-    assert (dist / "index.html").exists(), "run npm run build first"
+    dist = built_site
 
     manifest = json.loads((dist / "manifest.webmanifest").read_text(encoding="utf-8"))
     assert manifest["display"] == "standalone"
