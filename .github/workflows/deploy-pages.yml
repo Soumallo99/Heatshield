@@ -37,6 +37,8 @@ jobs:
   build:
     name: Build the static site
     runs-on: ubuntu-latest
+    outputs:
+      pages_enabled: ${{ steps.pages.outputs.enabled }}
     steps:
       - uses: actions/checkout@v4
 
@@ -86,15 +88,43 @@ jobs:
                 f"({len(doc['data'])} wards, bands {doc['band_counts']})")
           PY
 
-      - uses: actions/configure-pages@v5
+      # Publishing needs a one-time repository setting (Settings -> Pages ->
+      # Source: GitHub Actions). Until it is set, `actions/configure-pages`
+      # fails with a bare "Pages is not enabled", which reads like a broken
+      # workflow rather than a missing switch. So: check first, publish if it is
+      # on, and if it is not, leave a warning annotation naming the exact click
+      # path while the build and its guards above still run and report.
+      - name: Is GitHub Pages enabled?
+        id: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pages") || code="000"
+          code=${code:-000}
+          echo "pages settings endpoint -> HTTP $code"
+          if [ "$code" = "200" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Nothing was published - GitHub Pages is not enabled::Repo Settings -> Pages -> Build and deployment -> Source: GitHub Actions (one click, then re-run this workflow). The site is built and verified; only the upload was skipped."
+          fi
 
-      - uses: actions/upload-pages-artifact@v3
+      - if: steps.pages.outputs.enabled == 'true'
+        uses: actions/configure-pages@v5
+
+      - if: steps.pages.outputs.enabled == 'true'
+        uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/web/dist
 
   deploy:
     name: Publish
     needs: build
+    if: needs.build.outputs.pages_enabled == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
