@@ -143,6 +143,11 @@ cp .env.example .env      # setup.sh does this for you
 | `HS_FORECAST_DAYS` | `5` | Forecast window (3–16) |
 | `HS_PAST_DAYS` | `1` | Days of history to include |
 | `HS_CACHE_TTL_MIN` | `30` | Cache lifetime — protects the free API tier |
+| `HS_ADMIN_TOKEN` | *(empty)* | Bearer token for the administrative routes (subscriber registry, dispatch). **Unset ⇒ those routes are disabled (503).** Setting it also turns the API docs off. |
+| `HS_ALLOWED_ORIGINS` | *(empty)* | Extra browser origins allowed to call the API. Blank is correct for the shipped app (same-origin) |
+| `HS_RATE_LIMIT_PER_MIN` | `120` | Requests per client per minute (`0` disables). In-process limiter |
+| `HS_MAX_BODY_BYTES` | `262144` | Largest accepted request body |
+| `HS_TRUST_PROXY` | *(empty)* | `1` when behind a proxy you control, so `X-Forwarded-For` may be believed for rate limiting |
 | `TWILIO_*`, `ALERT_TO_NUMBERS` | — | Phase 5 only; safe to leave blank |
 
 **No API key is needed for weather data** — Open-Meteo's free tier is keyless for

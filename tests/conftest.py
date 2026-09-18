@@ -21,6 +21,25 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "frontend" / "web"
 
+# The API is configured from the environment at import time, and two of those
+# settings decide how the suite behaves:
+#
+#   * HS_ADMIN_TOKEN — the administrative routes (registry, dispatch) are
+#     disabled without one. The suite configures the token the way an operator
+#     would, and the security tests assert what happens when it is missing.
+#   * HS_RATE_LIMIT_PER_MIN=0 — a limiter that counts every request would turn
+#     the suite's own request volume into 429s. The limiter itself is exercised
+#     directly (tests/test_security.py) rather than by accident here.
+ADMIN_TOKEN = "test-admin-token"
+os.environ.setdefault("HS_ADMIN_TOKEN", ADMIN_TOKEN)
+os.environ.setdefault("HS_RATE_LIMIT_PER_MIN", "0")
+
+
+@pytest.fixture(scope="session")
+def admin_headers() -> dict[str, str]:
+    """Headers a real operator would send to the administrative routes."""
+    return {"X-API-Key": ADMIN_TOKEN}
+
 
 def _build() -> subprocess.CompletedProcess[str]:
     """`npm run build`, with headroom and one retry.

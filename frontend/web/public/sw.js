@@ -20,7 +20,7 @@
  * they clear site data by hand; if you skip it "just this once", the version
  * number stops meaning anything.
  */
-const VERSION = 'heatshield-phone-v3'
+const VERSION = 'heatshield-phone-v4'
 const SHELL_CACHE = `${VERSION}-shell`
 const DATA_CACHE = `${VERSION}-data`
 const TILE_CACHE = `${VERSION}-tiles`

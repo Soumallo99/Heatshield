@@ -151,7 +151,14 @@ def test_static_host_paths_are_relative_and_phone_is_code_split():
 
     assert "base: process.env.VITE_BASE_PATH || './'" in vite
     assert 'href="./manifest.webmanifest"' in index
-    assert "register('./sw.js', { scope: './' })" in index
+    # Registration moved out of index.html into a module (src/main.jsx) so the
+    # page needs no 'unsafe-inline' in its CSP; the relative scope is still what
+    # keeps a GitHub Pages subdirectory working.
+    assert "register('./sw.js', { scope: './' })" not in index, "inline script would need 'unsafe-inline'"
+    assert "<script>" not in index, "no inline scripts: CSP is script-src 'self'"
+    main_jsx = (WEB / "src" / "main.jsx").read_text(encoding="utf-8")
+    assert "register('./sw.js', { scope: './' })" in main_jsx
+    assert "import.meta.env.PROD" in main_jsx, "registration must stay production-only"
     assert "const Landing = lazy" in app and "const PhoneApp = lazy" in app
     assert "const scopedURL" in worker and "inScope('api/')" in worker
     assert "navigator.serviceWorker.register('/sw.js'" not in index

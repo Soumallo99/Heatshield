@@ -885,7 +885,8 @@ open**; dry runs append to a gitignored CSV log; no credential ever appears in G
 ### Static export & PWA
 
 Every public route — including all six demo payload families for all four scenarios — is in the
-`scripts/export_static.py` catalogue (31 exports, including the Kolkata brief `citizen-kolkata.json`),
+`scripts/export_static.py` catalogue (36 exports, including the Kolkata brief `citizen-kolkata.json`
+and one ward-ranking snapshot per console scenario),
 checked against the live FastAPI route table:
 
 ```bash
@@ -917,6 +918,47 @@ missing disclaimer, colour-only legends and non-composite motion.
 
 ---
 
+## Security
+
+HeatShield has no accounts, so the API is written on the assumption that anything not
+explicitly gated is public. A pentest pass over the live server found real problems; each one
+is fixed and pinned by a test in `tests/test_security.py` (named for the failure it prevents).
+
+| What was wrong | Why it mattered | Now |
+|---|---|---|
+| `GET /subscribers` and `/subscribers/for-ward/{id}` returned every phone number, name and role to **any anonymous request** | Personal data of residents, officials and health workers, harvestable with one request — and readable from *any website* a visitor had open, because CORS was `*` | Both require the admin token, **and** phone numbers come back redacted (`+91••••••3210`). Dispatch resolves real numbers server-side |
+| `POST /subscribers/stop` opted any number out with no authentication | A denial-of-warnings attack on a life-safety system: name a number, and that resident stops receiving heat alerts | Admin token required. (A genuine STOP arrives as an inbound SMS webhook, where the number proves it belongs to the sender) |
+| The two dispatch routes were callable by anyone | Dry-run by default and live sending is double-locked, but anyone could drive them, spend provider credit, and aim a send at numbers of their choosing (`to_numbers`) | Admin token required; recipient lists are normalised, de-duplicated, capped at 50 and rejected if oversized |
+| `allow_origins=["*"]` | Any website could read the API from a visitor's browser | Explicit allow-list (`HS_ALLOWED_ORIGINS`); localhost dev ports only, and only while `HS_ALLOW_DEV_ORIGINS` is on. The shipped app needs no CORS at all — it calls the API same-origin |
+| `?scenario_c=1e9` burned ~9 s of CPU and then 500'd; `ward_id=99999` was accepted into the registry | Cheap resource exhaustion; rubbish in a registry that later drives real sends | Every numeric input is bounded (scenario −10…20 °C, wards 1–141, hours ≤ 384, dates `YYYY-MM-DD`), so bad input is a 422 before any work happens |
+| Registry fields went into a CSV unescaped | A name starting with `=` or `@` is a spreadsheet formula that runs when an operator opens the file (CWE-1236) | Text fields are neutralised, length-capped and stripped of control characters before they are stored |
+| `/docs`, `/openapi.json`, `/redoc` published the full route map | A free plan of attack, dispatch endpoints included | Off once `HS_ADMIN_TOKEN` is set (dev keeps them; `HS_ENABLE_DOCS=1` forces either way) |
+| No rate limiting anywhere | Registry enumeration, repeated dispatch attempts | In-process limiter (120 req/min/client, `HS_RATE_LIMIT_PER_MIN`), `Retry-After` on 429, plus a request-body cap (`HS_MAX_BODY_BYTES`) |
+| No security headers | — | `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `Cache-Control: no-store` on every response |
+
+**Fail closed.** With no `HS_ADMIN_TOKEN` configured, the administrative routes answer 503
+naming the variable — a deployment that forgets to set one refuses those requests instead of
+trusting them. Local development is one line:
+
+```bash
+HS_ADMIN_TOKEN=dev python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+**The page itself.** GitHub Pages cannot set response headers, so the policy ships in the HTML:
+a `Content-Security-Policy` meta tag allowing scripts from this origin only (`script-src 'self'`,
+no `unsafe-inline`, no `unsafe-eval`, `object-src 'none'`, `base-uri 'self'`). To make that
+enforceable, the service-worker registration lives in `src/main.jsx` rather than an inline
+`<script>` block. `tests/test_security.py` asserts the policy, that no inline script survives the
+build, and that HeatShield's own bundles contact only the hosts they are supposed to (tiles,
+terrain, fonts) — a new analytics beacon or CDN script fails that test.
+
+**What this does not do.** The limiter is in-process, so a determined flood needs something in
+front (nginx, a cloud WAF, or a shared-store limiter). TLS, HSTS and `frame-ancestors` are the
+terminating proxy's job — `frame-ancestors` is ignored in a meta tag. And secrets stay out of
+Git: `.env` is ignored, `.env.example` carries names only, and the only credential in the
+project (Twilio) has no default value anywhere.
+
+```
 ## Map keys, installability & notification automation
 
 ### Maps are keyless — no "API key required", ever

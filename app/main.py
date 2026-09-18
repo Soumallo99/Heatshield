@@ -11,9 +11,15 @@ from datetime import datetime
 
 import pandas as pd
 from zoneinfo import ZoneInfo
-from fastapi import FastAPI, HTTPException, Query
-from pydantic import BaseModel
+from typing import Annotated
+
+from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request
+from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from core.security import (RateLimiter, client_key, redact_phone, require_admin,
+                           sanitise_phone_list)
 
 from core import config
 from core import demo as demo_engine
@@ -36,15 +42,86 @@ from core.subscribers import (add_subscriber as reg_add,
 from core.thermal import classify_wbgt, compute_thermal, daily_thermal, heatwave_flags, work_rest
 from core.weather import daily_peak, get_forecast, load_wards
 
+# The interactive schema is a map of every route, including the administrative
+# ones. Useful locally, needless exposure on a public deployment — so it is on by
+# default in development and off once an admin token exists. HS_ENABLE_DOCS
+# forces either way.
+_DOCS = "/docs" if config.ENABLE_DOCS else None
+_OPENAPI = "/openapi.json" if config.ENABLE_DOCS else None
+
 app = FastAPI(
     title="HeatShield API",
     version="0.1.0",
     description="Extreme Heatwave Early Warning & Human Thermal Stress Index",
+    docs_url=_DOCS,
+    redoc_url=None,
+    openapi_url=_OPENAPI,
 )
 
-app.add_middleware(
-    CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
-)
+# Browser origins: only what the operator lists, plus localhost dev ports when
+# HS_ALLOW_DEV_ORIGINS is not turned off. `allow_origins=["*"]` used to let any
+# website read the subscriber registry from a visitor's browser.
+_ORIGINS = list(config.ALLOWED_ORIGINS)
+if config.ALLOW_DEV_ORIGINS:
+    _ORIGINS += [
+        "http://localhost:5173", "http://127.0.0.1:5173",
+        "http://localhost:4173", "http://127.0.0.1:4173",
+    ]
+if _ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_ORIGINS,
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type", "X-API-Key", "X-HeatShield-Token", "Authorization"],
+        max_age=600,
+    )
+
+# Requests per client per minute on the whole API. Enumeration of the registry
+# and repeated dispatch attempts are the things this is here to make boring.
+limiter = RateLimiter(config.RATE_LIMIT_PER_MIN)
+
+_DOC_PATHS = {"/docs", "/openapi.json", "/redoc", "/docs/oauth2-redirect"}
+
+
+@app.middleware("http")
+async def guard(request: Request, call_next):
+    """Rate limit, body-size cap, docs lock, security headers.
+
+    Order matters: cheap rejections happen before anything touches pandas.
+    """
+    if not config.ENABLE_DOCS and request.url.path in _DOC_PATHS:
+        return JSONResponse({"detail": "API documentation is disabled on this deployment"},
+                            status_code=404)
+
+    declared = request.headers.get("content-length")
+    if declared and declared.isdigit() and int(declared) > config.MAX_BODY_BYTES:
+        return JSONResponse({"detail": "request body too large"}, status_code=413)
+
+    allowed, retry_after = limiter.allow(client_key(request))
+    if not allowed:
+        return JSONResponse(
+            {"detail": "rate limit exceeded — try again shortly"},
+            status_code=429,
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Cache-Control", "no-store")
+    return response
+
+
+# Input bounds. Every one of these was unbounded before: `?scenario_c=1e9` burned
+# nine seconds of CPU per request, and `ward_id=99999` was cheerfully accepted
+# into the subscriber registry. The UI's scenario lever spans 0-8 °C.
+SCENARIO_MIN, SCENARIO_MAX = -10.0, 20.0
+WARD_MAX = 141            # KMC wards (see DATA.md)
+DATE_PATTERN = r"^\d{4}-\d{2}-\d{2}$"
+
+# Shorthand: the admin gate on the routes that read personal data or can send.
+AdminOnly = Depends(require_admin)
 
 
 def _now_local() -> pd.Timestamp:
@@ -143,7 +220,7 @@ def zones():
 @app.get("/forecast")
 def forecast(
     hours: int = Query(24, ge=1, le=24 * 16, description="Hours from most recent past hour"),
-    ward_id: int | None = None,
+    ward_id: Annotated[int | None, Query(ge=1, le=WARD_MAX)] = None,
     use_cache: bool = True,
 ):
     """Hourly raw weather for all wards (Phase 1 output)."""
@@ -648,11 +725,16 @@ def notifications_preview(
 
 class NotifyDispatchIn(BaseModel):
     dry_run: bool = True
-    days: int = config.FORECAST_DAYS + 1
-    to_numbers: list[str] | None = None
+    days: int = Field(config.FORECAST_DAYS + 1, ge=1, le=9)
+    # An explicit recipient list is capped and normalised before it is trusted.
+    to_numbers: list[str] | None = Field(None, max_length=50)
+
+    @property
+    def recipients(self) -> list[str] | None:
+        return sanitise_phone_list(self.to_numbers)
 
 
-@app.post("/notifications/dispatch")
+@app.post("/notifications/dispatch", dependencies=[AdminOnly])
 def notifications_dispatch(payload: NotifyDispatchIn):
     """Dispatch planned notifications. Dry-run by default; live send is refused
     unless both opt-in locks are open AND no row is demo/synthetic."""
@@ -660,7 +742,7 @@ def notifications_dispatch(payload: NotifyDispatchIn):
     plan = plan_notifications(plan_payload["data"], is_demo=False)
     try:
         result = dispatch_previews(plan["previews"], dry_run=payload.dry_run,
-                                   to_numbers=payload.to_numbers)
+                                   to_numbers=payload.recipients)
     except PermissionError as exc:
         # An unsafe live send is a refusal with a readable reason, not a crash.
         return {"dispatched": 0, "dry_run": payload.dry_run, "refused": str(exc)}
@@ -737,7 +819,7 @@ def _thermal_frame():
 @app.get("/thermal")
 def thermal(
     hours: int = Query(24, ge=1, le=24 * 16),
-    ward_id: int | None = None,
+    ward_id: Annotated[int | None, Query(ge=1, le=WARD_MAX)] = None,
     peak_only: bool = False,
 ):
     """Hourly WBGT + Heat Index + stress band per ward."""
@@ -766,7 +848,10 @@ def thermal_daily(region: str = "coastal"):
 
 
 @app.get("/thermal/ward/{ward_id}")
-def thermal_ward(ward_id: int, intensity: str = "moderate"):
+def thermal_ward(
+    ward_id: Annotated[int, Path(ge=1, le=WARD_MAX)],
+    intensity: Annotated[str, Query(pattern="^(light|moderate|heavy|very_heavy)$")] = "moderate",
+):
     """Single-ward summary: today's peak, band, guidance, work/rest rule."""
     df = _thermal_frame()
     w = df[df["ward_id"] == ward_id]
@@ -803,7 +888,9 @@ def thermal_ward(ward_id: int, intensity: str = "moderate"):
 
 # ------------------------------------------------------------------ Phase 3
 @app.get("/risk/daily")
-def risk_daily(scenario_c: float = 0.0):
+def risk_daily(
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+):
     """Ward-day risk: peak risk score, band, exposure, excess-death estimate.
 
     `scenario_c` stress-tests the model (e.g. +6 for a heatwave what-if).
@@ -814,7 +901,10 @@ def risk_daily(scenario_c: float = 0.0):
 
 
 @app.get("/risk/ranking")
-def risk_ranking(scenario_c: float = 0.0, date: str | None = None):
+def risk_ranking(
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+    date: Annotated[str | None, Query(pattern=DATE_PATTERN)] = None,
+):
     """
     League table, worst first, for the peak day in the window.
 
@@ -831,7 +921,10 @@ def risk_ranking(scenario_c: float = 0.0, date: str | None = None):
 
 
 @app.get("/risk/ward/{ward_id}")
-def risk_ward(ward_id: int, scenario_c: float = 0.0):
+def risk_ward(
+    ward_id: Annotated[int, Path(ge=1, le=WARD_MAX)],
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+):
     """Single-ward risk summary for the detail panel / mobile view."""
     d = daily_risk(get_forecast(), temp_offset_c=scenario_c)
     w = d[d["ward_id"] == ward_id]
@@ -864,8 +957,11 @@ def risk_ward(ward_id: int, scenario_c: float = 0.0):
 
 
 @app.get("/risk")
-def risk(hours: int = Query(24, ge=1, le=24 * 16), ward_id: int | None = None,
-         scenario_c: float = 0.0):
+def risk(
+    hours: Annotated[int, Query(ge=1, le=24 * 16)] = 24,
+    ward_id: Annotated[int | None, Query(ge=1, le=WARD_MAX)] = None,
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+):
     """Hourly ward-level risk scores."""
     df = compute_risk(get_forecast(), temp_offset_c=scenario_c)
     if ward_id is not None and ward_id not in set(df["ward_id"]):
@@ -880,9 +976,9 @@ def risk(hours: int = Query(24, ge=1, le=24 * 16), ward_id: int | None = None,
 # ------------------------------------------------------------------ Phase 5
 @app.get("/alerts/plan")
 def alerts_plan(
-    threshold: float = DEFAULT_RISK_THRESHOLD,
-    lead_days: int = DEFAULT_MIN_LEAD_DAYS,
-    scenario_c: float = 0.0,
+    threshold: Annotated[float, Query(ge=0, le=100)] = DEFAULT_RISK_THRESHOLD,
+    lead_days: Annotated[int, Query(ge=0, le=7)] = DEFAULT_MIN_LEAD_DAYS,
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
     only_unsent: bool = False,
 ):
     """
@@ -921,24 +1017,28 @@ def alerts_plan(
 
 
 class DispatchIn(BaseModel):
-    threshold: float = DEFAULT_RISK_THRESHOLD
-    lead_days: int = DEFAULT_MIN_LEAD_DAYS
+    threshold: float = Field(DEFAULT_RISK_THRESHOLD, ge=0, le=100)
+    lead_days: int = Field(DEFAULT_MIN_LEAD_DAYS, ge=0, le=7)
     dry_run: bool = True
-    to_numbers: list[str] | None = None
+    to_numbers: list[str] | None = Field(None, max_length=50)
     # resolve recipients per ward from the subscriber registry
     per_ward: bool = True
 
+    @property
+    def recipients(self) -> list[str] | None:
+        return sanitise_phone_list(self.to_numbers)
+
 class SubscriberIn(BaseModel):
-    phone: str
-    ward_id: int = 0            # 0 = citywide
-    name: str = ""
+    phone: str = Field(min_length=8, max_length=20)
+    ward_id: int = Field(0, ge=0, le=WARD_MAX)   # 0 = citywide
+    name: str = Field("", max_length=200)
     role: str = "resident"
 
 class StopIn(BaseModel):
-    phone: str
+    phone: str = Field(min_length=8, max_length=20)
 
 
-@app.post("/alerts/dispatch")
+@app.post("/alerts/dispatch", dependencies=[AdminOnly])
 def alerts_dispatch(payload: DispatchIn):
     """Dispatch alerts. Defaults to dry-run; set dry_run=false to actually send."""
     daily = daily_risk(get_forecast())
@@ -949,7 +1049,7 @@ def alerts_dispatch(payload: DispatchIn):
         return {"dispatched": 0, "message": "no new events with sufficient lead time"}
     try:
         log = dispatch(pending, dry_run=payload.dry_run,
-                       to_numbers=payload.to_numbers, per_ward=payload.per_ward)
+                       to_numbers=payload.recipients, per_ward=payload.per_ward)
     except PermissionError as exc:
         # Refusing an unsafe live send is a 403, not a crash.
         return {"dispatched": 0, "dry_run": payload.dry_run, "refused": str(exc)}
@@ -964,25 +1064,37 @@ def alerts_dispatch(payload: DispatchIn):
 
 
 # --------------------------------------------------------- Phase 5b: registry
-@app.get("/subscribers")
-def subscribers_list(ward_id: int | None = None):
-    """Registry contents. `?ward_id=N` filters to that ward (+ citywide)."""
+@app.get("/subscribers", dependencies=[AdminOnly])
+def subscribers_list(
+    ward_id: Annotated[int | None, Query(ge=0, le=WARD_MAX)] = None,
+):
+    """Registry contents for operators. `?ward_id=N` filters to that ward (+ citywide).
+
+    Phone numbers are **redacted** here (`+91••••••3210`): dispatch resolves the
+    real numbers server-side, so no browser ever needs them, and a list of every
+    resident's number is the single most valuable thing on this API. The
+    administrative gate in front of the route is the second layer, not the first.
+    """
     df = load_registry()
+    stats = registry_stats()
     if df.empty:
-        return {"count": 0, "stats": registry_stats(), "data": []}
+        return {"count": 0, "stats": stats, "data": []}
     if ward_id is not None:
         df = df[(df["ward_id"] == ward_id) | (df["ward_id"] == 0)]
     out = df.copy()
+    out["phone"] = out["phone"].map(redact_phone)
     out["opted_out"] = out["opted_out"].astype(bool)
-    return {"count": int(len(out)), "stats": registry_stats(), "data": out.to_dict(orient="records")}
+    out = out.astype(object).where(pd.notna(out), None)
+    return {"count": int(len(out)), "stats": stats, "data": out.to_dict(orient="records")}
 
 
 @app.get("/subscribers/stats")
 def subscribers_stats():
+    """Aggregate counts only — no personal data, so this one stays public."""
     return registry_stats()
 
 
-@app.post("/subscribers")
+@app.post("/subscribers", dependencies=[AdminOnly])
 def subscribers_add(payload: SubscriberIn):
     result = reg_add(payload.phone, payload.ward_id, payload.name, payload.role)
     if not result.get("ok"):
@@ -991,9 +1103,15 @@ def subscribers_add(payload: SubscriberIn):
     return result
 
 
-@app.post("/subscribers/stop")
+@app.post("/subscribers/stop", dependencies=[AdminOnly])
 def subscribers_stop(payload: StopIn):
-    """STOP. Never fails loudly — silence is the requested outcome."""
+    """STOP. Never fails loudly — silence is the requested outcome.
+
+    Gated because without it anybody could silence anybody's heat warnings by
+    posting their number: a denial-of-warnings attack against a life-safety
+    system. Real STOP handling arrives as an inbound SMS webhook, which is the
+    only place a phone number proves it belongs to the sender.
+    """
     result = reg_opt_out(payload.phone)
     if not result.get("ok"):
         raise HTTPException(status_code=400, detail=result.get("error"))
@@ -1001,9 +1119,11 @@ def subscribers_stop(payload: StopIn):
     return result
 
 
-@app.get("/subscribers/for-ward/{ward_id}")
-def subscribers_for_ward(ward_id: int):
-    return {"ward_id": ward_id, "recipients": recipients_for_ward(ward_id)}
+@app.get("/subscribers/for-ward/{ward_id}", dependencies=[AdminOnly])
+def subscribers_for_ward(ward_id: Annotated[int, Path(ge=0, le=WARD_MAX)]):
+    """Recipient numbers for one ward — redacted, for operator auditing."""
+    return {"ward_id": ward_id,
+            "recipients": [redact_phone(n) for n in recipients_for_ward(ward_id)]}
 
 
 if __name__ == "__main__":

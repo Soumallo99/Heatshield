@@ -32,6 +32,7 @@ from pathlib import Path
 import pandas as pd
 
 from core.config import DATA_DIR
+from core.security import sanitise_cell
 
 REGISTRY_CSV = DATA_DIR / "subscribers.csv"
 
@@ -39,6 +40,9 @@ COLS = ["phone", "name", "ward_id", "role", "opted_out", "created_at", "notes"]
 
 ROLES = ("resident", "official", "health_worker")
 CITYWIDE = 0  # ward_id meaning "send me everything"
+WARD_MAX = 141                   # KMC ward count (see DATA.md)
+NAME_MAX = 80                    # a display name, not an essay
+NOTES_MAX = 300
 
 
 # --------------------------------------------------------------------------- #
@@ -86,6 +90,10 @@ def load_registry(path: Path | str = REGISTRY_CSV) -> pd.DataFrame:
         {"1", "true", "yes", "y"}
     )
     df["phone"] = df["phone"].map(normalise_phone)
+    # Empty CSV cells arrive as float NaN. `json.dumps` refuses NaN, so one blank
+    # `name` or `notes` field used to turn the whole registry route into a 500.
+    for column in ("name", "role", "notes", "created_at"):
+        df[column] = df[column].astype(object).where(pd.notna(df[column]), "")
     return df
 
 
@@ -116,8 +124,18 @@ def add_subscriber(
     p = normalise_phone(phone)
     if not p:
         return {"ok": False, "error": "invalid phone number"}
+    if not re.fullmatch(r"\+\d{8,15}", p):
+        return {"ok": False, "error": "phone must be a full international number"}
     if role not in ROLES:
         return {"ok": False, "error": f"role must be one of {ROLES}"}
+    ward_id = int(ward_id)
+    if not (CITYWIDE <= ward_id <= WARD_MAX):
+        return {"ok": False, "error": f"ward_id must be {CITYWIDE} (citywide) or 1-{WARD_MAX}"}
+    # Registry text is neutralised before it is written: a name starting with "="
+    # is a spreadsheet formula, not a person (CWE-1236), and unbounded strings
+    # let one request fill the disk.
+    name = sanitise_cell(name, max_length=NAME_MAX)
+    notes = sanitise_cell(notes, max_length=NOTES_MAX)
 
     df = load_registry(path)
     mask = df["phone"] == p
@@ -145,7 +163,7 @@ def add_subscriber(
 def opt_out(phone: str, path: Path | str = REGISTRY_CSV) -> dict:
     """STOP. Idempotent, and never fails loudly — silence is the requested outcome."""
     p = normalise_phone(phone)
-    if not p:
+    if not p or not re.fullmatch(r"\+\d{8,15}", p):
         return {"ok": False, "error": "invalid phone number"}
     df = load_registry(path)
     mask = df["phone"] == p
