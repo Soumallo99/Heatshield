@@ -1,0 +1,38 @@
+{
+  "landing": {
+    "path": "",
+    "title": "HeatShield — ward-level extreme heat early warning for Kolkata",
+    "description": "Ward-level heat risk, human thermal stress (WBGT) and action thresholds for Kolkata and Delhi NCR, built on keyless open data."
+  },
+  "dashboard": {
+    "path": "dashboard",
+    "title": "Kolkata operations dashboard — 141 wards, live heat risk | HeatShield",
+    "description": "Live heat-risk league table, ward map and 3D globe for all 141 KMC wards, with exposure and alert-planning detail."
+  },
+  "phone": {
+    "path": "phone",
+    "title": "Citizen heat brief — what to do where you are | HeatShield",
+    "description": "A one-minute local heat brief: current risk band, the protective action to take, and the days ahead."
+  },
+  "demo": {
+    "path": "demo",
+    "title": "Heat risk demo — synthetic scenarios, no API needed | HeatShield",
+    "description": "Deterministic labelled scenarios that show how the warning chain behaves, offline and with no credentials."
+  },
+  "privacy": {
+    "path": "privacy",
+    "title": "Privacy — what HeatShield collects | HeatShield",
+    "description": "What this deployment collects, what it deliberately does not, and how to have your data removed."
+  },
+  "terms": {
+    "path": "terms",
+    "title": "Terms of use — HeatShield",
+    "description": "Terms of use, the limits of the science, and what HeatShield does not promise."
+  },
+  "notfound": {
+    "path": null,
+    "noindex": true,
+    "title": "Page not found — HeatShield",
+    "description": "That link does not match any page in this deployment. The citizen brief and the operations dashboard are one click away."
+  }
+}

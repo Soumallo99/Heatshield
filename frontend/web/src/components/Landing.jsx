@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import WordReveal from './WordReveal'
+import Sources from './Sources'
 import Odometer from './Odometer'
 import { RefreshButton } from './LiveStatus'
 import { EASE, spring, useMotionSafe } from '../motion'
@@ -27,7 +28,7 @@ function Ticker({ items, note }) {
   const { reduced } = useMotionSafe()
   if (!items.length) {
     return (
-      <div className="border-y border-white/10 bg-white/[.02] py-2.5 text-center text-[12px] text-white/35">
+      <div className="border-y border-white/10 bg-white/[.02] py-2.5 text-center text-[12px] text-white/59">
         {note || 'waiting for the live ward feed…'}
       </div>
     )
@@ -41,7 +42,7 @@ function Ticker({ items, note }) {
         transition={{ duration: 42, repeat: Infinity, ease: 'linear' }}
       >
         {row.map((s, i) => (
-          <span key={i} className="px-8 text-[12px] text-white/45">
+          <span key={i} className="px-8 text-[12px] text-white/62">
             <span className="mr-2 text-orange-400/70">◉</span>
             {s}
           </span>
@@ -92,13 +93,13 @@ function Figure({ label, value, decimals = 0, suffix = '', hint, index, ready })
         {ready ? (
           <>
             <Odometer value={value} decimals={decimals} height={1.02} className="figure text-[clamp(2.4rem,5vw,3.6rem)]" />
-            <span className="text-[16px] text-white/40">{suffix}</span>
+            <span className="text-[16px] text-white/60">{suffix}</span>
           </>
         ) : (
-          <span className="figure text-[clamp(2.4rem,5vw,3.6rem)] text-white/20">—</span>
+          <span className="figure text-[clamp(2.4rem,5vw,3.6rem)] text-white/56">—</span>
         )}
       </div>
-      <div className="mt-2 text-[11px] leading-snug text-white/30">{hint}</div>
+      <div className="mt-2 text-[11px] leading-snug text-white/58">{hint}</div>
     </motion.div>
   )
 }
@@ -168,7 +169,7 @@ export default function Landing({ onEnter, onDemo }) {
             />
             <span className="display text-[19px] tracking-tight">HeatShield</span>
           </div>
-          <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/35 sm:block">
+          <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/59 sm:block">
             {wardCount == null ? 'Kolkata · live data pending' : `Kolkata · ${wardCount} wards`}
           </span>
           <div className="flex-1" />
@@ -273,7 +274,7 @@ export default function Landing({ onEnter, onDemo }) {
               <span className="ml-2 text-[11px] font-normal text-amber-100/50">synthetic scenarios · offline · no sign-up</span>
             </motion.button>
           )}
-          <span className="text-[11.5px] text-white/35">
+          <span className="text-[11.5px] text-white/59">
             No sign-up · open data · {hasData ? `${data.length} wards scored` : 'keyless forecast'}
           </span>
         </motion.div>
@@ -326,7 +327,7 @@ export default function Landing({ onEnter, onDemo }) {
             >
               <div className="tnum text-[11px] tracking-[0.2em] text-orange-400/70">{s.n}</div>
               <h3 className="display mt-4 text-[26px] leading-none">{s.t}</h3>
-              <p className="mt-3 max-w-[44ch] text-[13px] leading-relaxed text-white/45">{s.d}</p>
+              <p className="mt-3 max-w-[44ch] text-[13px] leading-relaxed text-white/62">{s.d}</p>
               <motion.div
                 className="absolute left-0 top-0 h-px w-full origin-left"
                 style={{ background: 'linear-gradient(90deg,#f97316,transparent)' }}
@@ -400,8 +401,29 @@ export default function Landing({ onEnter, onDemo }) {
         </motion.div>
       </section>
 
-      <footer className="border-t border-white/10 py-9 text-center text-[11px] text-white/25">
-        HeatShield · open weather data · built for impact-based heat warning
+      <Sources />
+
+      <footer className="mt-24 border-t border-white/10 px-6 py-9 text-center text-[11px] text-white/56">
+        <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+          <a className="underline decoration-white/15 underline-offset-4 hover:text-white/60" href="#/#sources">Sources</a>
+          <span aria-hidden="true">·</span>
+          <a className="underline decoration-white/15 underline-offset-4 hover:text-white/60" href="#/privacy">Privacy</a>
+          <span aria-hidden="true">·</span>
+          <a className="underline decoration-white/15 underline-offset-4 hover:text-white/60" href="#/terms">Terms</a>
+          <span aria-hidden="true">·</span>
+          <a
+            className="underline decoration-white/15 underline-offset-4 hover:text-white/60"
+            href="https://github.com/Soumallo99/Heatshield"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Source code
+          </a>
+        </nav>
+        <p className="mt-3">
+          HeatShield · ward-level heat risk on keyless open data · a decision-support prototype, not
+          an official warning service
+        </p>
       </footer>
     </div>
   )

@@ -11,7 +11,12 @@ const PhoneApp = lazy(() => import('./mobile/PhoneApp'))
 // The demo ships in its own chunk: cold-opening Overview or Citizen never pays
 // for demo code, and the demo never needs the live API.
 const DemoApp = lazy(() => import('./demo/DemoApp'))
+// Privacy, Terms and the 404 page are text. They are lazy for the same reason
+// the demo is: a phone cold-open should not download a legal document.
+const StaticPage = lazy(() => import('./components/StaticPage'))
 import { EASE } from './motion'
+import pageMeta from './site-pages.json'
+import { resolveRoute } from './routes'
 
 /**
  * Minimal hash router.
@@ -24,10 +29,10 @@ import { EASE } from './motion'
  * offset — the outgoing page lifts away as the incoming one rises, which reads as
  * one continuous movement rather than two separate fades.
  */
-const ROUTES = { '': 'landing', dashboard: 'dashboard', mobile: 'phone', phone: 'phone', demo: 'demo' }
-
 function useRoute() {
-  const readRoute = () => ROUTES[window.location.hash.replace('#/', '') || ''] || ''
+  // Routing lives in ./routes.js so it can be tested without a browser
+  // (scripts/test-routes.mjs); this hook only wires it to the hashchange event.
+  const readRoute = () => resolveRoute(window.location.hash)
   const [route, setRoute] = useState(readRoute)
   useEffect(() => {
     const onChange = () => {
@@ -40,7 +45,21 @@ function useRoute() {
     window.addEventListener('hashchange', onChange)
     return () => window.removeEventListener('hashchange', onChange)
   }, [])
-  return { route: ROUTES[route] ? route : '', go: (r) => { window.location.hash = `#/${r}` } }
+
+  // Each page carries its own title and description. For a crawler the static
+  // index.html is the landing page (hash routing cannot change that), but for a
+  // reader — and for the browser tab, and for a shared link — the title must say
+  // where you are, and the 404 must not claim to be the home page.
+  useEffect(() => {
+    const meta = pageMeta[route] || pageMeta.notfound
+    document.title = meta.title
+    const description = document.querySelector('meta[name="description"]')
+    // The static index.html describes the landing page; a hash-routed 404 must
+    // not leave that description in the head while showing "not found".
+    if (description) description.setAttribute('content', meta.description)
+  }, [route])
+
+  return { route, go: (r) => { window.location.hash = `#/${r}` } }
 }
 
 export default function App() {
@@ -66,6 +85,10 @@ export default function App() {
               <PhoneApp onExit={() => go('dashboard')} />
             ) : route === 'demo' ? (
               <DemoApp onExit={() => go('')} />
+            ) : route === 'privacy' || route === 'terms' ? (
+              <StaticPage page={route} />
+            ) : route === 'notfound' ? (
+              <StaticPage page="notfound" />
             ) : (
               <Landing onEnter={() => go('dashboard')} onDemo={() => go('demo')} />
             )}

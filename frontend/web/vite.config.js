@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { siteMeta } from './plugins/siteMeta.js'
 
 // The API port is overridable (HS_API_PORT) so a laptop with :8000 taken can
 // move the whole stack. The proxy must follow the same value, or /api/* would
@@ -11,7 +12,9 @@ export default defineConfig({
   // below /Heatshield/ rather than at a domain root. Set VITE_BASE_PATH when a
   // deployment intentionally has a known absolute prefix.
   base: process.env.VITE_BASE_PATH || './',
-  plugins: [react()],
+  // react() + the site-metadata plugin (canonical/OG/JSON-LD/robots/sitemap,
+  // all derived from VITE_SITE_URL).
+  plugins: [react(), siteMeta()],
   // Cesium is imported only by the lazy globe chunk. Pre-bundling it up front
   // stops Vite from discovering it mid-session and reloading the page.
   optimizeDeps: { include: ['cesium'] },
@@ -45,6 +48,10 @@ export default defineConfig({
     },
   },
   build: {
+    // Shipping source maps would hand out the original source and every
+    // internal URL. (The plugin sets this too, so a config edit cannot quietly
+    // re-enable them.)
+    sourcemap: false,
     // The 4 MB Cesium chunk is intentional and lazy-only: it is reached solely
     // through the "3D globe" toggle, and the constraint that actually matters
     // (the citizen phone cold-open) is enforced in bytes by
