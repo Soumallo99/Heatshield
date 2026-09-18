@@ -22,7 +22,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { ROUTES, resolveRoute } from '../src/routes.js'
+import { anchorFromHash, LANDING_ANCHORS, ROUTES, resolveRoute } from '../src/routes.js'
 import { DEFAULT_SITE_URL, INDEXABLE, PAGES, generate, siteUrl } from './gen-site-meta.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -59,6 +59,23 @@ test('a query string is not part of the route', () => {
   assert.equal(resolveRoute('#/dashboard?scenario=4'), 'dashboard')
 })
 
+test('in-page anchors open the landing page at a section, not a 404', () => {
+  // The footer's Sources link is `#/#sources`; before this rule it landed on the
+  // 404 page, because the router saw `#sources` as an unknown route.
+  assert.equal(resolveRoute('#/#sources'), 'landing')
+  assert.equal(resolveRoute('#sources'), 'landing')
+  assert.equal(anchorFromHash('#/#sources'), 'sources')
+  assert.equal(anchorFromHash('#sources'), 'sources')
+  assert.equal(anchorFromHash('#/dashboard'), null, 'a route is not an anchor')
+  assert.equal(anchorFromHash('#/phone?static'), null, 'a query string is not an anchor')
+  // Every anchor the router accepts must exist as a section in the app.
+  const sources = readFileSync(join(WEB, 'src', 'components', 'Sources.jsx'), 'utf8')
+  for (const anchor of LANDING_ANCHORS) {
+    assert.ok(sources.includes(`id="${anchor}"`), `landing anchor "${anchor}" has no section`)
+  }
+})
+
+
 test('an unknown hash is a 404, never a silent landing page', () => {
   for (const hash of ['#/nope', '#/privacy/extra', '#/landing', '#/../etc/passwd', '#/%20']) {
     assert.equal(resolveRoute(hash), 'notfound', `${hash} must not render the landing page`)
@@ -93,6 +110,29 @@ test('only src/log.js may touch the console', () => {
   }
   assert.deepEqual(offenders, [], 'route these through src/log.js — dev-gated, reportable, no console noise in production')
 })
+
+test('no development runtime is shipped to the browser', () => {
+  // "Remove vite + react [dev tooling] from the browser": HMR client, React
+  // Refresh and Vite's dev query markers must not survive a production build.
+  // (`__vite__mapDeps` is Vite's own chunk-dependency helper and is expected.)
+  const dist = join(WEB, 'dist', 'assets')
+  let files
+  try {
+    files = readdirSync(dist).filter((name) => name.endsWith('.js'))
+  } catch {
+    return
+  }
+  const markers = ['@vite/client', 'react-refresh', 'import.meta.hot', '__vite__injectQuery', 'vite/dist/client']
+  const found = []
+  for (const name of files) {
+    const bundle = readFileSync(join(dist, name), 'utf8')
+    for (const marker of markers) {
+      if (bundle.includes(marker)) found.push(`${name}: ${marker}`)
+    }
+  }
+  assert.deepEqual(found, [], 'development-only code reached the production bundle')
+})
+
 
 test('the production bundle carries no debug logging', () => {
   const dist = join(WEB, 'dist', 'assets')

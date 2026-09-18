@@ -16,7 +16,7 @@ const DemoApp = lazy(() => import('./demo/DemoApp'))
 const StaticPage = lazy(() => import('./components/StaticPage'))
 import { EASE } from './motion'
 import pageMeta from './site-pages.json'
-import { resolveRoute } from './routes'
+import { anchorFromHash, resolveRoute } from './routes'
 
 /**
  * Minimal hash router.
@@ -34,14 +34,33 @@ function useRoute() {
   // (scripts/test-routes.mjs); this hook only wires it to the hashchange event.
   const readRoute = () => resolveRoute(window.location.hash)
   const [route, setRoute] = useState(readRoute)
+
+  // In-page anchors (`#/#sources`) are the browser's job normally, but here the
+  // fragment is `/#sources`, which matches no element id — so the scroll is
+  // explicit, after a paint so the target section is mounted.
+  const scrollToAnchor = () => {
+    const anchor = anchorFromHash(window.location.hash)
+    if (!anchor) return
+    requestAnimationFrame(() => {
+      document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
+
   useEffect(() => {
     const onChange = () => {
+      const anchor = anchorFromHash(window.location.hash)
       setRoute(readRoute())
+      if (anchor) {
+        scrollToAnchor()
+        return
+      }
       // Each page starts at its own top. Without this, clicking Citizen from
       // the bottom of the long dashboard lands you in the new page's empty
       // scroll tail, which reads as "the tab didn't open".
       window.scrollTo(0, 0)
     }
+    // A deep link straight into a section must land there on first paint too.
+    if (anchorFromHash(window.location.hash)) scrollToAnchor()
     window.addEventListener('hashchange', onChange)
     return () => window.removeEventListener('hashchange', onChange)
   }, [])
