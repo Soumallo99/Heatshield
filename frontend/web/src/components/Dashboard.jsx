@@ -184,9 +184,11 @@ export default function Dashboard({ onExit, onDemo }) {
               <div className="h-5 w-5 rounded-full" style={{ background: 'linear-gradient(135deg,#ff5f6d,#ffc371)' }} />
               <span className="display text-[18px]">HeatShield</span>
             </button>
-            <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/58 sm:block">
-              operations
-            </span>
+            {/* The page's only h1. `sr-only` on phones keeps it in the
+                accessibility tree while staying out of the compact top bar. */}
+            <h1 className="sr-only text-[10px] font-normal uppercase tracking-[0.2em] text-white/58 sm:not-sr-only">
+              Delhi NCR operations
+            </h1>
             {onDemo && (
               <button
                 onClick={onDemo}
@@ -217,9 +219,11 @@ export default function Dashboard({ onExit, onDemo }) {
             <div className="h-5 w-5 rounded-full" style={{ background: 'linear-gradient(135deg,#ff5f6d,#ffc371)' }} />
             <span className="display text-[18px]">HeatShield</span>
           </button>
-          <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/58 sm:block">
-            operations
-          </span>
+          {/* Page heading. `sr-only` on phones: present for screen readers and
+              search engines, invisible in the compact mobile top bar. */}
+          <h1 className="sr-only text-[10px] font-normal uppercase tracking-[0.2em] text-white/58 sm:not-sr-only">
+            Kolkata operations
+          </h1>
           {onDemo && (
             <button
               onClick={onDemo}

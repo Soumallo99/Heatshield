@@ -75,6 +75,21 @@ function Privacy() {
         </p>
       </Section>
 
+      <Section id="consent" title="Consent">
+        <p>
+          There is no public sign-up form, and no number is collected by filling anything in on this
+          site. A number enters the warning registry one of two ways: the person asks to receive
+          alerts (replying to a message, or telling an operator), or an operator enrols them as an
+          official contact with their agreement. Either way it is the person’s own message that puts
+          them on the list.
+        </p>
+        <p>
+          Saying “STOP” — to any message, at any time — marks the entry as opted out and it is never
+          messaged again. That record is kept deliberately: being able to show that someone asked to
+          be left alone is the point of keeping it.
+        </p>
+      </Section>
+
       <Section id="third-parties" title="Third parties">
         <p>
           This site loads map tiles, terrain and typefaces from the providers listed on the landing
@@ -180,6 +195,26 @@ function Terms() {
           refund policy on this site. If you are operating this software on behalf of an
           organisation, the operator identity, contact address and governing jurisdiction belong in
           this section, and only the operator can supply them.
+        </p>
+      </Section>
+
+      <Section id="law" title="Which law applies">
+        <p>
+          This is a personal-data question, so the honest answer names the rules rather than asserting
+          compliance with unnamed ones. In India, the phone registry is personal data and the
+          deployer who holds it is its data fiduciary under the Digital Personal Data Protection Act,
+          2023: it must be held for a stated purpose (sending heat warnings), with the person’s
+          consent, kept no longer than needed, and deleted on request — which is what the sections
+          above describe the software as doing. Bulk commercial SMS in India additionally requires
+          the sender, headers and message templates to be registered under TRAI’s DLT framework
+          before any message can be delivered; that registration is a deployer’s step, not something
+          this code can do for you.
+        </p>
+        <p>
+          Outside India the equivalent rules are the deployer’s to identify. This paragraph explains
+          what the software does and which regime it is built for; it is not legal advice, and it
+          does not name a governing jurisdiction, because the repository has no operator to name one
+          (see “Business details”).
         </p>
       </Section>
 

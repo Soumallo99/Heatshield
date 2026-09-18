@@ -823,7 +823,7 @@ div:fullscreen { height: 100% !important; width: 100% !important; }
   justify-content: space-between;
   margin-bottom: 18px;
 }
-.demo-header h1 {
+.demo-header h1, .demo-header h2 {
   margin: 6px 0 0;
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 3.4vw, 2.3rem);

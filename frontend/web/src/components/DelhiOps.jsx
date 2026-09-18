@@ -154,9 +154,12 @@ export default function DelhiOps() {
       <header className="demo-header">
         <div className="demo-header__titles">
           <p className="demo-kicker">DELHI NCR · ZONE-LEVEL ADVANCE WARNINGS</p>
-          <h1>
+          {/* h2, not h1: this console is a section of the dashboard page, whose
+              h1 is the city name in the top bar. A page with two h1s gives a
+              screen-reader user no way to tell which one is the page. */}
+          <h2>
             Delhi NCR operations — {zones.length || 8} zones, leads Day +{leadDays[0]}…+{leadDays[leadDays.length - 1]}
-          </h1>
+          </h2>
           {payload ? <p className="demo-disclaimer" role="status">{payload.disclaimer}</p> : null}
         </div>
       </header>
