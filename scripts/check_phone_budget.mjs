@@ -38,6 +38,13 @@ if (!existsSync(join(dist, 'index.html'))) {
     const files = [...new Set([...referenced.filter((name) => /\.(?:js|css)$/.test(name)), phoneChunk])]
     const leafletsAtBoot = files.filter((name) => /leaflet/i.test(name))
     if (leafletsAtBoot.length) fail(`Leaflet entered phone cold-open: ${leafletsAtBoot.join(', ')}`)
+    // The 3D globe must never enter the phone cold-open either — CesiumJS is
+    // ~1.1 MB gzipped and its transitive deps (nosleep.js' base64 wake-lock
+    // video, protobufjs) are worse than they look. Both have slipped into the
+    // entry graph once already; the size total alone can hide them, so name
+    // them explicitly.
+    const globeAtBoot = files.filter((name) => /cesium|nosleep|protobuf|globe/i.test(name))
+    if (globeAtBoot.length) fail(`3D globe code entered phone cold-open: ${globeAtBoot.join(', ')}`)
     const bytes = files.reduce((sum, name) => sum + gzipSync(readFileSync(join(assets, name))).length, 0)
     const citizenBytes = readFileSync(staticCitizen).length
     console.log(`phone cold-open: ${bytes.toLocaleString()} gzip bytes across ${files.map((name) => basename(name)).join(', ')}`)

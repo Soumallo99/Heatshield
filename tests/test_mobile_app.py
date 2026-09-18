@@ -155,6 +155,12 @@ def test_static_host_paths_are_relative_and_phone_is_code_split():
     assert "const Landing = lazy" in app and "const PhoneApp = lazy" in app
     assert "const scopedURL" in worker and "inScope('api/')" in worker
     assert "navigator.serviceWorker.register('/sw.js'" not in index
+    # The shell is cache-first, so the cache name MUST be bumped on every
+    # shipped frontend change; the file documents that discipline and the
+    # version identifier is the mechanism.
+    assert re.search(r"const VERSION = 'heatshield-phone-v\d+'", worker)
+    assert "CACHE-BUMP DISCIPLINE" in worker
+    assert "heatshield-phone-v1" not in worker
 
 
 def test_phone_bundle_budget_after_real_vite_build():
@@ -169,3 +175,43 @@ def test_phone_bundle_budget_after_real_vite_build():
     assert budget.returncode == 0, budget.stdout + budget.stderr
     assert "phone cold-open:" in budget.stdout
     assert "static citizen payload:" in budget.stdout
+
+
+def test_built_site_is_installable_and_has_an_offline_shell():
+    """What `npm run build` must produce for the APK/PWA test round.
+
+    Installability is a set of concrete files, not a vibe: a manifest with the
+    three icon sizes, a worker that precaches the shell and the offline page,
+    and — because the whole app is served from a repository subdirectory on
+    GitHub Pages — relative paths everywhere.
+    """
+    dist = WEB / "dist"
+    assert (dist / "index.html").exists(), "run npm run build first"
+
+    manifest = json.loads((dist / "manifest.webmanifest").read_text(encoding="utf-8"))
+    assert manifest["display"] == "standalone"
+    assert manifest["start_url"] == "./#/phone"
+    assert manifest["scope"] == "./"
+    purposes = {icon["purpose"] for icon in manifest["icons"]}
+    sizes = {icon["sizes"] for icon in manifest["icons"]}
+    assert "maskable" in purposes and {"192x192", "512x512"} <= sizes
+    for icon in manifest["icons"]:
+        assert (dist / icon["src"]).exists(), icon["src"]
+
+    worker = (dist / "sw.js").read_text(encoding="utf-8")
+    for shell_entry in ("./", "./index.html", "./manifest.webmanifest", "./offline.html"):
+        assert f"'{shell_entry}'" in worker, shell_entry
+    assert (dist / "offline.html").exists()
+    assert (dist / "icons" / "badge-72.png").exists()
+    assert (dist / "data" / "kolkata_wards.geojson").exists(), "ward geometry must ship for offline maps"
+
+    # Every asset reference in the built HTML stays relative (subdirectory-safe).
+    html = (dist / "index.html").read_text(encoding="utf-8")
+    assert 'src="./assets/' in html and 'href="./assets/' in html
+    assert 'href="./manifest.webmanifest"' in html
+
+    # The lazy globe's runtime assets are copied next to the app, and its JS is
+    # NOT part of the entry HTML — the citizen route must never fetch Cesium.
+    assert (dist / "cesium" / "Workers").is_dir()
+    assert not re.search(r'"(?:src|href)="\./assets/cesium-', html)
+    assert not re.search(r'modulepreload[^>]*cesium-', html)

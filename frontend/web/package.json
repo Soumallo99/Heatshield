@@ -5,12 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
+    "predev": "npm run copy:cesium",
     "build": "vite build",
+    "prebuild": "npm run copy:cesium",
     "budget": "node ../../scripts/check_phone_budget.mjs",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "copy:cesium": "node scripts/copy-cesium-assets.mjs"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.22",
+    "cesium": "^1.145.0",
     "d3-delaunay": "^6.0.4",
     "framer-motion": "^11.11.17",
     "leaflet": "1.9",

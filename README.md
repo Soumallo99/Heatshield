@@ -272,9 +272,11 @@ heatshield/
 │   └── main.py          # FastAPI: /health /zones /forecast /thermal/*
 ├── frontend/
 │   ├── UI_SPEC.md       # locked stack, routes, animation inventory
-│   ├── MOBILE.md        # PWA guide (install, offline, push, testing)
+│   ├── MOBILE.md        # PWA guide (install, offline, push, cache-bump discipline)
 │   ├── prototype.html   # animated concept, zero-dependency
-│   └── pwa/             # manifest.webmanifest + service worker
+│   └── web/             # Vite + React app
+│       ├── public/      # manifest.webmanifest, sw.js, icons, offline.html (single source)
+│       └── src/globe/   # lazy CesiumJS 3D globe (vendored from gods-eye-view, MIT)
 ├── data/
 │   ├── wards.csv        # 141 real KMC ward centroids + real Census 2011 demographics
 │   ├── raw/             # timestamped raw JSON from Open-Meteo
@@ -284,6 +286,7 @@ heatshield/
 ├── requirements.lock.txt
 ├── setup.sh  setup.bat  # one-command installers
 ├── SETUP.md             # full local install + Android build guide
+├── THIRD-PARTY.md       # vendored code, runtime services and their licences
 ├── scripts/package.py   # builds the downloadable zip
 └── .env.example         # copy -> .env for Phase 5
 ```
@@ -325,8 +328,36 @@ Kolkata branch.
 The **scenario switcher** (+0 / +2 / +4 / +6 / +8 °C) re-scores every ward live — the fastest way
 to demo how the model behaves under a real heatwave.
 
-Production build: `npm run build` → `frontend/web/dist` (107 KB gzipped).
+Production build: `npm run build` → `frontend/web/dist` (~110 KB gzipped cold-open for the
+citizen phone route; `npm run budget` enforces < 120 KiB).
 Installable as a PWA (offline + push) — see `frontend/MOBILE.md`.
+
+### 3D globe (Operations dashboard)
+
+Both operations consoles carry a **2D map ⇄ 3D globe** switch. The 2D react-leaflet map stays
+the default: it is instant, works offline and needs no WebGL. Picking **3D globe** lazily loads
+a CesiumJS view of the same data — the 141 KMC ward polygons as a risk choropleth (with an
+optional, clearly-labelled stylised risk prism) in Kolkata, and the 8 advance-warning zone
+markers in Delhi NCR.
+
+- **Keyless, like everything else.** Global imagery is Esri World Imagery; if it fails, the
+  controller switches to OpenStreetMap tiles and says so on the map. Terrain is
+  Re:Earth/Mapterhorn quantized mesh (CC BY 4.0), degrading to the smooth ellipsoid with a
+  notice. There is no ion token, no key slot and no code path that could request a keyed tile —
+  the viewer boots with `baseLayer: false` so Cesium's token-hungry default imagery is never
+  even constructed.
+- **Never in the phone bundle.** CesiumJS is ~1.1 MB gzipped; it lives in its own chunk behind
+  `lazy(() => import('../globe/HeatGlobe'))`. `scripts/check_phone_budget.mjs` fails the build
+  if `cesium`, `nosleep` or `protobuf` ever reach the citizen cold-open. The phone app stays 2D.
+- **Licensing.** The provider/fallback architecture is adapted from
+  [gods-eye-view](https://github.com/bilawalsidhu/gods-eye-view) (MIT © 2026 Bilawal Sidhu,
+  snapshot `0d41b6b`), code only — no bundled data, no models, and nothing from its
+  NonCommercial datasets. Its MIT notice is kept in
+  `frontend/web/src/globe/LICENSE-gods-eye-view`; the full picture is in
+  [`THIRD-PARTY.md`](THIRD-PARTY.md).
+- **Runtime assets.** `npm run build` (and `npm run dev`) first copies CesiumJS's runtime assets
+  into `frontend/web/public/cesium/` via `scripts/copy-cesium-assets.mjs`; that directory is
+  gitignored, so no third-party build output is committed.
 
 ### Map basemaps
 

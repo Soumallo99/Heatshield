@@ -21,6 +21,10 @@ htmlcov/
 node_modules/
 frontend/web/dist/
 frontend/web/.vite/
+# CesiumJS runtime assets are copied from node_modules by
+# frontend/web/scripts/copy-cesium-assets.mjs (npm prebuild/predev) - ~7 MB of
+# third-party build output, reproducible from the pinned dependency.
+frontend/web/public/cesium/
 *.local
 
 # ---------------- secrets ----------------

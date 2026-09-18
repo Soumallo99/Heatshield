@@ -200,9 +200,23 @@ def test_both_cities_are_switchable_in_dashboard_and_citizen_tab():
     assert "maptiler" not in lowered and "thunderforest" not in lowered
     assert "key=" not in lowered and "apikey" not in lowered
     assert "OSM_FALLBACK" in basemaps_src
+    # CARTO is gone for a subtler reason than licensing: since ~2026-08-28 its
+    # keyless raster endpoints answer HTTP 200 with an "API KEY REQUIRED"
+    # watermark, which no client can detect (tileerror never fires, so the OSM
+    # fallback never triggers). A cartocdn URL anywhere is a regression.
+    assert "cartocdn" not in lowered
     assert not (WEB / ".env.example").exists()  # keyed-tile env slot removed
     risk_map = (WEB / "src" / "components" / "RiskMap.jsx").read_text(encoding="utf-8")
     assert "OSM_FALLBACK" in risk_map and "tileerror" in risk_map
+    # Every other tile surface must take its providers from the same registry.
+    demo_map = (WEB / "src" / "demo" / "DemoMap.jsx").read_text(encoding="utf-8")
+    assert "getBasemap('dark')" in demo_map and "cartocdn" not in demo_map.lower()
+    worker = (WEB / "public" / "sw.js").read_text(encoding="utf-8")
+    hosts = worker.split("const TILE_HOSTS = [", 1)[1].split("]", 1)[0]
+    assert "cartocdn" not in hosts and "maptiler" not in hosts
+    assert "server.arcgisonline.com" in hosts and "tile.opentopomap.org" in hosts
+    # The OSM fallback must be cacheable too, or falling back to it breaks offline.
+    assert "tile.openstreetmap.org" in hosts
 
 
 def test_demo_is_route_level_code_split_and_prominently_linked():

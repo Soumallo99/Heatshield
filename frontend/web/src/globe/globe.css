@@ -1,0 +1,222 @@
+/*
+ * Globe view styles. Imported by HeatGlobe.jsx, which is itself a lazy chunk —
+ * so this CSS ships with the globe and never with the phone cold-open.
+ *
+ * The Cesium widget keeps its own stylesheet (Widgets/widgets.css, bundled with
+ * this chunk) for the credit line; everything else here is HeatShield chrome.
+ */
+
+.globe-wrap {
+  position: relative;
+  min-width: 0;
+  height: 520px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #05060a;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.globe-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.globe-canvas .cesium-viewer,
+.globe-canvas .cesium-widget,
+.globe-canvas .cesium-widget canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Bottom-left stack: our attribution line, then Cesium's own credit display.
+   Both stay visible on purpose — provider attribution is a licence term, not
+   decoration. Pointer events stay off the block but on for the credit links. */
+.globe-foot {
+  position: absolute;
+  left: 10px;
+  bottom: 6px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 58%;
+  pointer-events: none;
+}
+
+.globe-credits {
+  font-size: 9px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: auto;
+}
+
+.globe-credits a {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.globe-hud {
+  position: absolute;
+  top: 10px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.globe-hud--left { left: 10px; }
+.globe-hud--right { right: 10px; align-items: flex-end; }
+
+.globe-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(7, 8, 13, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  max-width: 42ch;
+}
+
+.globe-eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.globe-title strong { font-size: 13px; }
+
+.globe-sub { font-size: 10.5px; color: rgba(255, 255, 255, 0.5); }
+
+.globe-chips {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(7, 8, 13, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+}
+
+.globe-chip {
+  border: 0;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.globe-chip:hover:not(:disabled) { color: #fff; }
+
+.globe-chip.is-on { background: rgba(255, 255, 255, 0.14); color: #fff; }
+
+.globe-chip:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.globe-notice {
+  max-width: 320px;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #fcd34d;
+  background: rgba(7, 8, 13, 0.92);
+  border: 1px solid rgba(252, 211, 77, 0.4);
+}
+
+.globe-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.62);
+  background: rgba(5, 6, 10, 0.95);
+}
+
+.globe-tip {
+  position: absolute;
+  z-index: 35;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.82);
+  background: rgba(7, 8, 13, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.globe-legend {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  z-index: 25;
+  padding: 7px 9px;
+  border-radius: 10px;
+  background: rgba(7, 8, 13, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  max-width: 260px;
+}
+
+.globe-legend__title {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 4px;
+}
+
+.globe-legend ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.globe-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.globe-legend i {
+  width: 10px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.globe-legend__note {
+  display: block;
+  margin-top: 5px;
+  font-size: 9px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.36);
+}
+
+.globe-attribution {
+  margin: 0;
+  font-size: 9px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.42);
+}

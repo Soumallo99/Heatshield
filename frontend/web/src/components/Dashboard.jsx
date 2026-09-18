@@ -3,7 +3,12 @@ import { AnimatePresence, motion } from 'framer-motion'
 // Leaflet + react-leaflet are ~40 kB gzip and only the dashboard needs them.
 // Loading them lazily keeps the landing page bundle small.
 const RiskMap = lazy(() => import('./RiskMap'))
+// The 3D globe is a separate lazy chunk (CesiumJS is ~1 MB gzipped). It is
+// only fetched when the operator picks "3D globe", so the 2D map — and the
+// citizen phone route, which never imports this file — stay unaffected.
+const HeatGlobe = lazy(() => import('../globe/HeatGlobe'))
 import AlertsPanel from './AlertsPanel'
+import MapViewSwitch from './MapViewSwitch'
 import DelhiOps from './DelhiOps'
 import Gauge from './Gauge'
 import HourlyChart from './HourlyChart'
@@ -112,6 +117,9 @@ export default function Dashboard({ onExit, onDemo }) {
   const { reduced } = useMotionSafe()
   const [city, setCity] = useState('kolkata')
   const [selectedId, setSelectedId] = useState(null)
+  // '2d' is the default everywhere: the globe is an extra view, never the
+  // only one (low-end devices, offline demos, no-WebGL browsers).
+  const [mapMode, setMapMode] = useState('2d')
   const [scenario, setScenario] = useState(0)
   const [geo, setGeo] = useState(null)
   // `epoch` is the manual-refresh lever: bumping it re-calls every endpoint at
@@ -349,7 +357,13 @@ export default function Dashboard({ onExit, onDemo }) {
               title="Ward risk layer"
               note={`${ranking.data?.date || '—'} peak-risk day · ${rows.length} KMC wards · Open-Meteo forecast, UHI-adjusted`}
               right={
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-white/40">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[10px] text-white/40">
+                  <MapViewSwitch
+                    value={mapMode}
+                    onChange={setMapMode}
+                    disabled={!geo}
+                    note={mapMode === '3d' ? 'lazy-loaded, keyless' : 'instant, offline-capable'}
+                  />
                   {Object.entries(bandColour).slice(0, 4).map(([k, v]) => (
                     <span key={k} className="flex items-center gap-1.5">
                       <i className="inline-block h-2 w-2 rounded-sm" style={{ background: v }} />
@@ -365,9 +379,22 @@ export default function Dashboard({ onExit, onDemo }) {
                 label={ranking.error ? 'waiting for the HeatShield API…' : 'fetching ward risk…'}
               />
             ) : rows.length ? (
-              <Suspense fallback={<MapSkeleton label="loading ward boundaries…" />}>
-                <RiskMap geo={geo} wards={rows} selectedId={selected?.ward_id}
-                         onSelect={(w) => setSelectedId(w.ward_id)} />
+              <Suspense fallback={<MapSkeleton label={mapMode === '3d' ? 'loading the 3D globe…' : 'loading ward boundaries…'} />}>
+                {mapMode === '3d' ? (
+                  <HeatGlobe
+                    mode="wards"
+                    area="kolkata"
+                    geo={geo}
+                    wards={rows}
+                    selectedId={selected?.ward_id}
+                    onSelect={setSelectedId}
+                    title="Kolkata ward risk — 3D globe"
+                    subtitle={`${rows.length} KMC wards · ${ranking.data?.date || '—'} peak-risk day · Open-Meteo forecast, UHI-adjusted`}
+                  />
+                ) : (
+                  <RiskMap geo={geo} wards={rows} selectedId={selected?.ward_id}
+                           onSelect={(w) => setSelectedId(w.ward_id)} />
+                )}
               </Suspense>
             ) : (
               <div className="flex h-[420px] items-center justify-center rounded-xl border border-white/[.08] bg-white/[.015] px-6 text-center text-[12px] leading-relaxed text-white/35">
