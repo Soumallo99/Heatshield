@@ -75,7 +75,7 @@ export function RefreshButton({ onRefresh, busy = false, lastUpdated = null, err
           transition={{ duration: state === 'live' ? 2.6 : 1.4, repeat: Infinity, ease: 'easeInOut' }}
         />
         {/* `tick` keeps "12 s ago" honest; it renders nothing itself. */}
-        <span className="tnum text-[10.5px] leading-tight text-white/45" data-tick={tick}>
+        <span className="tnum text-[10.5px] leading-tight text-white/62" data-tick={tick}>
           {busy ? (
             'refreshing…'
           ) : state === 'down' ? (
@@ -84,7 +84,7 @@ export function RefreshButton({ onRefresh, busy = false, lastUpdated = null, err
             <>
               {state === 'stale' ? 'last known ' : 'updated '}
               <span className="text-white/70">{formatClock(lastUpdated)}</span>
-              <span className="ml-1.5 text-white/25">{formatAge(lastUpdated)}</span>
+              <span className="ml-1.5 text-white/56">{formatAge(lastUpdated)}</span>
             </>
           )}
         </span>
@@ -117,6 +117,69 @@ export function RefreshButton({ onRefresh, busy = false, lastUpdated = null, err
  * Honest failure notice. Replaces the old behaviour of quietly substituting
  * invented wards when the backend was down.
  */
+/**
+ * The fourth honest state: a real forecast run that is not live.
+ *
+ * On a static host (GitHub Pages) there is no FastAPI, so the ward ranking comes
+ * from the exported snapshot in `public/static-api/`. That data is computed, not
+ * invented — but it is frozen at the export date, and an operator has to be able
+ * to tell the difference between "the pipeline is running" and "this is the last
+ * run we shipped". Silence here would be the same lie as a mock fallback.
+ */
+export function SnapshotNotice({ snapshot, onRetry }) {
+  const { reduced } = useMotionSafe()
+  if (!snapshot) return null
+  const date = snapshot.date || "the last exported run"
+  const scenario =
+    Number(snapshot.scenario_c) > 0
+      ? `+${snapshot.scenario_c} °C scenario`
+      : 'present-day conditions'
+  const wards = Array.isArray(snapshot.data) ? snapshot.data.length : null
+
+  return (
+    <motion.div
+      role="status"
+      className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border px-4 py-3"
+      style={{
+        borderColor: 'rgba(56,189,248,.35)',
+        background: 'rgba(56,189,248,.06)',
+      }}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={reduced ? { duration: 0 } : { duration: 0.5, ease: EASE }}
+    >
+      <span
+        className="block h-2 w-2 shrink-0 rounded-full"
+        style={{ background: DOT.live }}
+      />
+      <div className="min-w-0 flex-1 text-[11.5px] leading-relaxed">
+        <span className="font-semibold" style={{ color: '#bae6fd' }}>
+          Saved forecast run — this deployment has no live API
+        </span>
+        <span className="text-white/55">
+          {' '}
+          The map and league table show the exported run for {date} ({scenario}
+          {wards != null ? `, ${wards} wards` : ''}), shipped with this build. The numbers are real and
+          unchanged, but refreshing cannot update them here.
+        </span>{' '}
+        <span className="text-white/60">
+          For live data run the API and open the dev server:
+        </span>
+        <code className="tnum ml-1.5 rounded bg-black/40 px-1.5 py-0.5 text-[10.5px] text-white/60">
+          python -m uvicorn app.main:app --port 8000
+        </code>
+      </div>
+      <motion.button
+        onClick={onRetry}
+        className="rounded-full border border-white/20 bg-white/[.06] px-3 py-1 text-[11px] text-white/80 transition hover:border-white/40"
+        whileTap={reduced ? undefined : { scale: 0.96 }}
+      >
+        Check for live API
+      </motion.button>
+    </motion.div>
+  )
+}
+
 export function ConnectionNotice({ error, lastUpdated, onRetry, busy = false }) {
   const { reduced } = useMotionSafe()
   if (!error) return null
@@ -155,7 +218,7 @@ export function ConnectionNotice({ error, lastUpdated, onRetry, busy = false }) 
           </code>
         )}
         {' '}
-        <span className="text-white/40">
+        <span className="text-white/60">
           Retrying automatically every few seconds — this clears itself the moment the API answers
           (R retries now).
         </span>

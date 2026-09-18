@@ -9,6 +9,15 @@
  * provider, add an entry here yourself (README → "Maps are keyless") and keep
  * the automatic OSM_FALLBACK behaviour in RiskMap/DemoMap intact.
  *
+ * WHY THERE IS NO CARTO ENTRY ANY MORE (removed 2026-09, do not re-add):
+ * since ~2026-08-28 CARTO's keyless raster endpoints answer HTTP 200 with a
+ * watermark PNG that reads "API KEY REQUIRED" instead of failing. A failed
+ * request is detectable (`tileerror`, the OSM fallback); a *successful*
+ * response carrying a watermark is not — the map would have looked "loaded"
+ * while every tile shouted for a key. Only providers whose keyless tiles are
+ * genuinely keyless belong in this file. Esri's classic ArcGIS World/Canvas
+ * services and OpenTopoMap are keyless; that is the whole registry.
+ *
  * We deliberately do NOT scrape `mt{n}.google.com/vt` tiles: it violates the
  * Google Maps ToS. Google's licensed route (Maps JavaScript API / Map Tiles
  * API) needs a billing-enabled key — see README "Using Google tiles" for the
@@ -16,53 +25,98 @@
  *
  * Every entry is a plain object consumed by <TileLayer/>, plus an optional
  * `labels` overlay URL (drawn on top of imagery so street names stay readable).
+ * `maxNativeZoom` is the deepest level the provider actually has cached:
+ * beyond it Leaflet upscales the last real tile instead of requesting a 404
+ * and leaving a grey hole.
  */
 
+/*
+ * ATTRIBUTION IS A LICENCE TERM, NOT DECORATION — and it has to name the data
+ * actually being drawn.
+ *
+ * Every string below is copied from the `copyrightText` field of the ArcGIS
+ * service it is attached to (verified against
+ * `.../<service>/MapServer?f=json`; last full pass 2026-09-18) or from the
+ * provider's own licence page.
+ * Do not tidy them up and do not share one string between two services: the
+ * Dark Gray Canvas is HERE/Garmin/OSM data and the World Imagery is
+ * Vantor/Earthstar satellite imagery, and crediting one for the other is both
+ * wrong and a breach of the terms we are using the tiles under. The previous
+ * version of this file did exactly that — the default basemap advertised
+ * satellite imagery that appears nowhere in it.
+ */
 const OSM_ATTR = '© OpenStreetMap contributors'
-const CARTO_ATTR = `${OSM_ATTR} · © CARTO`
-const ESRI_ATTR = 'Imagery © Esri, Maxar, Earthstar Geographics'
 
-/** Retina (@2x) tiles where the provider supports them — this is most of what
- *  makes a Leaflet map look as sharp as a commercial map on a modern display. */
-const R = '{r}'
+/** Canvas/World_Dark_Gray_Base + its Reference labels overlay. */
+const ESRI_DARK_ATTR =
+  'Sources: Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community'
+
+/** World_Street_Map — the long form is the service's own copyrightText. */
+const ESRI_STREETS_ATTR =
+  'Sources: Esri, HERE, Garmin, USGS, Intermap, INCREMENT P, NRCan, Esri Japan, METI, ' +
+  'Esri China (Hong Kong), Esri Korea, Esri (Thailand), NGCC, © OpenStreetMap contributors, ' +
+  'and the GIS User Community'
+
+/** World_Imagery, drawn with Reference/World_Boundaries_and_Places on top.
+ *
+ *  The imagery line is the service's current `copyrightText` as of 2026-09-18:
+ *  "Source: Esri, Vantor, Earthstar Geographics, and the GIS User Community".
+ *  Esri renamed the imagery supplier (Maxar → Vantor) in the service metadata;
+ *  if this string and the service disagree again, the service wins — check
+ *  `.../World_Imagery/MapServer?f=json` before editing. */
+const ESRI_IMAGERY_ATTR =
+  'Imagery: Esri, Vantor, Earthstar Geographics, and the GIS User Community · ' +
+  'Labels: Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community'
+
+/** ArcGIS Server REST cached-map tile URL. Note `{z}/{y}/{x}` — ArcGIS
+ *  addresses tiles row-first; Leaflet substitutes in any order, so the
+ *  template stays a plain string with no extra shim. */
+const ARCGIS = (service) =>
+  `https://server.arcgisonline.com/ArcGIS/rest/services/${service}/MapServer/tile/{z}/{y}/{x}`
 
 /** Ordered list shown in the map's layer switcher. */
 export const BASEMAPS = [
   {
     id: 'dark',
     label: 'Dark',
-    hint: 'CARTO Dark Matter — the default, tuned for the risk choropleth',
-    url: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}${R}.png`,
-    subdomains: 'abcd',
+    hint: 'Esri Dark Gray Canvas + place labels — the default, tuned for the risk choropleth',
+    url: ARCGIS('Canvas/World_Dark_Gray_Base'),
     maxZoom: 20,
-    maxNativeZoom: 20,
-    attribution: CARTO_ATTR,
+    maxNativeZoom: 16,
+    attribution: ESRI_DARK_ATTR,
+    labels: {
+      url: ARCGIS('Canvas/World_Dark_Gray_Reference'),
+      maxZoom: 20,
+      maxNativeZoom: 16,
+    },
     overlayOpacity: 0.34,
   },
   {
     id: 'streets',
     label: 'Streets',
-    hint: 'CARTO Voyager — full street names, POIs, transit',
-    url: `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}${R}.png`,
-    subdomains: 'abcd',
+    hint: 'Esri World Street Map — full street names, POIs, transit',
+    url: ARCGIS('World_Street_Map'),
     maxZoom: 20,
-    maxNativeZoom: 20,
-    attribution: CARTO_ATTR,
+    maxNativeZoom: 19,
+    attribution: ESRI_STREETS_ATTR,
     light: true,
     overlayOpacity: 0.42,
   },
   {
     id: 'satellite',
     label: 'Satellite',
-    hint: 'Esri World Imagery + street labels on top (the "hybrid" look)',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    hint: 'Esri World Imagery + place labels on top (the "hybrid" look)',
+    url: ARCGIS('World_Imagery'),
     maxZoom: 20,
     maxNativeZoom: 19,
-    attribution: ESRI_ATTR,
+    attribution: ESRI_IMAGERY_ATTR,
     labels: {
-      url: `https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}${R}.png`,
-      subdomains: 'abcd',
+      // Reference overlay: real place/boundary labels out to z12 only, the way
+      // the Esri hybrid map uses it. Past z12 Leaflet upscales the last label
+      // tile, and the "Streets" basemap carries the high-zoom cartography.
+      url: ARCGIS('Reference/World_Boundaries_and_Places'),
       maxZoom: 20,
+      maxNativeZoom: 12,
     },
     overlayOpacity: 0.4,
   },
@@ -70,11 +124,17 @@ export const BASEMAPS = [
     id: 'terrain',
     label: 'Terrain',
     hint: 'OpenTopoMap — relief + contours',
-    url: `https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png`,
+    // Plain tiles only. OpenTopoMap documents exactly one URL
+    // (`https://{a|b|c}.tile.opentopomap.org/{z}/{x}/{y}.png`) with no retina
+    // variant — so the template must stay free of Leaflet's `{r}` token: on a
+    // high-DPI screen Leaflet would substitute `@2x` (Browser.retina), the tile
+    // would 404, trip the tile-failure counter, and silently swap a working
+    // Terrain map for the OSM fallback.
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
     subdomains: 'abc',
     maxZoom: 20,
     maxNativeZoom: 17,
-    attribution: `${OSM_ATTR} · SRTM · © OpenTopoMap (CC-BY-SA)`,
+    attribution: `Map data: ${OSM_ATTR}, SRTM · Map style: © OpenTopoMap (CC-BY-SA)`,
     light: true,
     overlayOpacity: 0.45,
   },

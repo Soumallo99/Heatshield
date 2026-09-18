@@ -3,14 +3,19 @@ import { AnimatePresence, motion } from 'framer-motion'
 // Leaflet + react-leaflet are ~40 kB gzip and only the dashboard needs them.
 // Loading them lazily keeps the landing page bundle small.
 const RiskMap = lazy(() => import('./RiskMap'))
+// The 3D globe is a separate lazy chunk (CesiumJS is ~1 MB gzipped). It is
+// only fetched when the operator picks "3D globe", so the 2D map — and the
+// citizen phone route, which never imports this file — stay unaffected.
+const HeatGlobe = lazy(() => import('../globe/HeatGlobe'))
 import AlertsPanel from './AlertsPanel'
+import MapViewSwitch from './MapViewSwitch'
 import DelhiOps from './DelhiOps'
 import Gauge from './Gauge'
 import HourlyChart from './HourlyChart'
 import Odometer from './Odometer'
 import StatsStrip from './StatsStrip'
 import TopWardsTable from './TopWardsTable'
-import { ConnectionNotice, RefreshButton } from './LiveStatus'
+import { ConnectionNotice, RefreshButton, SnapshotNotice } from './LiveStatus'
 import { bandColour, bandText, EASE, spring, useMotionSafe } from '../motion'
 import { useLive, useRefreshShortcut } from '../live'
 import { ALERT_THRESHOLD, fetchAlerts, fetchGeo, fetchHourly, fetchRanking,
@@ -25,7 +30,7 @@ function Clock() {
     return () => clearInterval(id)
   }, [])
   return (
-    <span className="tnum text-[11.5px] text-white/40">
+    <span className="tnum text-[11.5px] text-white/60">
       {t.toLocaleTimeString('en-IN', { hour12: false })}
     </span>
   )
@@ -40,10 +45,10 @@ function Driver({ label, value, unit, delay = 0 }) {
       animate={{ opacity: 1, x: 0 }}
       transition={reduced ? { duration: 0 } : t({ duration: 0.5, ease: EASE, delay })}
     >
-      <span className="text-[11.5px] text-white/40">{label}</span>
+      <span className="text-[11.5px] text-white/60">{label}</span>
       <span className="tnum text-[13px] font-medium">
         {value}
-        <span className="ml-0.5 text-[10px] text-white/35">{unit}</span>
+        <span className="ml-0.5 text-[10px] text-white/59">{unit}</span>
       </span>
     </motion.div>
   )
@@ -65,7 +70,7 @@ function MapSkeleton({ label = 'fetching ward risk…' }) {
           transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
         />
       </motion.div>
-      <span className="text-[11.5px] text-white/30">{label}</span>
+      <span className="text-[11.5px] text-white/58">{label}</span>
     </div>
   )
 }
@@ -77,7 +82,7 @@ function SectionHead({ eyebrow, title, note, right }) {
       <div className="min-w-0">
         <div className="eyebrow">{eyebrow}</div>
         <h2 className="display mt-1.5 text-[22px] leading-none">{title}</h2>
-        {note && <p className="mt-2 text-[11px] leading-snug text-white/35">{note}</p>}
+        {note && <p className="mt-2 text-[11px] leading-snug text-white/59">{note}</p>}
       </div>
       {right}
     </div>
@@ -99,7 +104,7 @@ function CitySwitch({ city, setCity }) {
           title={id === 'kolkata'
             ? 'Kolkata — 141 ward-level console (risk, exposure, alerts)'
             : 'Delhi NCR — 8-zone advance-warning console (HTSI, leads Day +0…+5)'}
-          className={`relative rounded-full px-3 py-1 text-[11px] transition ${city === id ? 'bg-white/[.14] text-white' : 'text-white/45 hover:text-white/80'}`}
+          className={`relative rounded-full px-3 py-1 text-[11px] transition ${city === id ? 'bg-white/[.14] text-white' : 'text-white/62 hover:text-white/80'}`}
         >
           {label}
         </button>
@@ -112,6 +117,9 @@ export default function Dashboard({ onExit, onDemo }) {
   const { reduced } = useMotionSafe()
   const [city, setCity] = useState('kolkata')
   const [selectedId, setSelectedId] = useState(null)
+  // '2d' is the default everywhere: the globe is an extra view, never the
+  // only one (low-end devices, offline demos, no-WebGL browsers).
+  const [mapMode, setMapMode] = useState('2d')
   const [scenario, setScenario] = useState(0)
   const [geo, setGeo] = useState(null)
   // `epoch` is the manual-refresh lever: bumping it re-calls every endpoint at
@@ -129,7 +137,11 @@ export default function Dashboard({ onExit, onDemo }) {
     fetchGeo().then(setGeo)
   }, [])
 
-  const rows = ranking.data?.data || []
+  // Memoised on the payload, not rebuilt per render. This array is a prop to
+  // the tables, both maps and the globe, and the globe updates its entities
+  // whenever the array identity changes — a fresh [] on every render would
+  // recolour 141 wards on each parent re-render (animations, clock, hover).
+  const rows = useMemo(() => ranking.data?.data || [], [ranking.data])
 
   // default-select the worst ward the first time data arrives
   useEffect(() => {
@@ -172,9 +184,11 @@ export default function Dashboard({ onExit, onDemo }) {
               <div className="h-5 w-5 rounded-full" style={{ background: 'linear-gradient(135deg,#ff5f6d,#ffc371)' }} />
               <span className="display text-[18px]">HeatShield</span>
             </button>
-            <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/30 sm:block">
-              operations
-            </span>
+            {/* The page's only h1. `sr-only` on phones keeps it in the
+                accessibility tree while staying out of the compact top bar. */}
+            <h1 className="sr-only text-[10px] font-normal uppercase tracking-[0.2em] text-white/58 sm:not-sr-only">
+              Delhi NCR operations
+            </h1>
             {onDemo && (
               <button
                 onClick={onDemo}
@@ -205,9 +219,11 @@ export default function Dashboard({ onExit, onDemo }) {
             <div className="h-5 w-5 rounded-full" style={{ background: 'linear-gradient(135deg,#ff5f6d,#ffc371)' }} />
             <span className="display text-[18px]">HeatShield</span>
           </button>
-          <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/30 sm:block">
-            operations
-          </span>
+          {/* Page heading. `sr-only` on phones: present for screen readers and
+              search engines, invisible in the compact mobile top bar. */}
+          <h1 className="sr-only text-[10px] font-normal uppercase tracking-[0.2em] text-white/58 sm:not-sr-only">
+            Kolkata operations
+          </h1>
           {onDemo && (
             <button
               onClick={onDemo}
@@ -263,6 +279,14 @@ export default function Dashboard({ onExit, onDemo }) {
           lastUpdated={ranking.lastUpdated}
           onRetry={refreshAll}
           busy={ranking.loading}
+        />
+
+        {/* Data arrived, but from the shipped snapshot rather than the API:
+            real numbers, frozen date. Both maps and the table show it, so the
+            disclosure sits above all of them. */}
+        <SnapshotNotice
+          snapshot={ranking.data?.static_snapshot ? ranking.data : null}
+          onRetry={refreshAll}
         />
 
         {/* -------------------------------------------------------- alert */}
@@ -349,7 +373,13 @@ export default function Dashboard({ onExit, onDemo }) {
               title="Ward risk layer"
               note={`${ranking.data?.date || '—'} peak-risk day · ${rows.length} KMC wards · Open-Meteo forecast, UHI-adjusted`}
               right={
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-white/40">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[10px] text-white/60">
+                  <MapViewSwitch
+                    value={mapMode}
+                    onChange={setMapMode}
+                    disabled={!geo}
+                    note={mapMode === '3d' ? 'lazy-loaded, keyless' : 'instant, offline-capable'}
+                  />
                   {Object.entries(bandColour).slice(0, 4).map(([k, v]) => (
                     <span key={k} className="flex items-center gap-1.5">
                       <i className="inline-block h-2 w-2 rounded-sm" style={{ background: v }} />
@@ -365,12 +395,25 @@ export default function Dashboard({ onExit, onDemo }) {
                 label={ranking.error ? 'waiting for the HeatShield API…' : 'fetching ward risk…'}
               />
             ) : rows.length ? (
-              <Suspense fallback={<MapSkeleton label="loading ward boundaries…" />}>
-                <RiskMap geo={geo} wards={rows} selectedId={selected?.ward_id}
-                         onSelect={(w) => setSelectedId(w.ward_id)} />
+              <Suspense fallback={<MapSkeleton label={mapMode === '3d' ? 'loading the 3D globe…' : 'loading ward boundaries…'} />}>
+                {mapMode === '3d' ? (
+                  <HeatGlobe
+                    mode="wards"
+                    area="kolkata"
+                    geo={geo}
+                    wards={rows}
+                    selectedId={selected?.ward_id}
+                    onSelect={setSelectedId}
+                    title="Kolkata ward risk — 3D globe"
+                    subtitle={`${rows.length} KMC wards · ${ranking.data?.date || '—'} peak-risk day · Open-Meteo forecast, UHI-adjusted`}
+                  />
+                ) : (
+                  <RiskMap geo={geo} wards={rows} selectedId={selected?.ward_id}
+                           onSelect={(w) => setSelectedId(w.ward_id)} />
+                )}
               </Suspense>
             ) : (
-              <div className="flex h-[420px] items-center justify-center rounded-xl border border-white/[.08] bg-white/[.015] px-6 text-center text-[12px] leading-relaxed text-white/35">
+              <div className="flex h-[420px] items-center justify-center rounded-xl border border-white/[.08] bg-white/[.015] px-6 text-center text-[12px] leading-relaxed text-white/59">
                 No ward data on screen. The dashboard only renders what the API
                 returns — press <span className="tnum mx-1 text-white/60">R</span> or Refresh once
                 the API is up.
@@ -422,14 +465,14 @@ export default function Dashboard({ onExit, onDemo }) {
                 <div className="eyebrow">exposed</div>
                 <div className="mt-2 flex items-baseline gap-1">
                   <Odometer value={(ward?.impact?.exposed_population || 0) / 1000} decimals={1} height={1.1} className="text-[30px] font-semibold" />
-                  <span className="text-[10px] text-white/35">k people</span>
+                  <span className="text-[10px] text-white/59">k people</span>
                 </div>
               </div>
               <div className="pl-3">
                 <div className="eyebrow">relative risk</div>
                 <div className="mt-2 flex items-baseline gap-1">
                   <Odometer value={ward?.impact?.relative_risk || 1} decimals={2} height={1.1} className="text-[30px] font-semibold" />
-                  <span className="text-[10px] text-white/35">× baseline</span>
+                  <span className="text-[10px] text-white/59">× baseline</span>
                 </div>
               </div>
             </div>
@@ -471,14 +514,14 @@ export default function Dashboard({ onExit, onDemo }) {
                       transition={spring.layout}
                     />
                   )}
-                  <div className="relative truncate text-[11px] text-white/45 transition group-hover:text-white/70">
+                  <div className="relative truncate text-[11px] text-white/62 transition group-hover:text-white/70">
                     {w.ward_name}
                   </div>
                   <div className="relative mt-0.5 flex items-baseline gap-1.5">
                     <span className="display text-[26px] leading-none" style={{ color: c }}>
                       {Math.round(w.risk_score)}
                     </span>
-                    <span className="text-[9px] uppercase tracking-wider text-white/30">{w.risk_band}</span>
+                    <span className="text-[9px] uppercase tracking-wider text-white/58">{w.risk_band}</span>
                   </div>
                   {/* risk bar: width encodes the score, colour is a repeat of
                       the label above so the band never relies on colour alone */}
@@ -529,7 +572,7 @@ export default function Dashboard({ onExit, onDemo }) {
               {hourly.length ? (
                 <HourlyChart data={hourly} metric="wbgt_adj_c" unit="°C WBGT" />
               ) : (
-                <div className="flex h-[150px] items-center justify-center text-[11.5px] text-white/30">
+                <div className="flex h-[150px] items-center justify-center text-[11.5px] text-white/58">
                   {hourlyLive.error ? 'curve unavailable — API unreachable' : 'loading curve…'}
                 </div>
               )}
@@ -551,7 +594,7 @@ export default function Dashboard({ onExit, onDemo }) {
           transition={reduced ? { duration: 0 } : { duration: 0.8, ease: EASE, delay: 0.26 }}
         >
           <div className="eyebrow">data provenance</div>
-          <div className="mt-3 grid gap-6 text-[11px] leading-relaxed text-white/45 md:grid-cols-2">
+          <div className="mt-3 grid gap-6 text-[11px] leading-relaxed text-white/62 md:grid-cols-2">
             <div>
               <div className="display text-[17px] text-white/80">Measured</div>
               <ul className="mt-2 space-y-1">
@@ -582,7 +625,7 @@ export default function Dashboard({ onExit, onDemo }) {
           </div>
         </motion.section>
 
-        <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.08] pt-5 text-[10.5px] text-white/25">
+        <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.08] pt-5 text-[10.5px] text-white/56">
           <span>
             scenario {scenario > 0 ? `+${scenario} °C` : 'now'} · threshold {ALERT_THRESHOLD} · 141 wards
           </span>

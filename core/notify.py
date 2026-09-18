@@ -30,7 +30,8 @@ from datetime import datetime
 import math
 import os
 from pathlib import Path
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 import pandas as pd
 

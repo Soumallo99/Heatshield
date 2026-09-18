@@ -27,6 +27,8 @@ import numpy as np
 import pandas as pd
 import requests
 
+from core.weather import UpstreamError
+
 from core import config
 
 # Eight locations deliberately span the NCR rather than pretending one grid
@@ -155,7 +157,7 @@ def _request_payload(url: str, params: dict[str, Any], timeout: int = 8) -> list
     payload = response.json()
     values = payload if isinstance(payload, list) else [payload]
     if not values or not all(isinstance(value, dict) for value in values):
-        raise RuntimeError("air/weather provider returned an invalid response")
+        raise UpstreamError("air/weather provider returned an invalid response")
     return values
 
 
@@ -223,7 +225,7 @@ def get_air_quality(
 
 def _payloads_for_zones(payloads: list[dict[str, Any]], zones: pd.DataFrame) -> Iterable[tuple[dict[str, Any], pd.Series]]:
     if len(payloads) != len(zones):
-        raise RuntimeError(
+        raise UpstreamError(
             f"provider returned {len(payloads)} locations for {len(zones)} requested NCR zones"
         )
     return zip(payloads, (row for _, row in zones.iterrows()))
@@ -235,7 +237,7 @@ def _weather_frame(payloads: list[dict[str, Any]], zones: pd.DataFrame) -> pd.Da
         hourly = payload.get("hourly") or {}
         frame = pd.DataFrame(hourly)
         if frame.empty or "time" not in frame:
-            raise RuntimeError("weather provider omitted hourly data")
+            raise UpstreamError("weather provider omitted hourly data")
         frame = frame.rename(columns={
             "time": "timestamp_local",
             "temperature_2m": "temp_c",
@@ -261,7 +263,7 @@ def _weather_frame(payloads: list[dict[str, Any]], zones: pd.DataFrame) -> pd.Da
     out = pd.concat(frames, ignore_index=True)
     out["timestamp_local"] = pd.to_datetime(out["timestamp_local"], errors="coerce")
     if out["timestamp_local"].isna().any() or out["temp_c"].isna().all():
-        raise RuntimeError("weather provider returned unusable timestamps or temperature")
+        raise UpstreamError("weather provider returned unusable timestamps or temperature")
     return out[[
         "zone_id", "zone_name", "lat", "lon", "timestamp_local", "temp_c", "rh_pct",
         "wind_kmh", "precip_mm", "surface_pressure_hpa", "solar_wm2",
@@ -274,7 +276,7 @@ def _air_frame(payloads: list[dict[str, Any]], zones: pd.DataFrame) -> pd.DataFr
         hourly = payload.get("hourly") or {}
         frame = pd.DataFrame(hourly)
         if frame.empty or "time" not in frame:
-            raise RuntimeError("air-quality provider omitted hourly data")
+            raise UpstreamError("air-quality provider omitted hourly data")
         frame = frame.rename(columns={
             "time": "timestamp_local",
             "pm2_5": "pm25_ugm3",
@@ -295,7 +297,7 @@ def _air_frame(payloads: list[dict[str, Any]], zones: pd.DataFrame) -> pd.DataFr
     out = pd.concat(frames, ignore_index=True)
     out["timestamp_local"] = pd.to_datetime(out["timestamp_local"], errors="coerce")
     if out["timestamp_local"].isna().any() or out["pm25_ugm3"].isna().all():
-        raise RuntimeError("air-quality provider returned unusable timestamps or PM2.5")
+        raise UpstreamError("air-quality provider returned unusable timestamps or PM2.5")
     return out[[
         "zone_id", "timestamp_local", "pm25_ugm3", "pm10_ugm3", "no2_ugm3",
         "o3_ugm3", "so2_ugm3", "provider_us_aqi",
@@ -376,7 +378,7 @@ def _apply_coupling(frame: pd.DataFrame) -> pd.DataFrame:
 def _combine_live(weather: pd.DataFrame, air: pd.DataFrame) -> pd.DataFrame:
     out = weather.merge(air, on=["zone_id", "timestamp_local"], how="inner", validate="one_to_one")
     if out.empty:
-        raise RuntimeError("weather and air-quality responses have no overlapping hours")
+        raise UpstreamError("weather and air-quality responses have no overlapping hours")
     out = _apply_coupling(out)
     out["data_source"] = "open-meteo forecast + CAMS air-quality forecast"
     out["is_synthetic"] = False

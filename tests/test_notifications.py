@@ -169,12 +169,14 @@ def test_live_dispatch_still_needs_the_double_lock_for_live_rows(monkeypatch):
 
 def test_dispatch_endpoint_defaults_to_dry_run_and_refuses_unsafe_live():
     client = TestClient(app)
-    result = client.post("/notifications/dispatch", json={}).json()
+    result = client.post("/notifications/dispatch", json={},
+                         headers={"X-API-Key": "test-admin-token"}).json()
     assert result["dry_run"] is True
     assert result["dispatched"] > 0
     assert set(result["status_counts"]) == {"dry-run"}
 
-    refused = client.post("/notifications/dispatch", json={"dry_run": False}).json()
+    refused = client.post("/notifications/dispatch", json={"dry_run": False},
+                          headers={"X-API-Key": "test-admin-token"}).json()
     assert refused["dispatched"] == 0
     assert "demo/synthetic" in refused["refused"]
 

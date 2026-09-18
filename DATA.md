@@ -14,10 +14,11 @@ Last verified 2026-09-01.
 | Weather forecast | Open-Meteo (aggregates DWD ICON, ECMWF, Météo-France, NOAA GFS) | CC-BY-4.0 | Live fetch, 5-day hourly |
 | Physics | Stull 2011 (wet bulb), Rothfusz/NWS (heat index), ISO 7243 (WBGT), Ranz–Marshall (convection) | Published literature | HI within ±0.4 °C of the NWS chart; Tw within 0.18 °C mean of psychrometric inversion |
 | Heatwave criteria | IMD (India Meteorological Department) | Published | Coastal preset applied for Kolkata |
-| Basemap (Dark, Streets) | CARTO Dark Matter / Voyager, built on OpenStreetMap | ODbL / CARTO | Keyless; attribution rendered in-app |
-| Basemap (Satellite) | Esri World Imagery (Maxar, Earthstar Geographics) + CARTO label overlay | Esri terms, attribution required | Keyless; hybrid label layer drawn on top |
+| Basemap (Dark, Streets) | Esri Dark Gray Canvas / World Street Map (+ Canvas reference labels) | Esri terms, attribution required | Keyless; attribution rendered in-app. CARTO was removed 2026-09 — its keyless endpoints now return HTTP 200 watermark tiles reading "API KEY REQUIRED", which no client can detect |
+| Basemap (Satellite) | Esri World Imagery (Vantor, Earthstar Geographics) + Esri `Reference/World_Boundaries_and_Places` label overlay | Esri terms, attribution required | Keyless; hybrid label layer drawn on top (real labels to z12, upscaled beyond) |
 | Basemap (Terrain) | OpenTopoMap (OSM + SRTM relief) | CC-BY-SA | Keyless |
-| Basemap (optional upgrade) | MapTiler / Thunderforest | Commercial, key required | Off unless `VITE_MAPTILER_KEY` / `VITE_THUNDERFOREST_KEY` is set. Google tiles are **not** used — scraping them breaks the Maps ToS |
+| 3D globe imagery / terrain | Esri World Imagery (keyless ArcGIS World_Imagery) + OSM fallback; Re:Earth/Mapterhorn quantized-mesh terrain (CC-BY-4.0) | Esri terms / ODbL / CC-BY-4.0 | Keyless only — the globe has no key slot at all. See `frontend/web/src/globe/` and `THIRD-PARTY.md` |
+| Basemap (optional upgrade) | MapTiler / Thunderforest | Commercial, key required | Not in the shipped registry — no tile-key slot exists. Google tiles are **not** used — scraping them breaks the Maps ToS |
 
 ## ⚙️ Modelled (real inputs, constructed relationship)
 

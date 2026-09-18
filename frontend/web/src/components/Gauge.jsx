@@ -106,7 +106,7 @@ export default function Gauge({ value = 0, band = 'Normal', caption = '' }) {
         >
           {band}
         </motion.span>
-        {caption && <span className="mt-1 text-[11px] text-white/40">{caption}</span>}
+        {caption && <span className="mt-1 text-[11px] text-white/60">{caption}</span>}
       </motion.div>
     </div>
   )

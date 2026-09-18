@@ -24,7 +24,7 @@ function Stat({ label, value, hint, raw, decimals = 0, suffix = '', accent, inde
       whileHover={reduced ? undefined : { y: -2 }}
     >
       <div
-        className="truncate text-[10px] uppercase tracking-[0.11em] text-white/35"
+        className="truncate text-[10px] uppercase tracking-[0.11em] text-white/59"
         title={label}
       >
         {label}
@@ -44,13 +44,13 @@ function Stat({ label, value, hint, raw, decimals = 0, suffix = '', accent, inde
               className="text-[23px] font-semibold"
             />
             {suffix && (
-              <span className="text-[10.5px] text-white/35">{suffix}</span>
+              <span className="text-[10.5px] text-white/59">{suffix}</span>
             )}
           </>
         )}
       </div>
 
-      <div className="mt-0.5 truncate text-[10px] text-white/25" title={hint}>
+      <div className="mt-0.5 truncate text-[10px] text-white/56" title={hint}>
         {hint}
       </div>
     </motion.div>

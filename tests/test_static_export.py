@@ -7,10 +7,14 @@ route table, and demo scenarios are asserted individually.
 from __future__ import annotations
 
 import json
+import re
+from pathlib import Path
 
 import core.coupled as coupled
 import core.demo as demo_engine
 from scripts import export_static
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _offline(*_args, **_kwargs):
@@ -21,9 +25,9 @@ def test_catalogue_covers_every_ncr_and_advance_route():
     assert export_static.check_catalogue() == []
     assert export_static.dynamic_phone_routes() == export_static.exported_route_paths()
     # 9 /ncr/* + /heatwave/advance + /warnings/advance + /notifications/preview
-    # + /citizen/kolkata + 6 /demo/* route paths (scenario snapshots share the
-    # path, differ by query)
-    assert len(export_static.exported_route_paths()) == 19
+    # + /citizen/kolkata + /risk/ranking + 6 /demo/* route paths (scenario
+    # snapshots share the path, differ by query)
+    assert len(export_static.exported_route_paths()) == 20
 
 
 def test_catalogue_covers_every_demo_scenario():
@@ -83,3 +87,48 @@ def test_demo_snapshots_carry_the_disclaimer_even_offline(tmp_path, monkeypatch)
     # instead of failing — a static host must never ship a 500-shaped hole.
     assert advance["is_synthetic"] is True
     assert "simulated static export outage" in advance["fallback_reason"]
+
+
+def test_ops_ranking_snapshots_match_the_dashboard_scenarios():
+    """The exported ranking snapshots must cover exactly the dashboard's buttons.
+
+    Two lists in two languages. If they drift, a scenario button on a static
+    deployment silently degrades to "API unreachable — no data to show" while
+    the map it controls is sitting right there. So the component is the source
+    of truth and this reads the constant out of it.
+    """
+    dashboard = (
+        ROOT / "frontend" / "web" / "src" / "components" / "Dashboard.jsx"
+    ).read_text(encoding="utf-8")
+    match = re.search(r"const SCENARIOS = \[([\d,\s]+)\]", dashboard)
+    assert match, "Dashboard.jsx no longer declares SCENARIOS"
+    buttons = tuple(int(piece) for piece in match.group(1).split(",") if piece.strip())
+    assert buttons == export_static.OPS_SCENARIOS
+
+    exported = {filename for _path, filename, _fn in export_static.EXPORTS}
+    for scenario in export_static.OPS_SCENARIOS:
+        assert f"risk-ranking-{scenario}.json" in exported
+
+
+def test_ops_snapshots_carry_the_fields_both_maps_paint_with(tmp_path, monkeypatch):
+    """Committed snapshots must be usable, not merely present.
+
+    The 2D map and the 3D choropleth both bucket rows by ``risk_band`` and size
+    them by ``risk_score``; a snapshot without them would render 141 grey wards
+    and look like a styling bug.
+    """
+    from scripts import export_static as exporter
+
+    monkeypatch.setattr(exporter, "OUT_DIR", tmp_path)
+    manifest = exporter.export(output=tmp_path)
+    assert len(manifest["routes"]) == len(exporter.EXPORTS)
+
+    for scenario in exporter.OPS_SCENARIOS:
+        doc = json.loads((tmp_path / f"risk-ranking-{scenario}.json").read_text())
+        rows = doc["data"]
+        assert len(rows) == 141, f"scenario {scenario}: {len(rows)} wards"
+        assert doc["date"], "a snapshot without a date cannot be labelled honestly"
+        for row in rows:
+            assert row["risk_band"] in {"Normal", "Caution", "Danger", "Critical", "Extreme"}
+            assert isinstance(row["risk_score"], (int, float))
+            assert row["lat"] and row["lon"], "the globe needs coordinates to place a ward"

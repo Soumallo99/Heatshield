@@ -15,10 +15,18 @@
  * the last computed run from data/processed/*.csv, so "offline" means
  * "last known data", clearly timestamped — never fabricated numbers.
  */
-const BASE = '/api'
+import { isStaticHost, publicURL, readJSON, REQUEST_TIMEOUT_MS, staticURL, withTimeout } from './staticApi.js'
+
+/* Relative, not '/api': this app is deployed under a repository subdirectory
+ * (https://<owner>.github.io/<repo>/), where a document-root path leaves the
+ * app — and leaves the service worker's scope, so its network-first data cache
+ * (public/sw.js: inScope('api/')) can never answer. Resolving relative to the
+ * document keeps /api on a dev server and /<repo>/api on a static host, which is
+ * what the phone and demo layers already do. */
+const BASE = './api'
 
 /** Thrown for any non-2xx or transport failure, with the status when known. */
-export class ApiError extends Error {
+class ApiError extends Error {
   constructor(message, status = null) {
     super(message)
     this.name = 'ApiError'
@@ -27,32 +35,81 @@ export class ApiError extends Error {
 }
 
 async function getJSON(path, { signal } = {}) {
-  let res
+  // Deadline: a hung request must surface as a failure the operator can see,
+  // not an eternal skeleton. Caller aborts (unmount / new scenario) still pass
+  // through as AbortError so existing callers keep ignoring them.
+  const guard = withTimeout(signal)
   try {
-    res = await fetch(`${BASE}${path}`, { headers: { Accept: 'application/json' }, signal })
-  } catch (err) {
-    if (err?.name === 'AbortError') throw err
-    // fetch rejects with a TypeError for connection refused / DNS / CORS.
-    throw new ApiError(`cannot reach the HeatShield API (${path})`, null)
-  }
-  if (!res.ok) throw new ApiError(`HeatShield API returned ${res.status} (${path})`, res.status)
+    let res
+    try {
+      res = await fetch(`${BASE}${path}`, { headers: { Accept: 'application/json' }, signal: guard.signal })
+    } catch (err) {
+      if (guard.timedOut()) {
+        throw new ApiError(`HeatShield API did not answer within ${REQUEST_TIMEOUT_MS / 1000}s (${path})`, 504)
+      }
+      if (err?.name === 'AbortError') throw err
+      // fetch rejects with a TypeError for connection refused / DNS / CORS.
+      throw new ApiError(`cannot reach the HeatShield API (${path})`, null)
+    }
+    if (!res.ok) throw new ApiError(`HeatShield API returned ${res.status} (${path})`, res.status)
 
-  const body = await res.json()
-  // The service worker (public/sw.js) answers a failed /api fetch with HTTP 200
-  // and this shape when it has nothing cached. Treating that as data would paint
-  // an empty dashboard with a green "live" dot — the exact lie this file exists
-  // to prevent. It is a failure, so it raises like one.
-  if (body && body.stale === true && body.error) {
-    throw new ApiError(`offline: ${body.error} (${path})`, 503)
+    let body
+    try {
+      // Still inside the deadline: headers arriving is not the same as an answer.
+      body = await res.json()
+    } catch (err) {
+      if (guard.timedOut()) {
+        throw new ApiError(`HeatShield API stopped answering within ${REQUEST_TIMEOUT_MS / 1000}s (${path})`, 504)
+      }
+      if (err?.name === 'AbortError') throw err
+      throw new ApiError(`HeatShield API returned invalid JSON (${path})`, res.status)
+    }
+
+    // The service worker (public/sw.js) answers a failed /api fetch with HTTP 200
+    // and this shape when it has nothing cached. Treating that as data would paint
+    // an empty dashboard with a green "live" dot — the exact lie this file exists
+    // to prevent. It is a failure, so it raises like one.
+    if (body && body.stale === true && body.error) {
+      throw new ApiError(`offline: ${body.error} (${path})`, 503)
+    }
+    return body
+  } finally {
+    guard.cleanup()
   }
-  return body
 }
 
 /* ------------------------------------------------------------------ api */
 
-/** Ward league table for the peak day in the window (`date` = that day). */
-export const fetchRanking = (scenario = 0) =>
-  getJSON(`/risk/ranking?scenario_c=${scenario}`)
+/** Ward league table for the peak day in the window (`date` = that day).
+ *
+ * Live-first, with the exported snapshot as the fallback. GitHub Pages serves
+ * files, not a FastAPI process, so /risk/* can only 404 there; the exporter
+ * (scripts/export_static.py) writes one snapshot per scenario button. The
+ * snapshot is a real computed run — but it is frozen at its export date, so the
+ * payload is marked and the console says so on screen (SnapshotNotice). Per-ward
+ * detail (/risk/ward/…) deliberately has no snapshot: one stale exposure number
+ * without its series beside it would be worse than an honest failure.
+ */
+async function rankingSnapshot(scenario, signal) {
+  const doc = await readJSON(staticURL(`risk-ranking-${scenario}.json`), signal, ApiError)
+  return { ...doc, static_snapshot: true }
+}
+
+export async function fetchRanking(scenario = 0, { signal } = {}) {
+  if (isStaticHost()) return rankingSnapshot(scenario, signal)
+  try {
+    return await getJSON(`/risk/ranking?scenario_c=${scenario}`, { signal })
+  } catch (error) {
+    if (error?.name === 'AbortError') throw error
+    try {
+      return await rankingSnapshot(scenario, signal)
+    } catch (snapshotError) {
+      if (snapshotError?.name === 'AbortError') throw snapshotError
+      // The live failure is the real story; the missing snapshot is not.
+      throw error
+    }
+  }
+}
 
 /** Single-ward drivers + impact. */
 export const fetchWardRisk = (id, scenario = 0) =>
@@ -60,9 +117,6 @@ export const fetchWardRisk = (id, scenario = 0) =>
 
 /** Ward registry (count must be 141). */
 export const fetchZones = () => getJSON('/zones')
-
-/** Liveness + server clock. Cheap: used to say "API reachable" truthfully. */
-export const fetchHealth = () => getJSON('/health')
 
 // /risk carries the UHI-adjusted series (wbgt_adj_c); /thermal carries the raw grid value.
 export const fetchHourly = (wardId, scenario = 0) =>
@@ -73,7 +127,10 @@ export const fetchHourly = (wardId, scenario = 0) =>
     "no boundaries" (the map still draws markers), so it resolves to null. */
 export const fetchGeo = async () => {
   try {
-    const r = await fetch('/data/kolkata_wards.geojson')
+    // publicURL, not '/data/…': on GitHub Pages the app lives under
+    // /<repo>/, so a document-root path leaves the app and 404s — taking the
+    // ward polygons (and with them the 2D and 3D choropleths) with it.
+    const r = await fetch(publicURL('data/kolkata_wards.geojson'))
     if (!r.ok) throw new ApiError(`geojson ${r.status}`, r.status)
     return await r.json()
   } catch {

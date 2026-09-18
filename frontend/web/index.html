@@ -3,8 +3,46 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>HeatShield — Extreme Heat Early Warning</title>
-    <meta name="description" content="Ward-level human thermal stress index and extreme heat early warning for Kolkata." />
+    <title>HeatShield — ward-level extreme heat early warning for Kolkata</title>
+
+    <!--
+      CONTENT SECURITY POLICY
+
+      This is a static bundle with no inline scripts and no third-party scripts,
+      so the policy can stay tight: scripts load from this origin only, which is
+      what makes an injected script tag (or an eval) useless — object-src and
+      base-uri are closed for the same reason.
+
+      What needs the exceptions below, and why:
+        * style-src 'unsafe-inline' — React and Cesium set element styles at
+          runtime, and Vite injects <style> tags in dev.
+        * img-src https: data: blob: — map tiles (Esri/OSM/OpenTopoMap) and
+          Cesium's textures/skybox are loaded as images from their own hosts.
+        * worker-src blob: — CesiumJS builds its workers from Blob URLs.
+        * connect-src 'self' https: — the API is same-origin (Vite proxies /api
+          in dev, and a static host has none), plus the service worker's own
+          same-origin fetches.
+        * font-src https://fonts.gstatic.com — the typefaces, with full local
+          fallbacks when the network is unavailable.
+
+      frame-ancestors, X-Frame-Options and HSTS cannot be set from a meta tag, so
+      they are documented in README -> "Security" for whoever terminates TLS.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https:; worker-src 'self' blob:; child-src blob:; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <meta
+      name="description"
+      content="Ward-level heat risk, human thermal stress (WBGT) and protective actions for all 141 Kolkata wards and 8 Delhi NCR zones, on keyless open data."
+    />
+    <meta name="application-name" content="HeatShield" />
+    <meta name="author" content="HeatShield (open source)" />
+    <!-- Canonical URL, Open Graph, Twitter card and schema.org JSON-LD are injected
+         at build time by plugins/siteMeta.js from VITE_SITE_URL, so a custom domain
+         is one environment variable rather than an edit here. -->
 
     <!-- PWA -->
     <!-- Relative URLs preserve the repository subpath on GitHub Pages. -->
@@ -31,30 +69,5 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script>
-      // sw.js must only control PRODUCTION builds. In dev it fights Vite's HMR
-      // and serves stale modules — which is how a perfectly good route "stops
-      // opening" on a real client while the dev server looks healthy.
-      // %MODE% is substituted by Vite at serve/build time.
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          if ('%MODE%' === 'production') {
-            // Relative scope keeps the worker inside a GitHub Pages project
-            // subdirectory instead of trying to control the whole domain.
-            navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
-          } else {
-            // A worker an earlier dev session registered keeps serving stale
-            // bundles. Evict it and its caches so nobody sits on old modules.
-            navigator.serviceWorker
-              .getRegistrations()
-              .then((rs) => rs.forEach((r) => r.unregister()))
-              .catch(() => {});
-            if ('caches' in window) {
-              caches.keys().then((ks) => ks.forEach((k) => caches.delete(k))).catch(() => {});
-            }
-          }
-        });
-      }
-    </script>
   </body>
 </html>

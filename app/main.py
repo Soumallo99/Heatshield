@@ -7,13 +7,24 @@ Docs: http://localhost:8000/docs
 """
 from __future__ import annotations
 
+import asyncio
+import logging
 from datetime import datetime
+from uuid import uuid4
 
 import pandas as pd
 from zoneinfo import ZoneInfo
-from fastapi import FastAPI, HTTPException, Query
-from pydantic import BaseModel
+from typing import Annotated, Literal
+
+from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request
+from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import JSONResponse, Response
+
+from core.response_cache import ResponseCache
+from core.security import (RateLimiter, client_key, redact_phone, require_admin,
+                           sanitise_phone_list)
 
 from core import config
 from core import demo as demo_engine
@@ -34,17 +45,299 @@ from core.subscribers import (add_subscriber as reg_add,
                               load_registry, opt_out as reg_opt_out,
                               recipients_for_ward, registry_stats)
 from core.thermal import classify_wbgt, compute_thermal, daily_thermal, heatwave_flags, work_rest
-from core.weather import daily_peak, get_forecast, load_wards
+from core.weather import UpstreamError, daily_peak, get_forecast, load_wards
+
+# The interactive schema is a map of every route, including the administrative
+# ones. Useful locally, needless exposure on a public deployment — so it is on by
+# default in development and off once an admin token exists. HS_ENABLE_DOCS
+# forces either way.
+_DOCS = "/docs" if config.ENABLE_DOCS else None
+_OPENAPI = "/openapi.json" if config.ENABLE_DOCS else None
 
 app = FastAPI(
     title="HeatShield API",
     version="0.1.0",
     description="Extreme Heatwave Early Warning & Human Thermal Stress Index",
+    docs_url=_DOCS,
+    redoc_url=None,
+    openapi_url=_OPENAPI,
 )
 
-app.add_middleware(
-    CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
-)
+# Browser origins: only what the operator lists, plus localhost dev ports when
+# HS_ALLOW_DEV_ORIGINS is not turned off. `allow_origins=["*"]` used to let any
+# website read the subscriber registry from a visitor's browser.
+_ORIGINS = list(config.ALLOWED_ORIGINS)
+if config.ALLOW_DEV_ORIGINS:
+    _ORIGINS += [
+        "http://localhost:5173", "http://127.0.0.1:5173",
+        "http://localhost:4173", "http://127.0.0.1:4173",
+    ]
+if _ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_ORIGINS,
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type", "X-API-Key", "X-HeatShield-Token", "Authorization"],
+        max_age=600,
+    )
+
+# Requests per client per minute on the whole API. Enumeration of the registry
+# and repeated dispatch attempts are the things this is here to make boring.
+# Answers to the public reads, kept for as long as they are allowed to be cached.
+# Per-process, like the limiter: see core/response_cache.py for what it does and
+# what it deliberately does not.
+answer_cache = ResponseCache(config.RESPONSE_CACHE_MAX_AGE)
+
+# Compression. The ranking payload is a few hundred kB of JSON for 141 wards and
+# the exports are larger; text compresses about 8:1. Added last so it wraps
+# everything else, including the guard's own error responses. Small bodies are
+# skipped — gzip on a 200-byte reply costs more than it saves.
+app.add_middleware(GZipMiddleware, minimum_size=1024)
+
+limiter = RateLimiter(config.RATE_LIMIT_PER_MIN)
+
+_DOC_PATHS = {"/docs", "/openapi.json", "/redoc", "/docs/oauth2-redirect"}
+
+# One logger, one place to look. Without this an unhandled exception in a route
+# reaches the client as a bare "Internal Server Error" with nothing in the
+# server log tying it to a request — the worst kind of bug report.
+logger = logging.getLogger("heatshield.api")
+
+# Responses that may be cached, in seconds. A public read built from the last
+# computed run is the same for every visitor until the next forecast cycle, so
+# a repeat request (a phone reopening the tab, a second reader) should not pay
+# for the computation again.
+#
+# Deliberately absent: anything that can contain personal data
+# (/subscribers*), anything that sends or mutates, and every administrative
+# route. Those keep the `no-store` default.
+_CACHEABLE_READS = {
+    "/health": 30,
+    "/risk": config.RESPONSE_CACHE_MAX_AGE,
+    "/risk/": config.RESPONSE_CACHE_MAX_AGE,
+    "/thermal": config.RESPONSE_CACHE_MAX_AGE,
+    "/thermal/": config.RESPONSE_CACHE_MAX_AGE,
+    "/alerts/plan": config.RESPONSE_CACHE_MAX_AGE,
+    "/ncr/": config.RESPONSE_CACHE_MAX_AGE,
+    # The Kolkata citizen brief is the second-largest public read in the API
+    # (~365 kB raw, ~9 kB on the wire, rebuilt from the committed forecast cache
+    # on every request). It is the same document for every visitor and carries
+    # no personal field — the opt-in registry lives under /subscribers, which
+    # stays deliberately uncacheable — so a phone reopening its tab should not
+    # pay for the rebuild.
+    "/citizen/": config.RESPONSE_CACHE_MAX_AGE,
+    "/warnings/advance": config.RESPONSE_CACHE_MAX_AGE,
+    "/zones": config.RESPONSE_CACHE_MAX_AGE,
+    "/wards": config.RESPONSE_CACHE_MAX_AGE,
+    "/demo/": 600,
+    # NB: nothing under /subscribers appears here, not even the aggregate stats.
+    # A path family that is cacheable in one place and forbidden in another is a
+    # rule waiting to be broken by the next field someone adds to it.
+}
+
+
+def _cache_seconds(path: str) -> int:
+    """Cache lifetime for a GET path, 0 when it must not be cached."""
+    if config.RESPONSE_CACHE_MAX_AGE <= 0:
+        return 0
+    for prefix, seconds in _CACHEABLE_READS.items():
+        if path == prefix or path.startswith(prefix):
+            return min(seconds, config.RESPONSE_CACHE_MAX_AGE)
+    return 0
+
+
+@app.exception_handler(UpstreamError)
+async def _upstream_unavailable(request: Request, exc: UpstreamError) -> JSONResponse:
+    """503, not 500: the weather provider is down, this server is fine.
+
+    The distinction matters on the screen. A 500 sends an operator looking for a
+    bug in HeatShield; a 503 that says why sends them to the provider's status
+    page, and tells a visitor honestly that the numbers are unavailable rather
+    than broken. Cached runs never land here — only a live fetch can.
+    """
+    logger.warning("upstream weather unavailable on %s: %s", request.url.path, exc)
+    return JSONResponse(
+        {
+            "detail": "the weather provider is unavailable right now",
+            "upstream": str(exc)[:500],
+            "remedy": (
+                "cached runs are unaffected — retry later, or run "
+                "scripts/refresh.py once the provider recovers"
+            ),
+        },
+        status_code=503,
+    )
+
+
+def _base_headers(request_id: str) -> dict[str, str]:
+    """Headers every response carries, cached or fresh."""
+    return {
+        "X-Request-ID": request_id,
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "no-referrer",
+        "X-Frame-Options": "DENY",
+    }
+
+
+def _cacheable_headers(headers) -> dict[str, str]:
+    """The response headers worth replaying from cache.
+
+    Content-Type carries the media type, Content-Encoding says whether the bytes
+    are gzipped, and Vary tells a shared cache that the encoding matters. The
+    rest (length, cache-control, request id) is recomputed per request.
+    """
+    keep = ("content-type", "content-encoding", "vary", "etag", "last-modified")
+    return {key: value for key, value in headers.items() if key.lower() in keep}
+
+
+async def _store_answer(key: str, response, ttl: int):
+    """Keep a copy of a 200 for the next reader, and return it unchanged.
+
+    Reading `body_iterator` consumes it, so the response is rebuilt from the
+    bytes we just buffered. Only 200s are stored: an error is not an answer, and
+    caching one would turn a transient failure into a two-minute outage.
+    """
+    if response.status_code != 200:
+        return response
+
+    body = b"".join([chunk async for chunk in response.body_iterator])
+    headers = dict(response.headers)
+    answer_cache.set(key, body, headers.get("content-type", "application/json"),
+                     _cacheable_headers(headers), ttl)
+    return Response(content=body, status_code=response.status_code, headers=headers)
+
+
+@app.middleware("http")
+async def guard(request: Request, call_next):
+    """Rate limit, body-size cap, docs lock, cache, security headers, request ids.
+
+    Order matters: cheap rejections happen before anything touches pandas, and a
+    cache hit happens before anything runs at all.
+    """
+    request_id = uuid4().hex[:12]
+    request.state.request_id = request_id
+    if not config.ENABLE_DOCS and request.url.path in _DOC_PATHS:
+        return JSONResponse({"detail": "API documentation is disabled on this deployment"},
+                            status_code=404)
+
+    declared = request.headers.get("content-length")
+    if declared and declared.isdigit() and int(declared) > config.MAX_BODY_BYTES:
+        return JSONResponse({"detail": "request body too large"}, status_code=413)
+
+    allowed, retry_after = limiter.allow(client_key(request))
+    if not allowed:
+        return JSONResponse(
+            {"detail": "rate limit exceeded — try again shortly"},
+            status_code=429,
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    # A credentialed request is never cached, in either direction: an operator's
+    # view must not be served to the next visitor, and must not be stored under a
+    # key a visitor can reach.
+    authenticated = any(
+        request.headers.get(header) for header in ("X-HeatShield-Token", "X-API-Key", "Authorization")
+    )
+    # A cross-origin request is answered without the shared cache. The CORS
+    # middleware sits *inside* this one, so a body replayed from here would reach
+    # the browser without its Access-Control-Allow-Origin header — the request
+    # would be blocked on a cache hit and allowed on a miss, which is worse than
+    # either. Our own pages are same-origin, so this costs the crowd nothing.
+    cross_origin = bool(request.headers.get("origin"))
+    ttl = _cache_seconds(request.url.path) if request.method == "GET" else 0
+    cache_key = None
+    flight = None
+    if ttl and not authenticated and not cross_origin:
+        cache_key = ResponseCache.key(
+            request.url.path, request.url.query, request.headers.get("accept-encoding", ""), ttl
+        )
+        entry = answer_cache.get(cache_key)
+        if entry is not None:
+            return Response(
+                content=entry.body,
+                headers={**entry.headers, **_base_headers(request_id), "X-Cache": "HIT",
+                         "Cache-Control": f"public, max-age={ttl}, stale-while-revalidate=60"},
+            )
+
+        # Single flight. The same page opened by thirty people at once is the
+        # normal pattern during a heat wave; it must not be computed thirty
+        # times. Waiters sleep rather than block — this is the event loop — and
+        # take over if the owner dies, so one failure cannot strand the rest.
+        flight, owner = answer_cache.claim(cache_key)
+        if not owner:
+            # The waiting bound is generous on purpose. A cold compute of the
+            # heaviest public read takes ~9 s on one worker, and a waiter that
+            # gives up early does not get its answer faster — it starts a second
+            # copy of the same work and makes the whole burst slower, which is
+            # exactly what the first version of this did (p95 17.7 s, cold).
+            for _ in range(600):                     # ~24 s, then compute it anyway
+                if flight.is_set():
+                    break
+                await asyncio.sleep(0.04)
+            entry = answer_cache.get(cache_key)
+            if entry is not None:
+                return Response(
+                    content=entry.body,
+                    headers={**entry.headers, **_base_headers(request_id), "X-Cache": "COALESCED",
+                             "Cache-Control": f"public, max-age={ttl}, stale-while-revalidate=60"},
+                )
+            flight = answer_cache.takeover(cache_key, flight)
+
+    try:
+        response = await call_next(request)
+        if cache_key is not None:
+            response = await _store_answer(cache_key, response, ttl)
+    except Exception:  # noqa: BLE001 — deliberate catch-all: log, name it, say nothing
+        # A traceback in the response body is an information leak; nothing at
+        # all is worse. Log the whole thing against the request id and hand the
+        # client a JSON error it can quote.
+        logger.exception("unhandled error on %s %s (request %s)", request.method, request.url.path, request_id)
+        return JSONResponse(
+            {"detail": "internal error", "request_id": request_id},
+            status_code=500,
+            headers={"X-Request-ID": request_id, "Cache-Control": "no-store"},
+        )
+    finally:
+        if cache_key is not None:
+            answer_cache.release(cache_key)
+
+    if response.status_code >= 500:
+        logger.error("server error %s on %s %s (request %s)",
+                     response.status_code, request.method, request.url.path, request_id)
+
+    response.headers.setdefault("X-Request-ID", request_id)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    if ttl and response.status_code == 200 and not authenticated:
+        response.headers.setdefault("Cache-Control", f"public, max-age={ttl}, stale-while-revalidate=60")
+    else:
+        response.headers.setdefault("Cache-Control", "no-store")
+    return response
+
+
+# Input bounds. Every one of these was unbounded before: `?scenario_c=1e9` burned
+# nine seconds of CPU per request, and `ward_id=99999` was cheerfully accepted
+# into the subscriber registry. The UI's scenario lever spans 0-8 °C.
+SCENARIO_MIN, SCENARIO_MAX = -10.0, 20.0
+WARD_MAX = 141            # KMC wards (see DATA.md)
+DATE_PATTERN = r"^\d{4}-\d{2}-\d{2}$"
+
+# Shorthand: the admin gate on the routes that read personal data or can send.
+AdminOnly = Depends(require_admin)
+
+def live_fetch_guard(request: Request, use_cache: bool = True) -> None:
+    """A forced live fetch is an operator action, not a visitor one.
+
+    `?use_cache=false` skips the cache and calls Open-Meteo directly, with three
+    retries and backoff between them. Left open, any anonymous client could drive
+    that loop as often as it liked — burning our upstream quota (which is free but
+    rate-limited) and holding a worker thread for seconds per call. The operator
+    who wants current weather has a token (and `scripts/refresh.py`); everyone
+    else gets the cached run, which is what the UI uses anyway.
+    """
+    if not use_cache:
+        require_admin(request)
 
 
 def _now_local() -> pd.Timestamp:
@@ -143,8 +436,12 @@ def zones():
 @app.get("/forecast")
 def forecast(
     hours: int = Query(24, ge=1, le=24 * 16, description="Hours from most recent past hour"),
-    ward_id: int | None = None,
-    use_cache: bool = True,
+    ward_id: Annotated[int | None, Query(ge=1, le=WARD_MAX)] = None,
+    use_cache: bool = Query(
+        True,
+        description="Serve the cached run. `false` forces a live upstream fetch and requires the admin token",
+    ),
+    _live: Annotated[None, Depends(live_fetch_guard)] = None,
 ):
     """Hourly raw weather for all wards (Phase 1 output)."""
     df = get_forecast(use_cache=use_cache)
@@ -648,11 +945,16 @@ def notifications_preview(
 
 class NotifyDispatchIn(BaseModel):
     dry_run: bool = True
-    days: int = config.FORECAST_DAYS + 1
-    to_numbers: list[str] | None = None
+    days: int = Field(config.FORECAST_DAYS + 1, ge=1, le=9)
+    # An explicit recipient list is capped and normalised before it is trusted.
+    to_numbers: list[str] | None = Field(None, max_length=50)
+
+    @property
+    def recipients(self) -> list[str] | None:
+        return sanitise_phone_list(self.to_numbers)
 
 
-@app.post("/notifications/dispatch")
+@app.post("/notifications/dispatch", dependencies=[AdminOnly])
 def notifications_dispatch(payload: NotifyDispatchIn):
     """Dispatch planned notifications. Dry-run by default; live send is refused
     unless both opt-in locks are open AND no row is demo/synthetic."""
@@ -660,7 +962,7 @@ def notifications_dispatch(payload: NotifyDispatchIn):
     plan = plan_notifications(plan_payload["data"], is_demo=False)
     try:
         result = dispatch_previews(plan["previews"], dry_run=payload.dry_run,
-                                   to_numbers=payload.to_numbers)
+                                   to_numbers=payload.recipients)
     except PermissionError as exc:
         # An unsafe live send is a refusal with a readable reason, not a crash.
         return {"dispatched": 0, "dry_run": payload.dry_run, "refused": str(exc)}
@@ -737,7 +1039,7 @@ def _thermal_frame():
 @app.get("/thermal")
 def thermal(
     hours: int = Query(24, ge=1, le=24 * 16),
-    ward_id: int | None = None,
+    ward_id: Annotated[int | None, Query(ge=1, le=WARD_MAX)] = None,
     peak_only: bool = False,
 ):
     """Hourly WBGT + Heat Index + stress band per ward."""
@@ -758,7 +1060,7 @@ def thermal(
 
 
 @app.get("/thermal/daily")
-def thermal_daily(region: str = "coastal"):
+def thermal_daily(region: Literal["coastal", "plains", "hills"] = "coastal"):
     """Daily peak WBGT / HI per ward + IMD heatwave flags. The Phase 3+4 input."""
     d = heatwave_flags(daily_thermal(get_forecast()), region=region)
     d["date"] = d["date"].astype(str)
@@ -766,7 +1068,10 @@ def thermal_daily(region: str = "coastal"):
 
 
 @app.get("/thermal/ward/{ward_id}")
-def thermal_ward(ward_id: int, intensity: str = "moderate"):
+def thermal_ward(
+    ward_id: Annotated[int, Path(ge=1, le=WARD_MAX)],
+    intensity: Annotated[str, Query(pattern="^(light|moderate|heavy|very_heavy)$")] = "moderate",
+):
     """Single-ward summary: today's peak, band, guidance, work/rest rule."""
     df = _thermal_frame()
     w = df[df["ward_id"] == ward_id]
@@ -803,7 +1108,9 @@ def thermal_ward(ward_id: int, intensity: str = "moderate"):
 
 # ------------------------------------------------------------------ Phase 3
 @app.get("/risk/daily")
-def risk_daily(scenario_c: float = 0.0):
+def risk_daily(
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+):
     """Ward-day risk: peak risk score, band, exposure, excess-death estimate.
 
     `scenario_c` stress-tests the model (e.g. +6 for a heatwave what-if).
@@ -814,7 +1121,10 @@ def risk_daily(scenario_c: float = 0.0):
 
 
 @app.get("/risk/ranking")
-def risk_ranking(scenario_c: float = 0.0, date: str | None = None):
+def risk_ranking(
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+    date: Annotated[str | None, Query(pattern=DATE_PATTERN)] = None,
+):
     """
     League table, worst first, for the peak day in the window.
 
@@ -831,7 +1141,10 @@ def risk_ranking(scenario_c: float = 0.0, date: str | None = None):
 
 
 @app.get("/risk/ward/{ward_id}")
-def risk_ward(ward_id: int, scenario_c: float = 0.0):
+def risk_ward(
+    ward_id: Annotated[int, Path(ge=1, le=WARD_MAX)],
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+):
     """Single-ward risk summary for the detail panel / mobile view."""
     d = daily_risk(get_forecast(), temp_offset_c=scenario_c)
     w = d[d["ward_id"] == ward_id]
@@ -864,8 +1177,11 @@ def risk_ward(ward_id: int, scenario_c: float = 0.0):
 
 
 @app.get("/risk")
-def risk(hours: int = Query(24, ge=1, le=24 * 16), ward_id: int | None = None,
-         scenario_c: float = 0.0):
+def risk(
+    hours: Annotated[int, Query(ge=1, le=24 * 16)] = 24,
+    ward_id: Annotated[int | None, Query(ge=1, le=WARD_MAX)] = None,
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+):
     """Hourly ward-level risk scores."""
     df = compute_risk(get_forecast(), temp_offset_c=scenario_c)
     if ward_id is not None and ward_id not in set(df["ward_id"]):
@@ -880,9 +1196,9 @@ def risk(hours: int = Query(24, ge=1, le=24 * 16), ward_id: int | None = None,
 # ------------------------------------------------------------------ Phase 5
 @app.get("/alerts/plan")
 def alerts_plan(
-    threshold: float = DEFAULT_RISK_THRESHOLD,
-    lead_days: int = DEFAULT_MIN_LEAD_DAYS,
-    scenario_c: float = 0.0,
+    threshold: Annotated[float, Query(ge=0, le=100)] = DEFAULT_RISK_THRESHOLD,
+    lead_days: Annotated[int, Query(ge=0, le=7)] = DEFAULT_MIN_LEAD_DAYS,
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
     only_unsent: bool = False,
 ):
     """
@@ -921,24 +1237,28 @@ def alerts_plan(
 
 
 class DispatchIn(BaseModel):
-    threshold: float = DEFAULT_RISK_THRESHOLD
-    lead_days: int = DEFAULT_MIN_LEAD_DAYS
+    threshold: float = Field(DEFAULT_RISK_THRESHOLD, ge=0, le=100)
+    lead_days: int = Field(DEFAULT_MIN_LEAD_DAYS, ge=0, le=7)
     dry_run: bool = True
-    to_numbers: list[str] | None = None
+    to_numbers: list[str] | None = Field(None, max_length=50)
     # resolve recipients per ward from the subscriber registry
     per_ward: bool = True
 
+    @property
+    def recipients(self) -> list[str] | None:
+        return sanitise_phone_list(self.to_numbers)
+
 class SubscriberIn(BaseModel):
-    phone: str
-    ward_id: int = 0            # 0 = citywide
-    name: str = ""
+    phone: str = Field(min_length=8, max_length=20)
+    ward_id: int = Field(0, ge=0, le=WARD_MAX)   # 0 = citywide
+    name: str = Field("", max_length=200)
     role: str = "resident"
 
 class StopIn(BaseModel):
-    phone: str
+    phone: str = Field(min_length=8, max_length=20)
 
 
-@app.post("/alerts/dispatch")
+@app.post("/alerts/dispatch", dependencies=[AdminOnly])
 def alerts_dispatch(payload: DispatchIn):
     """Dispatch alerts. Defaults to dry-run; set dry_run=false to actually send."""
     daily = daily_risk(get_forecast())
@@ -949,7 +1269,7 @@ def alerts_dispatch(payload: DispatchIn):
         return {"dispatched": 0, "message": "no new events with sufficient lead time"}
     try:
         log = dispatch(pending, dry_run=payload.dry_run,
-                       to_numbers=payload.to_numbers, per_ward=payload.per_ward)
+                       to_numbers=payload.recipients, per_ward=payload.per_ward)
     except PermissionError as exc:
         # Refusing an unsafe live send is a 403, not a crash.
         return {"dispatched": 0, "dry_run": payload.dry_run, "refused": str(exc)}
@@ -964,25 +1284,37 @@ def alerts_dispatch(payload: DispatchIn):
 
 
 # --------------------------------------------------------- Phase 5b: registry
-@app.get("/subscribers")
-def subscribers_list(ward_id: int | None = None):
-    """Registry contents. `?ward_id=N` filters to that ward (+ citywide)."""
+@app.get("/subscribers", dependencies=[AdminOnly])
+def subscribers_list(
+    ward_id: Annotated[int | None, Query(ge=0, le=WARD_MAX)] = None,
+):
+    """Registry contents for operators. `?ward_id=N` filters to that ward (+ citywide).
+
+    Phone numbers are **redacted** here (`+91••••••3210`): dispatch resolves the
+    real numbers server-side, so no browser ever needs them, and a list of every
+    resident's number is the single most valuable thing on this API. The
+    administrative gate in front of the route is the second layer, not the first.
+    """
     df = load_registry()
+    stats = registry_stats()
     if df.empty:
-        return {"count": 0, "stats": registry_stats(), "data": []}
+        return {"count": 0, "stats": stats, "data": []}
     if ward_id is not None:
         df = df[(df["ward_id"] == ward_id) | (df["ward_id"] == 0)]
     out = df.copy()
+    out["phone"] = out["phone"].map(redact_phone)
     out["opted_out"] = out["opted_out"].astype(bool)
-    return {"count": int(len(out)), "stats": registry_stats(), "data": out.to_dict(orient="records")}
+    out = out.astype(object).where(pd.notna(out), None)
+    return {"count": int(len(out)), "stats": stats, "data": out.to_dict(orient="records")}
 
 
 @app.get("/subscribers/stats")
 def subscribers_stats():
+    """Aggregate counts only — no personal data, so this one stays public."""
     return registry_stats()
 
 
-@app.post("/subscribers")
+@app.post("/subscribers", dependencies=[AdminOnly])
 def subscribers_add(payload: SubscriberIn):
     result = reg_add(payload.phone, payload.ward_id, payload.name, payload.role)
     if not result.get("ok"):
@@ -991,9 +1323,15 @@ def subscribers_add(payload: SubscriberIn):
     return result
 
 
-@app.post("/subscribers/stop")
+@app.post("/subscribers/stop", dependencies=[AdminOnly])
 def subscribers_stop(payload: StopIn):
-    """STOP. Never fails loudly — silence is the requested outcome."""
+    """STOP. Never fails loudly — silence is the requested outcome.
+
+    Gated because without it anybody could silence anybody's heat warnings by
+    posting their number: a denial-of-warnings attack against a life-safety
+    system. Real STOP handling arrives as an inbound SMS webhook, which is the
+    only place a phone number proves it belongs to the sender.
+    """
     result = reg_opt_out(payload.phone)
     if not result.get("ok"):
         raise HTTPException(status_code=400, detail=result.get("error"))
@@ -1001,9 +1339,11 @@ def subscribers_stop(payload: StopIn):
     return result
 
 
-@app.get("/subscribers/for-ward/{ward_id}")
-def subscribers_for_ward(ward_id: int):
-    return {"ward_id": ward_id, "recipients": recipients_for_ward(ward_id)}
+@app.get("/subscribers/for-ward/{ward_id}", dependencies=[AdminOnly])
+def subscribers_for_ward(ward_id: Annotated[int, Path(ge=0, le=WARD_MAX)]):
+    """Recipient numbers for one ward — redacted, for operator auditing."""
+    return {"ward_id": ward_id,
+            "recipients": [redact_phone(n) for n in recipients_for_ward(ward_id)]}
 
 
 if __name__ == "__main__":

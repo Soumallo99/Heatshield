@@ -12,9 +12,13 @@ Run after a forecast refresh, or use the built-in offline fallback deliberately:
     HS_FORECAST_DAYS=5 python -m scripts.export_static --check
 
 ``--check`` also fails if a new GET route under ``/ncr/*``, ``/demo/*``,
-``/warnings/*``, ``/heatwave/advance`` or ``/notifications/preview`` has not
-been added here.  That guard exists because a previous static release shipped
-nine live routes as GitHub Pages 404s.
+``/warnings/*``, ``/heatwave/advance``, ``/notifications/preview`` or
+``/risk/ranking`` has not been added here.  That guard exists because a previous
+static release shipped nine live routes as GitHub Pages 404s.
+
+The operations console is covered too: without ``/risk/ranking`` the operations
+map has ward geometry but nothing to colour it with, so the ranking is exported
+once per scenario button (``OPS_SCENARIOS``).
 """
 from __future__ import annotations
 
@@ -22,7 +26,8 @@ import argparse
 from datetime import date, datetime
 import json
 from pathlib import Path
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -56,6 +61,29 @@ def _demo_exports() -> tuple[tuple[str, str, Callable[[], dict[str, Any]]], ...]
     return tuple(entries)
 
 
+# The operations console's scenario buttons (`SCENARIOS` in
+# components/Dashboard.jsx). Kept in sync by
+# tests/test_static_export.py::test_ops_ranking_snapshots_match_the_dashboard_scenarios.
+OPS_SCENARIOS: tuple[int, ...] = (0, 2, 4, 6, 8)
+
+
+def _ops_exports() -> tuple[tuple[str, str, Callable[[], dict[str, Any]]], ...]:
+    """Ward ranking per scenario — the data behind both operations maps.
+
+    The 3D globe's choropleth buckets each ward by ``risk_band`` and the 2D
+    Leaflet map paints the same rows, so this one payload is what makes either
+    map more than uncoloured outlines on a host with no API.
+    """
+    return tuple(
+        (
+            f"/risk/ranking?scenario_c={scenario}",
+            f"risk-ranking-{scenario}.json",
+            lambda s=scenario: api.risk_ranking(scenario_c=s),
+        )
+        for scenario in OPS_SCENARIOS
+    )
+
+
 # (live API path, file name, endpoint function).  Keep this list explicit:
 # output filenames are part of the versioned static-client contract.
 EXPORTS: tuple[tuple[str, str, Callable[[], dict[str, Any]]], ...] = (
@@ -78,7 +106,7 @@ EXPORTS: tuple[tuple[str, str, Callable[[], dict[str, Any]]], ...] = (
     # Kolkata citizen brief (phone contract). Offline-safe: built from the
     # committed forecast cache; empty+labelled when the cache is cold.
     ("/citizen/kolkata", "citizen-kolkata.json", api.citizen_kolkata),
-) + _demo_exports()
+) + _demo_exports() + _ops_exports()
 
 
 def _json_default(value: Any) -> Any:
@@ -108,7 +136,7 @@ def exported_route_paths() -> set[str]:
 
 
 STATIC_ROUTE_PREFIXES = ("/ncr/", "/demo/", "/warnings/")
-STATIC_ROUTE_EXACT = ("/heatwave/advance", "/notifications/preview", "/citizen/kolkata")
+STATIC_ROUTE_EXACT = ("/heatwave/advance", "/notifications/preview", "/citizen/kolkata", "/risk/ranking")
 
 
 def dynamic_phone_routes() -> set[str]:

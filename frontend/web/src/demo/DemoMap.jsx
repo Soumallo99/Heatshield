@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import { AttributionControl, CircleMarker, MapContainer, TileLayer, Tooltip } from 'react-leaflet'
+import { AttributionControl, CircleMarker, MapContainer, Pane, TileLayer, Tooltip } from 'react-leaflet'
 import { bandColour, levelColour, levelLabel, formatNumber, formatTemp, text } from './contract.js'
-import { OSM_FALLBACK } from '../basemaps.js'
+import { getBasemap, OSM_FALLBACK } from '../basemaps.js'
 
 /* Layer definitions: every value is paired with WORDS — colour is never the
    only channel (accessibility rule enforced by tests/test_demo_app.py). */
@@ -59,9 +59,11 @@ const LAYERS = {
   },
 }
 
-export const MAP_LAYER_IDS = Object.keys(LAYERS)
-
 const DELHI_CENTRE = [28.58, 77.28]
+/* Dark keyless basemap from the shared registry (Esri Dark Gray Canvas +
+   place labels). Deliberately not a local URL constant: the registry is the
+   single place that decides which tile providers may render. */
+const dark = getBasemap('dark')
 
 /**
  * Colour-coded GIS view for the Heat Risk Demo.
@@ -72,7 +74,7 @@ const DELHI_CENTRE = [28.58, 77.28]
  */
 export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, selectedZoneId = '', showCooling = false, onSelect }) {
   const layerDef = LAYERS[layer] || LAYERS.level
-  // Keyless CARTO tiles need no API key — but if the CDN is blocked the map
+  // The dark basemap needs no API key — but if its CDN is blocked the map
   // must say so instead of rendering silent grey behind the data markers.
   const [tileFailures, setTileFailures] = useState(0)
   const tilesDegraded = tileFailures > 6
@@ -112,16 +114,31 @@ export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, sel
         className="demo-map"
         aria-label={`Demo risk map, ${layerDef.label} layer, Day +${leadDay}`}
       >
+        {/* The credit follows the tiles actually drawn: switching to the
+            OpenStreetMap fallback switches the credit with them. */}
         <AttributionControl position="bottomright" prefix={false} />
+        {/* Dark layer comes from the shared keyless registry (../basemaps.js):
+            one place decides which providers may render, and the demo cannot
+            drift onto a keyed URL of its own. */}
         <TileLayer
-          key={tilesDegraded ? 'osm' : 'carto'}
-          url={tilesDegraded ? OSM_FALLBACK.url : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'}
-          subdomains={tilesDegraded ? OSM_FALLBACK.subdomains : 'abcd'}
+          key={tilesDegraded ? 'osm' : dark.id}
+          url={tilesDegraded ? OSM_FALLBACK.url : dark.url}
+          subdomains={tilesDegraded ? OSM_FALLBACK.subdomains : dark.subdomains || 'abc'}
           maxZoom={20}
-          maxNativeZoom={tilesDegraded ? OSM_FALLBACK.maxNativeZoom : undefined}
-          attribution={tilesDegraded ? OSM_FALLBACK.attribution : '© OpenStreetMap contributors · © CARTO'}
+          maxNativeZoom={tilesDegraded ? OSM_FALLBACK.maxNativeZoom : dark.maxNativeZoom}
+          attribution={tilesDegraded ? OSM_FALLBACK.attribution : dark.attribution}
           eventHandlers={{ tileerror: () => setTileFailures((n) => n + 1) }}
         />
+        {!tilesDegraded && dark.labels && (
+          <Pane name="demo-dark-labels" style={{ zIndex: 450, pointerEvents: 'none' }}>
+            <TileLayer
+              key={`${dark.id}-labels`}
+              url={dark.labels.url}
+              maxZoom={20}
+              maxNativeZoom={dark.labels.maxNativeZoom}
+            />
+          </Pane>
+        )}
         {markers.map(({ row, zone }) => {
           const colour = layerDef.colour(row)
           const selected = row.zone_id === selectedZoneId
@@ -164,9 +181,9 @@ export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, sel
       </MapContainer>
       {tilesDegraded ? (
         <p className="demo-note" role="status">
-          The CARTO basemap is unreachable on this network — switched to OpenStreetMap standard
-          tiles (both keyless; no API key is involved anywhere). If that CDN is blocked too, the
-          coloured risk markers and the zone tables still carry the full data.
+          The dark basemap (Esri Dark Gray Canvas) is unreachable on this network — switched to
+          OpenStreetMap standard tiles (both keyless; no API key is involved anywhere). If that
+          CDN is blocked too, the coloured risk markers and the zone tables still carry the full data.
         </p>
       ) : null}
       <ul className="demo-map-legend" aria-label={`${layerDef.label} legend`}>

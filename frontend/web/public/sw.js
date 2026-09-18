@@ -5,7 +5,26 @@
  * https://owner.github.io/Heatshield/, where an absolute /sw.js or /api path
  * escapes the repository subdirectory and silently breaks installation.
  */
-const VERSION = 'heatshield-phone-v1'
+/*
+ * STRATEGY — two rules, and the difference between them matters.
+ *
+ *   * Navigation documents are NETWORK-FIRST. index.html names the hashed
+ *     chunks of one build; every deploy renames them. Cache-first here meant a
+ *     returning visitor's browser kept using yesterday's index.html, which
+ *     asked for chunk files the deploy had already deleted — a tab that did
+ *     nothing until a manual reload. That was a real report, and this rule is
+ *     the fix.
+ *   * Hashed assets, the ward GeoJSON, API responses and tiles are CACHE-FIRST,
+ *     which is what makes an installed open on a phone instant and works with
+ *     no signal.
+ *
+ * CACHE-BUMP DISCIPLINE still applies to the asset caches: EVERY release that
+ * changes shipped frontend code bumps VERSION below (…-v5 -> …-v6). The bump
+ * renames every cache and the activate handler deletes the ones that do not
+ * start with the new VERSION, so an installed app reclaims storage instead of
+ * accumulating a copy of every build it has ever run.
+ */
+const VERSION = 'heatshield-phone-v6'
 const SHELL_CACHE = `${VERSION}-shell`
 const DATA_CACHE = `${VERSION}-data`
 const TILE_CACHE = `${VERSION}-tiles`
@@ -24,12 +43,26 @@ const APP_SHELL = [
 ]
 const OFFLINE_PAGE = scopedURL('offline.html')
 const GEOJSON = scopedURL('data/kolkata_wards.geojson')
+/* Tile hosts get their own bounded cache. Keep this list to providers the
+ * shipped maps may actually request — CARTO was removed from both places after
+ * ~2026-08-28, when its keyless raster endpoints started answering HTTP 200 with
+ * an "API KEY REQUIRED" watermark, which is undetectable from the client.
+ *
+ *   * server.arcgisonline.com — the 2D basemaps (src/basemaps.js)
+ *   * services.arcgisonline.com — the 3D globe's World Imagery
+ *     (src/globe/imagery.js). A different host for the same provider, which is
+ *     exactly the kind of thing that goes missing: without it the globe
+ *     re-downloaded every tile on every visit.
+ *   * tile.opentopomap.org — the Terrain basemap
+ *   * tile.openstreetmap.org — the OSM fallback, and what the globe falls back to
+ *
+ * `tests/test_frontend_shell.py` fails if this list and the two registry files
+ * ever drift apart again. */
 const TILE_HOSTS = [
-  'basemaps.cartocdn.com',
   'server.arcgisonline.com',
+  'services.arcgisonline.com',
   'tile.opentopomap.org',
-  'api.maptiler.com',
-  'tile.thunderforest.com',
+  'tile.openstreetmap.org',
 ]
 
 async function trimTileCache() {
@@ -108,8 +141,36 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Hash routes do not need server rewrites, but a navigation with an unusual
-  // static-host path still gets index.html when the network is unavailable.
+  // NAVIGATION DOCUMENTS ARE NETWORK-FIRST, and that is a correctness fix, not
+  // a preference. index.html names the hashed chunk files this build is made of,
+  // and every deploy changes those names. Served cache-first, yesterday's
+  // index.html keeps pointing at files that no longer exist, so a route whose
+  // chunk is not already in the cache cannot load at all — the visitor sees a
+  // tab that does nothing until a reload happens to pick up the new document.
+  // That was the Citizen tab report. Network-first costs one request on a
+  // navigation and removes the entire class of failure; offline still works
+  // from the cache.
+  if (request.mode === 'navigate') {
+    event.respondWith((async () => {
+      try {
+        const fresh = await fetch(request)
+        if (fresh.ok && url.origin === self.location.origin) {
+          const cache = await caches.open(SHELL_CACHE)
+          cache.put(request, fresh.clone())
+        }
+        return fresh
+      } catch {
+        const cached = await caches.match(request)
+        const shell = cached || (await caches.match(scopedURL('index.html')))
+        return shell || (await caches.match(OFFLINE_PAGE))
+      }
+    })())
+    return
+  }
+
+  // Everything else is a hashed, immutable asset: cache-first is correct and is
+  // what makes the installed app instant. Cached entries are revalidated in the
+  // background so a same-name file cannot go stale for long.
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) {
@@ -129,9 +190,7 @@ self.addEventListener('fetch', (event) => {
           }
           return response
         })
-        .catch(() => request.mode === 'navigate'
-          ? caches.match(scopedURL('index.html')).then((page) => page || caches.match(OFFLINE_PAGE))
-          : caches.match(OFFLINE_PAGE))
+        .catch(() => caches.match(OFFLINE_PAGE))
     })
   )
 })

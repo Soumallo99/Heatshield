@@ -39,8 +39,41 @@ jobs:
         working-directory: frontend/web
         run: npm ci
 
+      # The budget and installability tests measure real Vite output, so the
+      # build belongs here rather than inside a fixture: if it fails, the
+      # failing step says so by name. NODE_OPTIONS gives CesiumJS's ~4 MB bundle
+      # headroom, because an OOM here is silent apart from a non-zero exit.
+      - name: Build the frontend (the tests measure this output)
+        working-directory: frontend/web
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: npm run build
+
+      # Failures are echoed as check-run annotations. The raw job log lives on a
+      # host that some networks (and sandboxes) cannot reach; annotations are on
+      # the API, so "which test broke" is answerable from `gh` alone.
       - name: Run tests
-        run: python -m pytest tests -q
+        env:
+          HS_TEST_SKIP_BUILD: "1"
+        run: |
+          set -o pipefail
+          # `if cmd; then …; fi` returns 0 when cmd *fails*, so the original
+          # `status=$?` here captured 0: pytest failed, the annotations below
+          # were emitted, and the step still passed. Two CI runs reported success
+          # while tests/test_dispatch_script.py was failing. `|| status=$?` keeps
+          # the real status without tripping the shell's -e.
+          status=0
+          python -m pytest tests -q 2>&1 | tee /tmp/pytest.log || status=$?
+          if [ "$status" -eq 0 ]; then
+            exit 0
+          fi
+          grep -E '^(FAILED|ERROR)' /tmp/pytest.log | tail -10 | while IFS= read -r line; do
+            printf '::error title=Pytest failure::%s\n' "${line//\%/%25}"
+          done
+          tail -c 1500 /tmp/pytest.log | sed -e 's/%/%25/g' -e 's/\r//g' | awk '{printf "%s%%0A", $0}' | while IFS= read -r encoded; do
+            printf '::error title=Pytest output (tail)::%s\n' "$encoded"
+          done
+          exit "$status"
 
       # Hits the live Open-Meteo API, so it can fail for reasons outside the
       # code (rate limit, upstream outage). The 52 unit tests above are the
@@ -68,3 +101,15 @@ jobs:
       - name: Build
         working-directory: frontend/web
         run: npm run build
+
+      # Fails the build on an icon-only button, a clickable <div>, a missing
+      # alt, or text that does not reach WCAG AA on the app's own background.
+      - name: Accessibility audit
+        working-directory: frontend/web
+        run: npm run a11y
+
+      # Routing, per-page titles, console hygiene, and the generated
+      # robots/sitemap/llms files. No browser required.
+      - name: Frontend checks
+        working-directory: frontend/web
+        run: npm test

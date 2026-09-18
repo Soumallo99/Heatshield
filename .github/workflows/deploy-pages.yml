@@ -1,0 +1,134 @@
+name: Deploy to GitHub Pages
+
+# The whole frontend is a static bundle and the API is optional by design
+# (see scripts/export_static.py), which makes GitHub Pages a supported target
+# rather than a demo. Two things make it work, and both are easy to lose:
+#
+#   * the Vite base stays relative (`./`), so the app is served correctly from
+#     https://<owner>.github.io/<repo>/ without a rewrite of every asset URL;
+#   * `npm run build` runs `prebuild` -> scripts/copy-cesium-assets.mjs, which
+#     copies CesiumJS's Workers/Assets/ThirdParty/Widgets out of node_modules
+#     into public/cesium/. The 3D globe fetches those at runtime through
+#     window.CESIUM_BASE_URL, and dist/cesium/ is build output (gitignored), so
+#     it exists only because this workflow builds.
+#
+# There is no /api here: both operations maps render the exported forecast run
+# from public/static-api/ and say so on screen (SnapshotNotice).
+#
+# One-time setup: repo Settings -> Pages -> Build and deployment ->
+# Source: GitHub Actions. Without that, the deploy job fails with "Pages is not
+# enabled" (the API says GET /repos/<owner>/<repo>/pages -> 404).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a deploy in flight; a half-published site is worse than a slow one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build the static site
+    runs-on: ubuntu-latest
+    outputs:
+      pages_enabled: ${{ steps.pages.outputs.enabled }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend/web
+        run: npm ci
+
+      - name: Build
+        working-directory: frontend/web
+        run: npm run build
+
+      # The one failure this workflow exists to catch: a build that succeeds
+      # while shipping no Cesium runtime assets. In a browser that is silent —
+      # terrain and ward geometry simply never appear — and it is exactly what
+      # happens if `prebuild`/`copy:cesium` is dropped from package.json.
+      - name: Verify the globe's runtime assets shipped
+        working-directory: frontend/web
+        run: |
+          set -euo pipefail
+          test -d dist/cesium/Workers || { echo "::error::dist/cesium/Workers missing — the 3D globe would 404"; exit 1; }
+          test -n "$(ls -A dist/cesium/Workers)" || { echo "::error::dist/cesium/Workers is empty"; exit 1; }
+          test -f dist/cesium/Widgets/widgets.css || { echo "::error::Cesium widget stylesheet missing"; exit 1; }
+          # The entry HTML must not reference Cesium: the phone route must never
+          # download a globe it does not show.
+          if grep -E '"(src|href)="?\./assets/cesium-' dist/index.html; then
+            echo "::error::Cesium is referenced from the entry HTML — the citizen phone cold-open would pay for it"; exit 1
+          fi
+          ls -d dist/cesium/* | head
+
+      # The operations maps render the *committed* snapshot on this host, so its
+      # date is the freshness of everything the deployed map shows. Printed, not
+      # enforced: the snapshot is refreshed by the data pipeline's own schedule
+      # (`python -m scripts.export_static`), and a red deploy would not fix it.
+      - name: Report the exported forecast run the maps will show
+        working-directory: frontend/web
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          doc = json.loads(pathlib.Path("dist/static-api/risk-ranking-0.json").read_text())
+          print(f"deployed map data: forecast run for {doc['date']} "
+                f"({len(doc['data'])} wards, bands {doc['band_counts']})")
+          PY
+
+      # Publishing needs a one-time repository setting (Settings -> Pages ->
+      # Source: GitHub Actions). Until it is set, `actions/configure-pages`
+      # fails with a bare "Pages is not enabled", which reads like a broken
+      # workflow rather than a missing switch. So: check first, publish if it is
+      # on, and if it is not, leave a warning annotation naming the exact click
+      # path while the build and its guards above still run and report.
+      - name: Is GitHub Pages enabled?
+        id: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pages") || code="000"
+          code=${code:-000}
+          echo "pages settings endpoint -> HTTP $code"
+          if [ "$code" = "200" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Nothing was published - GitHub Pages is not enabled::Repo Settings -> Pages -> Build and deployment -> Source: GitHub Actions (one click, then re-run this workflow). The site is built and verified; only the upload was skipped."
+          fi
+
+      - if: steps.pages.outputs.enabled == 'true'
+        uses: actions/configure-pages@v5
+
+      - if: steps.pages.outputs.enabled == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/web/dist
+
+  deploy:
+    name: Publish
+    needs: build
+    if: needs.build.outputs.pages_enabled == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,9 +1,13 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
-import { formatNumber, formatTemp, levelLabel, normaliseDemoPayload, text } from '../demo/contract.js'
+import { formatNumber, normaliseDemoPayload, text } from '../demo/contract.js'
 import { DemoScreen } from '../demo/screens.js'
 import { readJSON, staticURL } from '../staticApi.js'
 
 const DemoMap = lazy(() => import('../demo/DemoMap.jsx'))
+// Same lazy 3D globe as the Kolkata console; a separate chunk, fetched only
+// when the operator picks it.
+const HeatGlobe = lazy(() => import('../globe/HeatGlobe'))
+import MapViewSwitch from './MapViewSwitch'
 
 /* Honesty first: the live advance-warning payload says whether it is a real
    forecast or the labelled synthetic outage exercise — the banner mirrors it. */
@@ -72,6 +76,7 @@ export default function DelhiOps() {
   const [leadDay, setLeadDay] = useState(3)
   const [layer, setLayer] = useState('level')
   const [zoneId, setZoneId] = useState('')
+  const [mapMode, setMapMode] = useState('2d')
   const [reloadToken, setReloadToken] = useState(0)
 
   useEffect(() => {
@@ -149,9 +154,12 @@ export default function DelhiOps() {
       <header className="demo-header">
         <div className="demo-header__titles">
           <p className="demo-kicker">DELHI NCR · ZONE-LEVEL ADVANCE WARNINGS</p>
-          <h1>
+          {/* h2, not h1: this console is a section of the dashboard page, whose
+              h1 is the city name in the top bar. A page with two h1s gives a
+              screen-reader user no way to tell which one is the page. */}
+          <h2>
             Delhi NCR operations — {zones.length || 8} zones, leads Day +{leadDays[0]}…+{leadDays[leadDays.length - 1]}
-          </h1>
+          </h2>
           {payload ? <p className="demo-disclaimer" role="status">{payload.disclaimer}</p> : null}
         </div>
       </header>
@@ -251,16 +259,35 @@ export default function DelhiOps() {
                 GIS view — Day +{activeLead}
                 <span className="demo-panel__sub"> zone grid points, not street-level observations</span>
               </h2>
-              <Suspense fallback={<div className="demo-map demo-map--empty" aria-busy="true">Loading map…</div>}>
-                <DemoMap
-                  rows={dayRows}
-                  zones={zones}
-                  layer={layer}
-                  leadDay={activeLead}
-                  selectedZoneId={zoneId}
-                  showCooling={false}
-                  onSelect={setZoneId}
+              <div style={{ marginBottom: 8 }}>
+                <MapViewSwitch
+                  value={mapMode}
+                  onChange={setMapMode}
+                  note={mapMode === '3d' ? 'lazy-loaded, keyless imagery' : 'instant, offline-capable'}
                 />
+              </div>
+              <Suspense fallback={<div className="demo-map demo-map--empty" aria-busy="true">Loading map…</div>}>
+                {mapMode === '3d' ? (
+                  <HeatGlobe
+                    mode="zones"
+                    area="delhi"
+                    rows={dayRows}
+                    selectedId={zoneId}
+                    onSelect={(id) => setZoneId(String(id))}
+                    title="Delhi NCR advance warnings — 3D globe"
+                    subtitle={`${zones.length || 8} zones · Day +${activeLead} · ${text(payload.warnings.issued_at, '—')}`}
+                  />
+                ) : (
+                  <DemoMap
+                    rows={dayRows}
+                    zones={zones}
+                    layer={layer}
+                    leadDay={activeLead}
+                    selectedZoneId={zoneId}
+                    showCooling={false}
+                    onSelect={setZoneId}
+                  />
+                )}
               </Suspense>
               <p className="demo-note">
                 {text(payload.warnings.granularity_note, 'Zones are ~10 km model grid points.')}

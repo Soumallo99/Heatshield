@@ -141,7 +141,8 @@ heavy animation needs. FastAPI is untouched — it is the data contract. Motion 
 prototyped in `frontend/prototype.html`; full spec in `frontend/UI_SPEC.md`.
 
 **Mobile decision:** PWA, not a native APK. No JDK/Android Studio toolchain, works on iOS too,
-and it wraps the same React build. Manifest + service worker ready in `frontend/pwa/`;
+and it wraps the same React build. Manifest + service worker live in
+`frontend/web/public/` (the single source — the old duplicate `frontend/pwa/` copy is gone);
 guide in `frontend/MOBILE.md`.
 
 ## Running it unattended
@@ -196,8 +197,8 @@ what is measured, what is modelled, what is missing and why, and how to rebuild 
 dataset from source.
 
 Sources: OpenCity/datameet ward polygons (ODbL) · Census 2011 population via Wikidata ·
-OpenStreetMap green/water/buildings · Open-Meteo forecast · basemaps from CARTO,
-Esri World Imagery and OpenTopoMap (all keyless — see [Map basemaps](#map-basemaps)).
+OpenStreetMap green/water/buildings · Open-Meteo forecast · basemaps from Esri
+(Canvas/Imagery/Street) and OpenTopoMap (all keyless — see [Map basemaps](#map-basemaps)).
 
 ## Quickstart
 
@@ -271,9 +272,11 @@ heatshield/
 │   └── main.py          # FastAPI: /health /zones /forecast /thermal/*
 ├── frontend/
 │   ├── UI_SPEC.md       # locked stack, routes, animation inventory
-│   ├── MOBILE.md        # PWA guide (install, offline, push, testing)
+│   ├── MOBILE.md        # PWA guide (install, offline, push, cache-bump discipline)
 │   ├── prototype.html   # animated concept, zero-dependency
-│   └── pwa/             # manifest.webmanifest + service worker
+│   └── web/             # Vite + React app
+│       ├── public/      # manifest.webmanifest, sw.js, icons, offline.html (single source)
+│       └── src/globe/   # lazy CesiumJS 3D globe (vendored from gods-eye-view, MIT)
 ├── data/
 │   ├── wards.csv        # 141 real KMC ward centroids + real Census 2011 demographics
 │   ├── raw/             # timestamped raw JSON from Open-Meteo
@@ -283,6 +286,7 @@ heatshield/
 ├── requirements.lock.txt
 ├── setup.sh  setup.bat  # one-command installers
 ├── SETUP.md             # full local install + Android build guide
+├── THIRD-PARTY.md       # vendored code, runtime services and their licences
 ├── scripts/package.py   # builds the downloadable zip
 └── .env.example         # copy -> .env for Phase 5
 ```
@@ -324,21 +328,57 @@ Kolkata branch.
 The **scenario switcher** (+0 / +2 / +4 / +6 / +8 °C) re-scores every ward live — the fastest way
 to demo how the model behaves under a real heatwave.
 
-Production build: `npm run build` → `frontend/web/dist` (107 KB gzipped).
+Production build: `npm run build` → `frontend/web/dist` (~110 KB gzipped cold-open for the
+citizen phone route; `npm run budget` enforces < 120 KiB).
 Installable as a PWA (offline + push) — see `frontend/MOBILE.md`.
+
+### 3D globe (Operations dashboard)
+
+Both operations consoles carry a **2D map ⇄ 3D globe** switch. The 2D react-leaflet map stays
+the default: it is instant, works offline and needs no WebGL. Picking **3D globe** lazily loads
+a CesiumJS view of the same data — the 141 KMC ward polygons as a risk choropleth (with an
+optional, clearly-labelled stylised risk prism) in Kolkata, and the 8 advance-warning zone
+markers in Delhi NCR.
+
+- **Keyless, like everything else.** Global imagery is Esri World Imagery; if it fails, the
+  controller switches to OpenStreetMap tiles and says so on the map. Terrain is
+  Re:Earth/Mapterhorn quantized mesh (CC BY 4.0), degrading to the smooth ellipsoid with a
+  notice. There is no ion token, no key slot and no code path that could request a keyed tile —
+  the viewer boots with `baseLayer: false` so Cesium's token-hungry default imagery is never
+  even constructed.
+- **Never in the phone bundle.** CesiumJS is ~1.1 MB gzipped; it lives in its own chunk behind
+  `lazy(() => import('../globe/HeatGlobe'))`. `scripts/check_phone_budget.mjs` fails the build
+  if `cesium`, `nosleep` or `protobuf` ever reach the citizen cold-open. The phone app stays 2D.
+- **Licensing.** The provider/fallback architecture is adapted from
+  [gods-eye-view](https://github.com/bilawalsidhu/gods-eye-view) (MIT © 2026 Bilawal Sidhu,
+  snapshot `0d41b6b`), code only — no bundled data, no models, and nothing from its
+  NonCommercial datasets. Its MIT notice is kept in
+  `frontend/web/src/globe/LICENSE-gods-eye-view`; the full picture is in
+  [`THIRD-PARTY.md`](THIRD-PARTY.md).
+- **Runtime assets.** `npm run build` (and `npm run dev`) first copies CesiumJS's runtime assets
+  into `frontend/web/public/cesium/` via `scripts/copy-cesium-assets.mjs`; that directory is
+  gitignored, so no third-party build output is committed.
 
 ### Map basemaps
 
 The ward map is a real slippy map, not a static image: pinch/scroll zoom to z20,
 `@2x` retina tiles, a scale bar, hover readout, ward search, geolocation, fullscreen,
-and a layer switcher with four basemaps — **Dark** (CARTO Dark Matter, default),
-**Streets** (CARTO Voyager: full street names, POIs, transit), **Satellite** (Esri
-World Imagery with a street-label overlay on top — the "hybrid" look), and **Terrain**
+and a layer switcher with four basemaps — **Dark** (Esri Dark Gray Canvas + reference
+place labels, the default, tuned for the risk choropleth), **Streets** (Esri World
+Street Map: full street names, POIs, transit), **Satellite** (Esri World Imagery with
+Esri's boundaries/places reference overlay on top — the "hybrid" look), and **Terrain**
 (OpenTopoMap relief + contours). Ward name/score labels thin out by zoom the way a
 consumer map does, and risk shading can be toggled off to read the streets underneath.
 
 All four are **keyless** — clone and run, no signup, matching the rest of the project.
 Registry lives in [`frontend/web/src/basemaps.js`](frontend/web/src/basemaps.js).
+
+**Why CARTO was removed (2026-09).** Since ~2026-08-28 CARTO's keyless raster endpoints
+answer **HTTP 200 with a watermark PNG that reads "API KEY REQUIRED"** rather than failing.
+That is the one failure mode a client cannot detect: `tileerror` never fires, so the
+`OSM_FALLBACK` never triggers and the map looks *loaded* while every tile demands a key.
+Only providers whose keyless tiles are genuinely keyless are allowed in this registry now,
+which is why it is Esri-only plus OpenTopoMap. Do not re-add a CARTO URL.
 
 **An *"API key required"* tile can never appear.** The optional keyed-provider upgrade
 (`VITE_MAPTILER_KEY` / `VITE_THUNDERFOREST_KEY`) has been removed from the shipped code —
@@ -352,7 +392,7 @@ violation and is not done here. The licensed route is the Maps JavaScript API or
 Map Tiles API, both of which require a billing-enabled Google Cloud key — if you have
 one, add a Google entry to `basemaps.js` (or swap `MapContainer` for `@vis.gl/react-google-maps`)
 and everything else keeps working. The keyless Streets/Satellite styles above are
-already drawn from the same underlying OSM + Maxar/Esri imagery Google licenses, so
+already drawn from the same underlying OSM + Esri (Vantor/Earthstar) imagery Google licenses, so
 the cartographic fidelity is comparable without the key or the legal exposure.
 
 ## Gotchas learned in Phase 3
@@ -527,8 +567,9 @@ npm run budget
 
 `export_static.py` materialises the whole public catalogue — the nine `/ncr/*`
 routes, `/heatwave/advance`, `/warnings/advance`, `/notifications/preview`,
-`/citizen/kolkata` and all six `/demo/*` payload families (18 files) — in
-`frontend/web/public/static-api/` (31 exports). `citizen-kolkata.json` is a
+`/citizen/kolkata`, `/risk/ranking` (one snapshot per scenario button) and all
+six `/demo/*` payload families — in `frontend/web/public/static-api/`
+(36 exports). `citizen-kolkata.json` is a
 secondary, on-demand payload (~45 KB gzipped): it is fetched only when the user
 switches the citizen tab to Kolkata, so it stays out of the cold-open budget by
 design. The phone and demo clients use
@@ -537,9 +578,40 @@ the live relative `/api` first before falling back to those labelled snapshots.
 The export catalogue is checked against FastAPI routes (`--check`) so adding a
 new endpoint cannot silently become a static-host 404.
 
-The production Vite base, manifest, service-worker registration and cache keys
-are all relative (`./`), which keeps a project deployed at
-`https://<owner>.github.io/Heatshield/` inside its own path. The current budget
+The operations console is the exception that proves the rule: it is *live-first
+by design*, and its per-ward detail (`/risk/ward/{id}`, hourly series) has no
+snapshot on purpose — a frozen exposure number without its series would be worse
+than the honest "API unreachable" state. What *is* exported is the ward ranking,
+because otherwise both operations maps would draw 141 uncoloured polygons with
+no explanation; when that snapshot is what you are looking at, the console says
+so in as many words (**SnapshotNotice**: *"Saved forecast run — this deployment
+has no live API"*, with the run's date and scenario).
+
+The production Vite base, manifest, service-worker registration, cache keys and
+**every data path** are relative (`./`), which keeps a project deployed at
+`https://<owner>.github.io/Heatshield/` inside its own path. That last part is
+load-bearing and was wrong once: the ward GeoJSON was fetched as
+`/data/kolkata_wards.geojson`, a document-root request that escapes a project
+subdirectory — on Pages that 404s, and both maps lose their polygons. Public
+assets now go through `publicURL()` in `src/staticApi.js`, and the API base is
+`./api` rather than `/api` so the service worker's network-first data cache is
+inside its scope too.
+
+### Deploying to GitHub Pages
+
+`.github/workflows/deploy-pages.yml` builds the frontend and publishes
+`frontend/web/dist` on every push to `main`. It exists rather than a
+"deploy from branch" setting because the globe's runtime assets
+(`dist/cesium/{Workers,Assets,ThirdParty,Widgets}`, ~7 MB) are **build output**:
+they are gitignored and produced by `npm run build` → `prebuild` →
+`scripts/copy-cesium-assets.mjs`, so a branch that only stores sources would
+serve a 3D globe with no workers and no terrain. The workflow also fails
+explicitly if those assets or the Cesium widget stylesheet are missing, and
+prints the forecast run date the deployed maps will show.
+
+One-time setup: **Settings → Pages → Build and deployment → Source: GitHub
+Actions** (the REST API reports 404 for `/repos/<owner>/<repo>/pages` until that
+is done — the deploy job fails with "Pages is not enabled"). The current budget
 gate limits the actual phone cold-open set (entry + React + motion + phone chunk
 + CSS, never Leaflet, never the demo chunk) to **120 KiB gzip** and the initial
 citizen snapshot to **45 KiB uncompressed**. The checked build is currently
@@ -813,7 +885,8 @@ open**; dry runs append to a gitignored CSV log; no credential ever appears in G
 ### Static export & PWA
 
 Every public route — including all six demo payload families for all four scenarios — is in the
-`scripts/export_static.py` catalogue (31 exports, including the Kolkata brief `citizen-kolkata.json`),
+`scripts/export_static.py` catalogue (36 exports, including the Kolkata brief `citizen-kolkata.json`
+and one ward-ranking snapshot per console scenario),
 checked against the live FastAPI route table:
 
 ```bash
@@ -845,6 +918,242 @@ missing disclaimer, colour-only legends and non-composite motion.
 
 ---
 
+## Security
+
+HeatShield has no accounts, so the API is written on the assumption that anything not
+explicitly gated is public. A pentest pass over the live server found real problems; each one
+is fixed and pinned by a test in `tests/test_security.py` (named for the failure it prevents).
+
+| What was wrong | Why it mattered | Now |
+|---|---|---|
+| `GET /subscribers` and `/subscribers/for-ward/{id}` returned every phone number, name and role to **any anonymous request** | Personal data of residents, officials and health workers, harvestable with one request — and readable from *any website* a visitor had open, because CORS was `*` | Both require the admin token, **and** phone numbers come back redacted (`+91••••••3210`). Dispatch resolves real numbers server-side |
+| `POST /subscribers/stop` opted any number out with no authentication | A denial-of-warnings attack on a life-safety system: name a number, and that resident stops receiving heat alerts | Admin token required. (A genuine STOP arrives as an inbound SMS webhook, where the number proves it belongs to the sender) |
+| The two dispatch routes were callable by anyone | Dry-run by default and live sending is double-locked, but anyone could drive them, spend provider credit, and aim a send at numbers of their choosing (`to_numbers`) | Admin token required; recipient lists are normalised, de-duplicated, capped at 50 and rejected if oversized |
+| `allow_origins=["*"]` | Any website could read the API from a visitor's browser | Explicit allow-list (`HS_ALLOWED_ORIGINS`); localhost dev ports only, and only while `HS_ALLOW_DEV_ORIGINS` is on. The shipped app needs no CORS at all — it calls the API same-origin |
+| `?scenario_c=1e9` burned ~9 s of CPU and then 500'd; `ward_id=99999` was accepted into the registry | Cheap resource exhaustion; rubbish in a registry that later drives real sends | Every numeric input is bounded (scenario −10…20 °C, wards 1–141, hours ≤ 384, dates `YYYY-MM-DD`), so bad input is a 422 before any work happens |
+| Registry fields went into a CSV unescaped | A name starting with `=` or `@` is a spreadsheet formula that runs when an operator opens the file (CWE-1236) | Text fields are neutralised, length-capped and stripped of control characters before they are stored |
+| `/docs`, `/openapi.json`, `/redoc` published the full route map | A free plan of attack, dispatch endpoints included | Off once `HS_ADMIN_TOKEN` is set (dev keeps them; `HS_ENABLE_DOCS=1` forces either way) |
+| No rate limiting anywhere | Registry enumeration, repeated dispatch attempts | In-process limiter (120 req/min/client, `HS_RATE_LIMIT_PER_MIN`), `Retry-After` on 429, plus a request-body cap (`HS_MAX_BODY_BYTES`) |
+| No security headers | — | `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `Cache-Control: no-store` by default — public reads are cacheable for two minutes, credentials never are (see *Caching and compression*) |
+
+**Fail closed.** With no `HS_ADMIN_TOKEN` configured, the administrative routes answer 503
+naming the variable — a deployment that forgets to set one refuses those requests instead of
+trusting them. Local development is one line:
+
+```bash
+HS_ADMIN_TOKEN=dev python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+**The page itself.** GitHub Pages cannot set response headers, so the policy ships in the HTML:
+a `Content-Security-Policy` meta tag allowing scripts from this origin only (`script-src 'self'`, no
+`unsafe-inline`, no `unsafe-eval`, `object-src 'none'`, `base-uri 'self'`), plus the build-computed
+sha256 of the single inline block (the JSON-LD structured data, which is a data block rather than a
+script — the hash means the policy is exactly as strict as it claims even in implementations that
+apply `script-src` to it). To make that
+enforceable, the service-worker registration lives in `src/main.jsx` rather than an inline
+`<script>` block. `tests/test_security.py` asserts the policy, that the only inline block is the hashed JSON-LD,
+ and that HeatShield's own bundles contact only the hosts they are supposed to (tiles,
+terrain, fonts) — a new analytics beacon or CDN script fails that test.
+
+**What this does not do.** The limiter is in-process, so a determined flood needs something in
+front (nginx, a cloud WAF, or a shared-store limiter). TLS, HSTS and `frame-ancestors` are the
+terminating proxy's job — `frame-ancestors` is ignored in a meta tag. And secrets stay out of
+Git: `.env` is ignored, `.env.example` carries names only, and the only credential in the
+project (Twilio) has no default value anywhere.
+
+## Before you deploy — the launch checklist, answered
+
+A launch-readiness pass, item by item. Every line is one of three honest answers:
+**done** (with the file or test that proves it), **already there** (with the check that keeps it
+true), or **not applicable** — with the reason. Inventing a feature to tick a box is how a
+prototype grows a privacy policy it does not honour.
+
+### What applies, and how it is verified
+
+| Area | Items | Answer |
+|---|---|---|
+| Custom domain | custom domain, HTTPS | Done — one variable, `VITE_SITE_URL`; HTTPS is the host's (Pages issues and renews the certificate). Steps below |
+| SEO | meta descriptions, unique page titles, canonical tags, structured data, sitemap.xml, robots.txt, llms.txt, social share images, favicon, internal links, custom 404, unique heading per page | Done — `frontend/web/plugins/siteMeta.js` + `scripts/gen-site-meta.mjs` generate all of it from the site URL; each page sets its own title and description from `src/site-pages.json`; `scripts/test-routes.mjs` fails on a duplicate title or a page missing metadata. **Local business schema is deliberately absent**: there is no business behind this deployment, and inventing one would be a lie in machine-readable form. The JSON-LD is `WebApplication` + `SoftwareSourceCode` with the datasets cited |
+| Legal | privacy policy, terms & conditions, business details, local laws, cookie policy, refund policy, form consent | Privacy and Terms are published (`#/privacy`, `#/terms`) and state what is collected, what is not, and the science's limits. **Refund policy: not applicable** — the project takes no payments. **Cookie policy: not applicable** — there are no cookies, no analytics and no third-party scripts (verified by grep and by the CSP allow-list test), so a cookie banner would introduce the storage it warns about. **Business details: deliberately not invented** — the Terms says plainly that no operator identity ships with the source and that a deployer must add their own. **Form consent:** the only data entry in the product is the opt-in SMS registry, which is admin/CLI-only and documented as requiring the person's own message |
+| Content honesty | remove unsupported claims, remove fake reviews, proper page sources, copyright on images, third-party embeds, check tracking | Done — `src/components/Sources.jsx` lists every dataset, licence and limitation next to the landing page; `llms.txt` tells assistants not to present this as an official service. No reviews exist anywhere. No stock or generated imagery (the share card is drawn by `scripts/make_social_card.py` from the app's own palette). No embeds: no iframes, no third-party scripts; map tiles are images under their own licences. Tracking: none — `localStorage` holds UI preferences only |
+| Accessibility | colour contrast, alt text, fix accessibility, keyboard-friendly forms, clear button labels | Done — `npm run a11y`, enforced in CI. It found 105 problems: 61 Tailwind opacities and 16 stylesheet colours below WCAG AA (footer and legal text worst, at 12px), all raised to passing while keeping the hierarchy; `prefers-contrast: more` drops translucency entirely. 47 controls all carry an accessible name; click handlers on non-interactive elements fail the audit; `<img>` without `alt` fails it (the app has none — icons are SVG/emoji); the ward search and every demo control is labelled |
+| Reliability | error handling, loading states, empty states, failed requests, API timeouts, uptime monitoring, error logging, simultaneous users, backup restoration, duplicate subscribers | Done — loading/empty/failed states were already explicit (`MapSkeleton`, `LiveStatus`, `—` for a missing number, "API unreachable" rather than a fabricated curve); **every fetch now has a 15 s deadline** (`withTimeout`, `src/staticApi.js`); monitoring, error reporting, backups and the concurrency test are the subsections below. Duplicate subscribers: the registry is keyed on the normalised E.164 number, and the tests add the same person in five spellings and get one row. **Duplicate payments: not applicable** — no payments |
+| Performance | compress files, cache repeat requests, reduce huge JS bundles, no production source maps, remove vite/react from the browser | Done — gzip on the API (47 kB ranking payload → 6.4 kB on the wire), `Cache-Control` on public reads, an in-process answer cache with single-flight (48 identical concurrent requests: p95 11.2 s → 12 ms once warm, measured in **Simultaneous users** below), `build.sourcemap: false`, and the 4.18 MB Cesium chunk is lazy-only and never on a citizen's cold open (budget gate: 112,980 gz bytes measured 2026-09-18, limit 122,880). `scripts/test-routes.mjs` fails if any dev-only logging survives into the shipped bundles |
+| Anti-abuse | rate limiting, API limits, spending caps | Done where it applies — in-process limiter (120/min/client, `Retry-After`), every numeric input bounded, request-body cap, docs locked once a token exists. **Spending caps: not applicable** — there is no payment surface; the only thing that spends money is SMS, and that path is admin-gated, dry-run by default and double-locked (`--live` + data must be genuinely live) |
+| Serving & protection | hide keys, check env vars, keys in git, auth, admin routes, user permissions, sanitise inputs, XSS, SQLi, DB rules, file uploads, CSRF, CORS, cookies, debug mode, production settings | See **Security** above — the full findings table, each fix pinned by a test. **Not applicable, with reasons:** SQLi and database rules (there is no database; state is CSV read through pandas), file uploads (there is no upload path at all), secure cookies and CSRF (no cookies and no cookie-based auth — the API takes a header token, which a cross-site form cannot set), user permissions (no accounts, so permissions are "public read" versus "admin token"). Debug mode is off by construction: docs locked, source maps off, zero console output in the shipped bundles, `.env` gitignored |
+| Console | fix console errors | Done — `src/log.js` is the only file that touches the console, gated on `import.meta.env.DEV` so the minifier deletes it; the test asserts no app bundle contains a single `console.*` call |
+
+### Turn on a custom domain
+
+1. Point DNS at GitHub Pages (`CNAME` record for `heatshield.example` → `soumallo99.github.io`).
+2. Repository **Settings → Pages**: set **Source: GitHub Actions**, then enter the custom domain
+   and tick *Enforce HTTPS*.
+3. Build with the domain, so every generated URL follows it:
+
+   ```bash
+   VITE_SITE_URL=https://heatshield.example/ npm run build
+   ```
+
+   In CI this belongs in `deploy-pages.yml` as a variable (`VITE_SITE_URL`), so a redeploy never
+   reverts the canonical URL to `*.github.io`.
+4. Verify the four generated artefacts in one go:
+
+   ```bash
+   for f in robots.txt sitemap.xml llms.txt social-card.png; do
+     curl -s -o /dev/null -w "%{http_code} %{url_effective}\n" "https://heatshield.example/$f"
+   done
+   ```
+
+No trace of the old domain is left behind: canonical, `og:url`, `og:image`, the JSON-LD `@id`s,
+`robots.txt`'s `Sitemap:` line and every `<loc>` in `sitemap.xml` are generated from that one value.
+
+### Uptime monitoring
+
+`.github/workflows/uptime.yml` probes the site, its crawler files and (if configured) the API's
+`/health` **and** a real `/risk/ranking` payload every six hours; a failure notifies repository
+watchers by email. Set `PUBLIC_SITE_URL` and `PUBLIC_API_URL` under
+*Settings → Variables → Actions*.
+
+Two limits worth knowing: GitHub pauses scheduled workflows after 60 days without repository
+activity, and a runner only proves the site is reachable from the public internet. For a real
+deployment point Uptime Kuma, healthchecks.io or a synthetic check at the same URLs — `/health`
+for liveness, `/risk/ranking?scenario_c=0` for "the data layer still answers", which is the
+distinction that matters: a process can be up while the warning pipeline is dead.
+
+### Error logging
+
+Server side, every response carries `X-Request-ID` and anything that fails is logged against it
+(`heatshield.api` logger) — an operator reading a screenshot can quote one id and find the
+traceback. Unhandled errors return `{"detail": "internal error", "request_id": …}` and never a
+traceback.
+
+Client side, `src/log.js` is the single seam:
+
+* set `VITE_ERROR_REPORT_URL` at build time and every report is POSTed there as JSON (beacon
+  first, so a page being closed still gets it out) — any collector that accepts a JSON body works;
+* leave it unset and reports stay in an on-device ring buffer, readable as `__HS_ERRORS__` in the
+  console of the phone that misbehaved. Nothing is written to storage or cookies, so this adds no
+  consent surface.
+
+### Backups, and a restore that has actually been tested
+
+```bash
+python scripts/backup.py backup                    # -> backups/<utc-stamp>/ with MANIFEST.json
+python scripts/backup.py verify backups/<stamp>    # checksums, detects corruption
+python scripts/backup.py restore backups/<stamp>   # verifies, then writes back (needs --yes)
+```
+
+The manifest carries a sha256 per file, so a restore proves it is putting back the bytes that were
+saved. It refuses to restore a corrupt snapshot rather than half-applying it, and records an absent
+file as absent instead of silently skipping it. `tests/test_backup_restore.py` covers the round
+trip: delete the registry, restore it, get identical bytes.
+
+What is in scope is `data/subscribers.csv` (the one irreplaceable file: a lost opt-out row means
+texting someone who asked to be left alone), the computed `data/processed/*.csv` runs including
+the alert log, and the 36 kB forecast cache. `data/raw/` is re-downloadable and not copied.
+
+### Simultaneous users — measured, not assumed
+
+`scripts/loadtest.py` fires concurrent clients at the public reads and checks that no payload
+contradicts the request it answered (a scenario-4 page showing scenario-0 numbers would be a wrong
+warning, not a slow one) and that nothing 5xx's.
+
+```bash
+python scripts/loadtest.py --url http://127.0.0.1:8000 --users 12 --per-user 4
+```
+
+| 48 requests, 12 concurrent clients | p50 | p90 | p95 | errors |
+|---|---|---|---|---|
+| one uvicorn worker, mixed endpoints (default) | 1234 ms | 2397 ms | 3021 ms | 0 |
+| `uvicorn --workers 2`, mixed endpoints | 246 ms | 2169 ms | 2550 ms | 0 |
+
+No errors and no cross-request contamination in either run. The expected lesson is in there: the
+heavy endpoints are pandas computations, so run **more than one worker** in production
+(`uvicorn app.main:app --workers 4`).
+
+The unexpected lesson came from testing the pattern a heat warning actually produces — everybody
+opening *the same page* at once, which the table above cannot see because it spreads clients across
+seven different endpoints:
+
+```bash
+python scripts/loadtest.py --url http://127.0.0.1:8000 --users 12 --per-user 4 \
+  --path "/risk/ranking?scenario_c=0"     # the same 48 requests, all to one endpoint
+```
+
+| 48 identical requests, 12 concurrent clients | p50 | p90 | p95 | max | mean |
+|---|---|---|---|---|---|
+| before the answer cache (measured on `main`) | 1247 ms | 11019 ms | 11205 ms | 11300 ms | 3550 ms |
+| cold cache (first burst after a restart) | 16 ms | 9313 ms | 9316 ms | 9322 ms | 2337 ms |
+| cache warm (any burst in the next 2 minutes) | 12 ms | 14 ms | 15 ms | 41 ms | 16 ms |
+
+One cold `/risk/ranking?scenario_c=0` costs 9.3 s of pandas on one worker. Serving the same bytes to
+forty-eight people who want them at the same moment used to cost that, forty-eight times over, in
+sequence: the p95 of 11.2 s *is* the queue. Now the first request computes, everyone else waits for
+that same answer instead of starting a second copy, and for the following two minutes the endpoint
+answers in milliseconds. Nothing about it is a database or a bigger box — see
+`core/response_cache.py`, and the rules that keep it honest in `tests/test_response_cache.py`.
+
+### Caching and compression
+
+* **gzip** (`GZipMiddleware`, ≥1 kB): the 141-ward ranking payload goes out at 6.4 kB instead of
+  47 kB. Static assets are GitHub Pages' business and it already compresses them.
+* **`Cache-Control`**: public reads get `public, max-age=120, stale-while-revalidate=60`
+  (`/health` 30 s, `/demo/*` 10 min). The rule list is deliberately a list and not a pattern:
+  `/risk*`, `/thermal*`, `/ncr/*`, `/warnings/advance`, `/zones`, `/wards`, `/alerts/plan` and
+  `/citizen/*` (the Kolkata phone brief — ~365 kB raw and rebuilt from the forecast cache on every
+  request, for the same document every visitor gets — `tests/test_server_hygiene.py` holds it to
+  being cached *and* to the repeat really coming from the cache). Everything under `/subscribers`, anything that mutates or
+  sends, and anything administrative stays `no-store` — a subscriber list in a shared cache is a
+  data leak, not a performance win. A request carrying a credential (`X-API-Key`,
+  `X-HeatShield-Token`, `Authorization`) is never cached, so an authenticated read cannot poison a
+  shared cache for the next visitor.
+* **An in-process answer cache** (`core/response_cache.py`, added after the measurement above):
+  a repeat GET for the same path and query within the window is answered from memory — 1.3 ms
+  instead of 9.3 s for the ranking. A burst of identical requests is *coalesced*: one computes,
+  the rest wait for that same answer rather than starting forty-eight copies of the same pandas
+  work. It stores only whole 200s, only for GETs, only under the same paths as the `Cache-Control`
+  rule, never for a credentialed request (an operator's view must not be served to the next
+  visitor), never for a cross-origin request (CORS sits inside this middleware, so a replayed body
+  would reach the browser without its `Access-Control-Allow-Origin`), and never anything larger
+  than 512 kB across at most 128 keys — a cache that can be filled by a hostile query is an
+  amplification primitive, not an optimisation. Every response carries `X-Cache: HIT` or
+  `COALESCED` when it did not come from a fresh computation, so this is observable rather than
+  assumed.
+* One knob: `HS_RESPONSE_CACHE_MAX_AGE=0` turns the header off entirely and every response goes
+  back to `no-store`. The cache follows the same knob, and a longer window (a forecast run changes
+  once per cycle, not once per two minutes) is a reasonable deployment choice:
+
+  ```bash
+  HS_RESPONSE_CACHE_MAX_AGE=600 uvicorn app.main:app --workers 4
+  ```
+
+* After a deploy or a `scripts/refresh.py` run, warm the paths a first visitor needs instead of
+  letting them pay the 9 s:
+
+  ```bash
+  python scripts/warmup.py --url http://127.0.0.1:8000
+  ```
+
+  It exits non-zero if a path fails, which makes it a usable last step of a deploy rather than a
+  comforting log line. The cache is **per process**, like the limiter: with `--workers 4` each
+  worker holds its own copy, so a burst that lands on four workers computes at most four times, not
+  forty-eight.
+
+### After you deploy — five read-only checks
+
+None of these change anything; all five answer "did the deploy land?". The uptime workflow
+below runs the first four on a schedule.
+
+```bash
+BASE=https://heatshield.example
+for f in robots.txt sitemap.xml llms.txt social-card.png; do
+  curl -s -o /dev/null -w "%{http_code} $f\n" "$BASE/$f"
+done
+curl -s "$BASE/" | grep -o '<link rel="canonical"[^>]*>'          # canonical points at the domain
+curl -sI "$BASE/health" | grep -i 'cache-control\|x-request-id'   # API answers, with a request id
+python scripts/warmup.py --url "$BASE"                             # heavy reads answer, and are now warm
+```
+
 ## Map keys, installability & notification automation
 
 ### Maps are keyless — no "API key required", ever
@@ -871,8 +1180,9 @@ basemaps in a web app is the **Google Maps Tile API**, which requires a GCP proj
 Scraping `mt{n}.google.com/vt` violates Google's Terms of Service and stays excluded (see the
 comment at the top of `basemaps.js`). If you hold a billing-enabled key, the supported paths are:
 
-1. Keep the keyless CARTO/ESRI basemaps (visually very close, zero cost), or
-2. Take the MapTiler upgrade above (free tier), or
+1. Keep the keyless Esri/OpenTopoMap basemaps (visually very close, zero cost), or
+2. Take a commercial keyed provider (MapTiler, Thunderforest…) as a *your-deployment-only*
+   registry entry, or
 3. Add a `google` entry to the registry in `basemaps.js` using the official Map Tiles API
    with its session flow — a self-contained change to that one file.
 
@@ -892,8 +1202,9 @@ maskable icons; service worker caches everything for offline use).
 - **iPhone/iPad:** Safari → Share → **Add to Home Screen** (Apple does not expose the install
   prompt to web apps).
 - **A real, store-style APK/AAB:** package the deployed PWA with **PWABuilder** —
-  1. Deploy the site (GitHub Pages works: `scripts/export_static` + `npm run build`, relative
-     paths already configured).
+  1. Deploy the site — `.github/workflows/deploy-pages.yml` does it on push to `main`
+     (enable **Settings → Pages → Source: GitHub Actions** once). Relative paths, the
+     service worker and the static snapshots are already wired for the subdirectory URL.
   2. Go to <https://www.pwabuilder.com>, enter your deployed URL (e.g.
      `https://<owner>.github.io/Heatshield/#/phone`).
   3. *Package For Stores → Android → Generate* → download the **signed APK** (or the AAB for
@@ -947,7 +1258,14 @@ act.
    ```bash
    python -m scripts.dispatch_notifications                       # whole plan
    python -m scripts.dispatch_notifications --audience residents --channel whatsapp
+   python -m scripts.dispatch_notifications --rehearse-demo        # prove the refusal itself
    ```
+
+   `--rehearse-demo` plans a synthetic scenario on purpose, so the refusal below can be
+   demonstrated on a calm day rather than only when the forecast happens to cross the
+   notification bar. Every preview it produces is labelled synthetic, so it can never be sent
+   live however the locks are set — which is exactly what makes it a safe rehearsal and a
+   deterministic test (`tests/test_dispatch_script.py`).
 3. **Go live** (both locks open, and the current payload is genuinely live — demo and
    synthetic-fallback rows are refused *even with both locks open*):
    ```bash
