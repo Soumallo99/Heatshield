@@ -227,3 +227,19 @@ def test_the_suite_does_not_write_into_tracked_data():
     resolved = alerts.LOG_PATH.resolve()
     assert root not in resolved.parents, f"the suite writes to tracked data: {resolved}"
     assert resolved.parent.exists(), "the scratch directory must exist before the first dispatch"
+
+
+def test_ci_does_not_mask_a_failing_test_run():
+    """A green check must mean a green suite.
+
+    The test step used to read `if python -m pytest … | tee log; then exit 0; fi`
+    followed by `status=$?`. Bash returns 0 from an `if` whose condition failed,
+    so `status` was always 0: pytest failed, the step printed failure annotations
+    and then exited 0. Two consecutive CI runs reported success while
+    tests/test_dispatch_script.py was failing, which is worse than a red build —
+    it is a red build wearing a green badge.
+    """
+    workflow = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "ci.yml").read_text()
+    assert "if python -m pytest" not in workflow, "a pipeline inside `if` loses its exit status"
+    assert "| tee /tmp/pytest.log || status=$?" in workflow, "the suite's real status must be captured"
+    assert 'exit "$status"' in workflow, "the step must exit with the suite's status"

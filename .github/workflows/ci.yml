@@ -57,10 +57,16 @@ jobs:
           HS_TEST_SKIP_BUILD: "1"
         run: |
           set -o pipefail
-          if python -m pytest tests -q 2>&1 | tee /tmp/pytest.log; then
+          # `if cmd; then …; fi` returns 0 when cmd *fails*, so the original
+          # `status=$?` here captured 0: pytest failed, the annotations below
+          # were emitted, and the step still passed. Two CI runs reported success
+          # while tests/test_dispatch_script.py was failing. `|| status=$?` keeps
+          # the real status without tripping the shell's -e.
+          status=0
+          python -m pytest tests -q 2>&1 | tee /tmp/pytest.log || status=$?
+          if [ "$status" -eq 0 ]; then
             exit 0
           fi
-          status=$?
           grep -E '^(FAILED|ERROR)' /tmp/pytest.log | tail -10 | while IFS= read -r line; do
             printf '::error title=Pytest failure::%s\n' "${line//\%/%25}"
           done

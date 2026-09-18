@@ -1135,6 +1135,21 @@ answers in milliseconds. Nothing about it is a database or a bigger box — see
   worker holds its own copy, so a burst that lands on four workers computes at most four times, not
   forty-eight.
 
+### After you deploy — five read-only checks
+
+None of these change anything; all five answer "did the deploy land?". The uptime workflow
+below runs the first four on a schedule.
+
+```bash
+BASE=https://heatshield.example
+for f in robots.txt sitemap.xml llms.txt social-card.png; do
+  curl -s -o /dev/null -w "%{http_code} $f\n" "$BASE/$f"
+done
+curl -s "$BASE/" | grep -o '<link rel="canonical"[^>]*>'          # canonical points at the domain
+curl -sI "$BASE/health" | grep -i 'cache-control\|x-request-id'   # API answers, with a request id
+python scripts/warmup.py --url "$BASE"                             # heavy reads answer, and are now warm
+```
+
 ## Map keys, installability & notification automation
 
 ### Maps are keyless — no "API key required", ever
@@ -1239,7 +1254,14 @@ act.
    ```bash
    python -m scripts.dispatch_notifications                       # whole plan
    python -m scripts.dispatch_notifications --audience residents --channel whatsapp
+   python -m scripts.dispatch_notifications --rehearse-demo        # prove the refusal itself
    ```
+
+   `--rehearse-demo` plans a synthetic scenario on purpose, so the refusal below can be
+   demonstrated on a calm day rather than only when the forecast happens to cross the
+   notification bar. Every preview it produces is labelled synthetic, so it can never be sent
+   live however the locks are set — which is exactly what makes it a safe rehearsal and a
+   deterministic test (`tests/test_dispatch_script.py`).
 3. **Go live** (both locks open, and the current payload is genuinely live — demo and
    synthetic-fallback rows are refused *even with both locks open*):
    ```bash
