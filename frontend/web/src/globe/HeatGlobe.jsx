@@ -149,6 +149,12 @@ export default function HeatGlobe({
   }, [])
 
   /* ---- layers ----------------------------------------------------------- */
+  /* Build effect: creates and destroys entities, so it runs only when the
+     *structure* changes (mode, geometry, scene readiness). It deliberately does
+     not depend on wards/rows/selectedId/extrude — those are read at build time
+     and kept current by the update effect below. Depending on them here would
+     tear down every Cesium entity on each ward click, and drop the picking
+     bindings with them. */
   useEffect(() => {
     const scene = sceneRef.current
     if (!scene || !ready) return
@@ -168,6 +174,10 @@ export default function HeatGlobe({
     scene.requestRender()
   }, [mode, geo, ready])
 
+  /* Update effect: data-first or data-later. Runs on mount (right after the
+     build effect, since `ready` just flipped) and on every selection, scenario
+     or data change — so a choropleth built while the ranking was still loading
+     is coloured the moment the rows arrive. */
   useEffect(() => {
     const scene = sceneRef.current
     if (!scene || !ready) return

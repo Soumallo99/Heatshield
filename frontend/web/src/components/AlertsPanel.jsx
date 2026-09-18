@@ -22,8 +22,6 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
   const pending = alerts?.pending_after_dedupe ?? 0
   const lead = alerts?.min_lead_days ?? 1
 
-  const soonest = rows.reduce((a, r) => (a == null || r.lead_days < a ? r.lead_days : a), null)
-
   return (
     <motion.section
       className="panel mt-5 p-6"

@@ -137,7 +137,11 @@ export default function Dashboard({ onExit, onDemo }) {
     fetchGeo().then(setGeo)
   }, [])
 
-  const rows = ranking.data?.data || []
+  // Memoised on the payload, not rebuilt per render. This array is a prop to
+  // the tables, both maps and the globe, and the globe updates its entities
+  // whenever the array identity changes — a fresh [] on every render would
+  // recolour 141 wards on each parent re-render (animations, clock, hover).
+  const rows = useMemo(() => ranking.data?.data || [], [ranking.data])
 
   // default-select the worst ward the first time data arrives
   useEffect(() => {
