@@ -79,8 +79,11 @@ def test_the_service_worker_serves_navigations_network_first():
         "a cache-first index.html keeps pointing at chunk names the last deploy deleted"
     )
     # The shell strategy changed, so the cache name must have changed with it, or
-    # an installed app keeps the old worker's caches.
-    assert "heatshield-phone-v6" in worker
+    # an installed app keeps the old worker's caches. v7 is the bump for the
+    # globe's live tracking layers: new frontend code, new chunk names, and an
+    # installed worker still answering from v6 would serve a globe with no
+    # aircraft/quake/satellite buttons on it at all.
+    assert "heatshield-phone-v7" in worker
     assert "heatshield-phone-v5" not in worker
 
 

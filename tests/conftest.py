@@ -46,6 +46,14 @@ _TEST_SCRATCH = Path(tempfile.mkdtemp(prefix="heatshield-tests-"))
 os.environ.setdefault("HS_ALERT_LOG", str(_TEST_SCRATCH / "alert_log.csv"))
 atexit.register(shutil.rmtree, _TEST_SCRATCH, ignore_errors=True)
 
+# The globe's live tracking layers (core/live.py) reach three third-party
+# services: adsb.lol, the USGS and CelesTrak. A suite that called them would
+# fail for somebody else's reasons — and in a sandbox with no egress it would
+# fail for ours. So they are off for the whole suite, and the tests that
+# exercise the fetching turn them on with a faked upstream
+# (tests/test_live_layers.py). No test in this repository needs the network.
+os.environ.setdefault("HS_LIVE_LAYERS", "0")
+
 
 @pytest.fixture(scope="session")
 def admin_headers() -> dict[str, str]:

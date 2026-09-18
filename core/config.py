@@ -91,3 +91,29 @@ RESPONSE_CACHE_MAX_AGE = int(os.getenv("HS_RESPONSE_CACHE_MAX_AGE", "120"))
 # Set when the app runs behind a trusted reverse proxy, so X-Forwarded-For can be
 # believed for rate-limiting purposes.
 TRUST_PROXY = os.getenv("HS_TRUST_PROXY", "").strip().lower() in {"1", "true", "yes"}
+
+# --------------------------------------------------------------------------- #
+# 7. Live tracking layers (the operations globe) — see core/live.py
+# --------------------------------------------------------------------------- #
+# Three optional layers on the 3D globe: aircraft (adsb.lol), earthquakes
+# (USGS) and satellites (CelesTrak). All three upstreams are public and
+# keyless, and none of them is reached from the browser — the app calls
+# /api/live/* and this process fetches. Turning the whole set off is one
+# switch, for a deployment with no egress (or an operator who does not want
+# it): the routes then answer with an honest "off" payload instead of a
+# timeout on every press.
+LIVE_ENABLED = os.getenv("HS_LIVE_LAYERS", "1").strip().lower() not in {"0", "false", "no"}
+
+# Short deadline, few retries. These layers are an extra view, not the warning
+# itself: an operator should never wait on an aircraft icon.
+LIVE_TIMEOUT_S = float(os.getenv("HS_LIVE_TIMEOUT_S", "6"))
+LIVE_RETRIES = int(os.getenv("HS_LIVE_RETRIES", "2"))
+
+# How long a *successful* payload is reused, per layer. Failures are never
+# cached (see core/live.py). These exist because the globe re-asks on a timer
+# and the upstreams are somebody else's free service; the values follow how
+# often each source actually changes — ADS-B every few seconds, USGS on every
+# new event, CelesTrak a few times a day.
+LIVE_AIRCRAFT_TTL_S = float(os.getenv("HS_LIVE_AIRCRAFT_TTL_S", "20"))
+LIVE_EARTHQUAKE_TTL_S = float(os.getenv("HS_LIVE_EARTHQUAKE_TTL_S", "60"))
+LIVE_SATELLITE_TTL_S = float(os.getenv("HS_LIVE_SATELLITE_TTL_S", "600"))

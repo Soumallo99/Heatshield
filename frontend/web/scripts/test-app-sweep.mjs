@@ -35,6 +35,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { build, stop as stopEsbuild } from 'esbuild'
 import { JSDOM, VirtualConsole } from 'jsdom'
 
+import { SATELLITE_WASM_STUB, isWasmEntry } from '../plugins/satelliteWasmStub.js'
+
 // esbuild keeps a service process alive between builds; without this the test
 // process never exits and CI sits at the timeout instead of reporting.
 after(async () => {
@@ -182,6 +184,25 @@ async function mountApp(options = {}) {
     format: 'iife',
     jsx: 'automatic',
     loader: { '.css': 'text', '.png': 'dataurl', '.json': 'json' },
+    // The globe's live layers propagate orbits with satellite.js, whose
+    // WebAssembly build is reached through a dynamic import of Emscripten glue
+    // (node:module, top-level await, worker_threads) — none of which survives
+    // this bundle. The same rule as the Vite build: stub the wasm entry, keep
+    // the pure-JavaScript SGP4. See plugins/satelliteWasmStub.js.
+    plugins: [
+      {
+        name: 'satellite-wasm-stub',
+        setup: (build) => {
+          build.onResolve({ filter: /satellite|wasm/ }, (args) =>
+            isWasmEntry(args.path) ? { path: args.path, namespace: 'satellite-wasm-stub' } : null,
+          )
+          build.onLoad({ filter: /.*/, namespace: 'satellite-wasm-stub' }, () => ({
+            contents: SATELLITE_WASM_STUB,
+            loader: 'js',
+          }))
+        },
+      },
+    ],
     define: {
       'import.meta.env.PROD': 'true',
       'import.meta.env.DEV': 'false',

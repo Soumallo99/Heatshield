@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { satelliteWasmStub } from './plugins/satelliteWasmStub.js'
 import { siteMeta } from './plugins/siteMeta.js'
 
 // The API port is overridable (HS_API_PORT) so a laptop with :8000 taken can
@@ -14,10 +15,13 @@ export default defineConfig({
   base: process.env.VITE_BASE_PATH || './',
   // react() + the site-metadata plugin (canonical/OG/JSON-LD/robots/sitemap,
   // all derived from VITE_SITE_URL).
-  plugins: [react(), siteMeta()],
-  // Cesium is imported only by the lazy globe chunk. Pre-bundling it up front
-  // stops Vite from discovering it mid-session and reloading the page.
-  optimizeDeps: { include: ['cesium'] },
+  // satelliteWasmStub keeps satellite.js's Emscripten build (and its pthreads
+  // workers) out of the globe chunk; see plugins/satelliteWasmStub.js.
+  plugins: [react(), siteMeta(), satelliteWasmStub()],
+  // Cesium is imported only by the lazy globe chunk, and satellite.js only by
+  // the globe's live layers. Pre-bundling them up front stops Vite from
+  // discovering them mid-session and reloading the page.
+  optimizeDeps: { include: ['cesium', 'satellite.js'] },
   server: {
     host: '0.0.0.0',
     port: 5173,
