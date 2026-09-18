@@ -19,6 +19,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { bandColour } from '../motion.js'
+import { reportError } from '../log.js'
 import { levelColour, levelLabel, formatNumber, formatTemp, text } from '../demo/contract.js'
 import {
   addWardChoropleth, addWardLabel, addZoneMarkers, bindPicking,
@@ -130,7 +131,7 @@ export default function HeatGlobe({
           sceneRef.current = null
         }
       } catch (error) {
-        console.error('[HeatShield globe] failed to start:', error)
+        reportError('globe', error)
         if (!cancelled) {
           setNotice(
             `The 3D globe could not start on this device (${error?.message || error}). ` +

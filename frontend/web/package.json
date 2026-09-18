@@ -10,7 +10,9 @@
     "prebuild": "npm run copy:cesium",
     "budget": "node ../../scripts/check_phone_budget.mjs",
     "preview": "vite preview --host 0.0.0.0",
-    "copy:cesium": "node scripts/copy-cesium-assets.mjs"
+    "copy:cesium": "node scripts/copy-cesium-assets.mjs",
+    "a11y": "node scripts/audit-a11y.mjs",
+    "test": "node --test scripts/test-routes.mjs"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.22",

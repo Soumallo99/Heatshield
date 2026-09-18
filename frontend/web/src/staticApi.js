@@ -41,13 +41,51 @@ export function isStaticHost() {
  * named error type (PhoneDataError / DemoDataError) without duplicating the
  * logic. AbortError is re-thrown untouched so callers can ignore unmounts.
  */
+/**
+ * Deadlines for every browser fetch.
+ *
+ * Without one, a fetch against a host that accepts the TCP connection but never
+ * answers sits there until the OS gives up (minutes), and the UI shows a
+ * skeleton forever — indistinguishable from "still loading" on a phone with one
+ * bar of signal. Every request now carries a deadline: the caller's own
+ * unmount signal still wins (AbortError passes through untouched so callers can
+ * keep ignoring it), a deadline abort is converted into an honest, typed error.
+ */
+export const REQUEST_TIMEOUT_MS = 15000
+
+export function withTimeout(signal, ms = REQUEST_TIMEOUT_MS) {
+  const controller = new AbortController()
+  let timedOut = false
+  const timer = setTimeout(() => {
+    timedOut = true
+    controller.abort()
+  }, ms)
+  const relay = () => controller.abort()
+  if (signal) {
+    if (signal.aborted) controller.abort()
+    else signal.addEventListener('abort', relay, { once: true })
+  }
+  return {
+    signal: controller.signal,
+    timedOut: () => timedOut,
+    cleanup() {
+      clearTimeout(timer)
+      signal?.removeEventListener('abort', relay)
+    },
+  }
+}
+
 export async function readJSON(url, signal, ErrorClass = Error) {
+  const guard = withTimeout(signal)
   let response
   try {
-    response = await fetch(url, { headers: { Accept: 'application/json' }, signal })
+    response = await fetch(url, { headers: { Accept: 'application/json' }, signal: guard.signal })
   } catch (error) {
+    if (guard.timedOut()) throw new ErrorClass(`${url} did not answer within ${REQUEST_TIMEOUT_MS / 1000}s`)
     if (error?.name === 'AbortError') throw error
     throw new ErrorClass(`Unable to reach ${url}`)
+  } finally {
+    guard.cleanup()
   }
   if (!response.ok) throw new ErrorClass(`${url} returned ${response.status}`)
   try {

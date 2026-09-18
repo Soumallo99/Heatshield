@@ -13,6 +13,7 @@
  * an honest message to show on the map instead of a silent downgrade.
  */
 import * as Cesium from 'cesium'
+import { warn } from '../log.js'
 
 /** Re:Earth / Mapterhorn ellipsoidal quantized-mesh, CC BY 4.0. */
 const KEYLESS_TERRAIN_URL = 'https://terrain.reearth.land/cesium-mesh/ellipsoid'
@@ -25,10 +26,8 @@ export async function createKeylessTerrain({ signal, onFallback } = {}) {
     signal?.throwIfAborted()
     return { provider, fallbackMessage: null, terrainId: 'keyless' }
   } catch (error) {
-    console.warn(
-      '[HeatShield globe] keyless terrain unavailable, using the smooth ellipsoid:',
-      error,
-    )
+    // Expected on filtered networks: fall back quietly, note it in dev only.
+    warn(`keyless terrain unavailable, using the smooth ellipsoid (${error?.message || error})`)
     onFallback?.(
       '3D terrain is unavailable on this network — the globe is flat (smooth ellipsoid). ' +
         'Imagery, ward shapes and risk colours are unaffected.',

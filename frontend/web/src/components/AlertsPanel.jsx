@@ -33,7 +33,7 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
         <div>
           <div className="eyebrow">sms / whatsapp · dry-run</div>
           <h2 className="display mt-1.5 text-[22px] leading-none">Early warning queue</h2>
-          <p className="mt-2 text-[11px] text-white/35">
+          <p className="mt-2 text-[11px] text-white/59">
             alerts raised only when there is at least <span className="text-white/60">{lead} day</span> of lead time
           </p>
         </div>
@@ -51,7 +51,7 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
             </motion.div>
           )}
           {total > 0 && (
-            <span className="text-[10.5px] text-white/30">
+            <span className="text-[10.5px] text-white/58">
               {pending === total
                 ? 'all unsent · 12 h de-duplication'
                 : `${pending} of ${total} unsent · rest sent <12 h ago`}
@@ -85,10 +85,10 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <p className="text-[12.5px] text-white/45">
+          <p className="text-[12.5px] text-white/62">
             No ward crosses the alert threshold with {lead}+ day of lead time.
           </p>
-          <p className="mt-1.5 text-[11px] text-white/28">
+          <p className="mt-1.5 text-[11px] text-white/57">
             Every crossing inside the window is a nowcast, not a warning — there is nothing left to act on.
             Try a higher scenario to see the queue fill.
           </p>
@@ -113,7 +113,7 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <div className="truncate text-[12.5px] font-medium text-white/85">{r.ward_name}</div>
-                      <div className="mt-0.5 text-[10.5px] text-white/40">
+                      <div className="mt-0.5 text-[10.5px] text-white/60">
                         {fmtDate(r.event_date)} · WBGT {r.wbgt_peak_c?.toFixed(1)}°
                       </div>
                     </div>
@@ -128,7 +128,7 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
                       <div className="tnum text-[15px] font-bold leading-none" style={{ color: c }}>
                         {r.lead_days}
                       </div>
-                      <div className="text-[8.5px] uppercase tracking-wider text-white/40">day lead</div>
+                      <div className="text-[8.5px] uppercase tracking-wider text-white/60">day lead</div>
                     </motion.div>
                   </div>
 
@@ -139,7 +139,7 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
                     >
                       {r.risk_band}
                     </span>
-                    <span className="tnum text-[10.5px] text-white/40">
+                    <span className="tnum text-[10.5px] text-white/60">
                       risk {Math.round(r.risk_score)} · {r.exposed_population?.toLocaleString('en-IN')} exposed
                     </span>
                   </div>
@@ -162,7 +162,7 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
       )}
 
       {rows.length > 9 && (
-        <p className="mt-3 text-[10.5px] text-white/30">
+        <p className="mt-3 text-[10.5px] text-white/58">
           + {rows.length - 9} more wards queued. Dry-run is the default — nothing is sent until
           credentials are configured and dispatch is invoked.
         </p>

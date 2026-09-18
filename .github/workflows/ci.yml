@@ -95,3 +95,15 @@ jobs:
       - name: Build
         working-directory: frontend/web
         run: npm run build
+
+      # Fails the build on an icon-only button, a clickable <div>, a missing
+      # alt, or text that does not reach WCAG AA on the app's own background.
+      - name: Accessibility audit
+        working-directory: frontend/web
+        run: npm run a11y
+
+      # Routing, per-page titles, console hygiene, and the generated
+      # robots/sitemap/llms files. No browser required.
+      - name: Frontend checks
+        working-directory: frontend/web
+        run: npm test

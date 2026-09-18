@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
+import { warn } from './log'
 import ErrorBoundary from './components/ErrorBoundary'
 import './index.css'
 
@@ -33,7 +34,7 @@ if ('serviceWorker' in navigator) {
         })
         .catch((err) => {
           // Offline capability is an enhancement, never a hard failure.
-          console.warn('[HeatShield] service worker registration failed:', err)
+          warn(`service worker registration failed: ${err?.message || err}`)
         })
       return
     }

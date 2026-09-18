@@ -254,7 +254,7 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
 
   if (!geo) {
     return (
-      <div className="flex h-[420px] items-center justify-center text-[12px] text-white/30">
+      <div className="flex h-[420px] items-center justify-center text-[12px] text-white/58">
         loading ward boundaries…
       </div>
     )
@@ -468,7 +468,7 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
 
       {/* ------------------------------------------------------- legend */}
       <div className="absolute bottom-7 right-2 z-[600] rounded-lg border border-white/10 bg-black/60 px-2.5 py-2 backdrop-blur">
-        <div className="mb-1 text-[9px] uppercase tracking-wider text-white/40">
+        <div className="mb-1 text-[9px] uppercase tracking-wider text-white/60">
           Heat risk
         </div>
         <div className="flex flex-col gap-0.5">
@@ -494,7 +494,7 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
           <span className="ml-2 tnum" style={{ color: bandColour[byId[hover].risk_band] }}>
             {Math.round(byId[hover].risk_score)} · {byId[hover].risk_band}
           </span>
-          <span className="ml-2 text-white/35">
+          <span className="ml-2 text-white/59">
             {byId[hover].population?.toLocaleString('en-IN')} residents
           </span>
         </div>

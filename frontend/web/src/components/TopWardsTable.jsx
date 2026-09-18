@@ -75,7 +75,7 @@ export default function TopWardsTable({ wards = [], selectedId, onSelect, defaul
         <div>
           <div className="eyebrow">why, not just where</div>
           <h2 className="display mt-1.5 text-[22px] leading-none">Risk drivers</h2>
-          <p className="mt-2 text-[11px] leading-snug text-white/35">
+          <p className="mt-2 text-[11px] leading-snug text-white/59">
             Sort any column · select a row to drive the map and gauge
           </p>
         </div>
@@ -99,7 +99,7 @@ export default function TopWardsTable({ wards = [], selectedId, onSelect, defaul
               className={`${c.cls} text-[9.5px] uppercase tracking-[0.1em] transition ${
                 c.align === 'right' ? 'text-right' : 'text-left'
               } ${c.sortKey ? 'cursor-pointer hover:text-white/70' : 'cursor-default'} ${
-                active ? 'text-white/70' : 'text-white/30'
+                active ? 'text-white/70' : 'text-white/58'
               }`}
               title={c.sortKey ? `Sort by ${c.label}` : undefined}
             >
@@ -154,7 +154,7 @@ export default function TopWardsTable({ wards = [], selectedId, onSelect, defaul
                   />
                 )}
 
-                <span className="relative tnum text-[10.5px] text-white/30">{i + 1}</span>
+                <span className="relative tnum text-[10.5px] text-white/58">{i + 1}</span>
                 <span className="relative truncate text-[12px] text-white/85">{w.ward_name}</span>
                 <span className="relative tnum text-right text-[12.5px] font-semibold" style={{ color: c }}>
                   {fmt(w.risk_score)}
@@ -186,7 +186,7 @@ export default function TopWardsTable({ wards = [], selectedId, onSelect, defaul
       </div>
 
       {wards.length > defaultLimit && (
-        <p className="mt-2.5 text-[10px] text-white/25">
+        <p className="mt-2.5 text-[10px] text-white/56">
           Showing {shown.length} of {wards.length} wards
         </p>
       )}

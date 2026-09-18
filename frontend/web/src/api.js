@@ -15,7 +15,7 @@
  * the last computed run from data/processed/*.csv, so "offline" means
  * "last known data", clearly timestamped — never fabricated numbers.
  */
-import { isStaticHost, publicURL, readJSON, staticURL } from './staticApi.js'
+import { isStaticHost, publicURL, readJSON, REQUEST_TIMEOUT_MS, staticURL, withTimeout } from './staticApi.js'
 
 /* Relative, not '/api': this app is deployed under a repository subdirectory
  * (https://<owner>.github.io/<repo>/), where a document-root path leaves the
@@ -35,13 +35,22 @@ class ApiError extends Error {
 }
 
 async function getJSON(path, { signal } = {}) {
+  // Deadline: a hung request must surface as a failure the operator can see,
+  // not an eternal skeleton. Caller aborts (unmount / new scenario) still pass
+  // through as AbortError so existing callers keep ignoring them.
+  const guard = withTimeout(signal)
   let res
   try {
-    res = await fetch(`${BASE}${path}`, { headers: { Accept: 'application/json' }, signal })
+    res = await fetch(`${BASE}${path}`, { headers: { Accept: 'application/json' }, signal: guard.signal })
   } catch (err) {
+    if (guard.timedOut()) {
+      throw new ApiError(`HeatShield API did not answer within ${REQUEST_TIMEOUT_MS / 1000}s (${path})`, 504)
+    }
     if (err?.name === 'AbortError') throw err
     // fetch rejects with a TypeError for connection refused / DNS / CORS.
     throw new ApiError(`cannot reach the HeatShield API (${path})`, null)
+  } finally {
+    guard.cleanup()
   }
   if (!res.ok) throw new ApiError(`HeatShield API returned ${res.status} (${path})`, res.status)
 

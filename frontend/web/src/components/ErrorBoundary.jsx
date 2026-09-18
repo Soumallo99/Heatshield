@@ -1,6 +1,7 @@
 import { Component } from 'react'
 import { motion } from 'framer-motion'
 import { EASE } from '../motion'
+import { reportError } from '../log'
 
 /**
  * Without this, one thrown error anywhere in the tree unmounts the whole app and
@@ -27,7 +28,9 @@ export default class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, info) {
-    console.error('[HeatShield]', error, info?.componentStack)
+    // One seam for every client failure: dev console, on-device ring buffer,
+    // or the operator's VITE_ERROR_REPORT_URL. See src/log.js.
+    reportError('ui', error, { componentStack: info?.componentStack?.split('\n').slice(0, 4).join('\n') })
 
     // A page left open across a dev-server restart can end up with two React
     // copies in one tab; hooks then run through a dispatcher that was never

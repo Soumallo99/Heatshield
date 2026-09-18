@@ -82,7 +82,7 @@
   font-size: 9px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, .60);
 }
 
 .globe-title strong { font-size: 13px; }
@@ -178,7 +178,7 @@
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, .60);
   margin-bottom: 4px;
 }
 
@@ -211,12 +211,12 @@
   margin-top: 5px;
   font-size: 9px;
   line-height: 1.35;
-  color: rgba(255, 255, 255, 0.36);
+  color: rgba(255, 255, 255, .58);
 }
 
 .globe-attribution {
   margin: 0;
   font-size: 9px;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, .62);
 }

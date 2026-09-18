@@ -75,7 +75,7 @@ export function RefreshButton({ onRefresh, busy = false, lastUpdated = null, err
           transition={{ duration: state === 'live' ? 2.6 : 1.4, repeat: Infinity, ease: 'easeInOut' }}
         />
         {/* `tick` keeps "12 s ago" honest; it renders nothing itself. */}
-        <span className="tnum text-[10.5px] leading-tight text-white/45" data-tick={tick}>
+        <span className="tnum text-[10.5px] leading-tight text-white/62" data-tick={tick}>
           {busy ? (
             'refreshing…'
           ) : state === 'down' ? (
@@ -84,7 +84,7 @@ export function RefreshButton({ onRefresh, busy = false, lastUpdated = null, err
             <>
               {state === 'stale' ? 'last known ' : 'updated '}
               <span className="text-white/70">{formatClock(lastUpdated)}</span>
-              <span className="ml-1.5 text-white/25">{formatAge(lastUpdated)}</span>
+              <span className="ml-1.5 text-white/56">{formatAge(lastUpdated)}</span>
             </>
           )}
         </span>
@@ -162,7 +162,7 @@ export function SnapshotNotice({ snapshot, onRetry }) {
           {wards != null ? `, ${wards} wards` : ''}), shipped with this build. The numbers are real and
           unchanged, but refreshing cannot update them here.
         </span>{' '}
-        <span className="text-white/40">
+        <span className="text-white/60">
           For live data run the API and open the dev server:
         </span>
         <code className="tnum ml-1.5 rounded bg-black/40 px-1.5 py-0.5 text-[10.5px] text-white/60">
@@ -218,7 +218,7 @@ export function ConnectionNotice({ error, lastUpdated, onRetry, busy = false }) 
           </code>
         )}
         {' '}
-        <span className="text-white/40">
+        <span className="text-white/60">
           Retrying automatically every few seconds — this clears itself the moment the API answers
           (R retries now).
         </span>

@@ -28,14 +28,14 @@ export default function MapViewSwitch({ value, onChange, disabled = false, note 
             disabled={disabled && id === '3d'}
             title={disabled && id === '3d' ? 'Waiting for ward boundaries…' : title}
             className={`relative rounded-full px-3 py-1 text-[11px] transition ${
-              value === id ? 'bg-white/[.14] text-white' : 'text-white/45 hover:text-white/80'
+              value === id ? 'bg-white/[.14] text-white' : 'text-white/62 hover:text-white/80'
             } ${disabled && id === '3d' ? 'cursor-not-allowed opacity-40' : ''}`}
           >
             {label}
           </button>
         ))}
       </div>
-      {note && <span className="text-[10px] text-white/35">{note}</span>}
+      {note && <span className="text-[10px] text-white/59">{note}</span>}
     </div>
   )
 }

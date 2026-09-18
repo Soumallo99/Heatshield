@@ -42,7 +42,7 @@ export default function HourlyChart({ data = [], metric = 'wbgt_adj_c', unit = '
   }, [data, metric])
 
   if (!model) {
-    return <div className="flex h-[150px] items-center justify-center text-xs text-white/35">loading curve…</div>
+    return <div className="flex h-[150px] items-center justify-center text-xs text-white/59">loading curve…</div>
   }
 
   const { rows, vals, line, area, x, y, peakIdx, hourOf } = model
@@ -124,7 +124,7 @@ export default function HourlyChart({ data = [], metric = 'wbgt_adj_c', unit = '
         </motion.g>
       </svg>
 
-      <div className="mt-1 flex items-center justify-between text-[10px] text-white/35">
+      <div className="mt-1 flex items-center justify-between text-[10px] text-white/59">
         <span>{unit} · next 24 h</span>
         <span>
           peak {vals[peakIdx].toFixed(1)}° · {peakBand}

@@ -30,7 +30,7 @@ function Clock() {
     return () => clearInterval(id)
   }, [])
   return (
-    <span className="tnum text-[11.5px] text-white/40">
+    <span className="tnum text-[11.5px] text-white/60">
       {t.toLocaleTimeString('en-IN', { hour12: false })}
     </span>
   )
@@ -45,10 +45,10 @@ function Driver({ label, value, unit, delay = 0 }) {
       animate={{ opacity: 1, x: 0 }}
       transition={reduced ? { duration: 0 } : t({ duration: 0.5, ease: EASE, delay })}
     >
-      <span className="text-[11.5px] text-white/40">{label}</span>
+      <span className="text-[11.5px] text-white/60">{label}</span>
       <span className="tnum text-[13px] font-medium">
         {value}
-        <span className="ml-0.5 text-[10px] text-white/35">{unit}</span>
+        <span className="ml-0.5 text-[10px] text-white/59">{unit}</span>
       </span>
     </motion.div>
   )
@@ -70,7 +70,7 @@ function MapSkeleton({ label = 'fetching ward risk…' }) {
           transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
         />
       </motion.div>
-      <span className="text-[11.5px] text-white/30">{label}</span>
+      <span className="text-[11.5px] text-white/58">{label}</span>
     </div>
   )
 }
@@ -82,7 +82,7 @@ function SectionHead({ eyebrow, title, note, right }) {
       <div className="min-w-0">
         <div className="eyebrow">{eyebrow}</div>
         <h2 className="display mt-1.5 text-[22px] leading-none">{title}</h2>
-        {note && <p className="mt-2 text-[11px] leading-snug text-white/35">{note}</p>}
+        {note && <p className="mt-2 text-[11px] leading-snug text-white/59">{note}</p>}
       </div>
       {right}
     </div>
@@ -104,7 +104,7 @@ function CitySwitch({ city, setCity }) {
           title={id === 'kolkata'
             ? 'Kolkata — 141 ward-level console (risk, exposure, alerts)'
             : 'Delhi NCR — 8-zone advance-warning console (HTSI, leads Day +0…+5)'}
-          className={`relative rounded-full px-3 py-1 text-[11px] transition ${city === id ? 'bg-white/[.14] text-white' : 'text-white/45 hover:text-white/80'}`}
+          className={`relative rounded-full px-3 py-1 text-[11px] transition ${city === id ? 'bg-white/[.14] text-white' : 'text-white/62 hover:text-white/80'}`}
         >
           {label}
         </button>
@@ -184,7 +184,7 @@ export default function Dashboard({ onExit, onDemo }) {
               <div className="h-5 w-5 rounded-full" style={{ background: 'linear-gradient(135deg,#ff5f6d,#ffc371)' }} />
               <span className="display text-[18px]">HeatShield</span>
             </button>
-            <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/30 sm:block">
+            <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/58 sm:block">
               operations
             </span>
             {onDemo && (
@@ -217,7 +217,7 @@ export default function Dashboard({ onExit, onDemo }) {
             <div className="h-5 w-5 rounded-full" style={{ background: 'linear-gradient(135deg,#ff5f6d,#ffc371)' }} />
             <span className="display text-[18px]">HeatShield</span>
           </button>
-          <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/30 sm:block">
+          <span className="hidden text-[10px] uppercase tracking-[0.2em] text-white/58 sm:block">
             operations
           </span>
           {onDemo && (
@@ -369,7 +369,7 @@ export default function Dashboard({ onExit, onDemo }) {
               title="Ward risk layer"
               note={`${ranking.data?.date || '—'} peak-risk day · ${rows.length} KMC wards · Open-Meteo forecast, UHI-adjusted`}
               right={
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[10px] text-white/40">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[10px] text-white/60">
                   <MapViewSwitch
                     value={mapMode}
                     onChange={setMapMode}
@@ -409,7 +409,7 @@ export default function Dashboard({ onExit, onDemo }) {
                 )}
               </Suspense>
             ) : (
-              <div className="flex h-[420px] items-center justify-center rounded-xl border border-white/[.08] bg-white/[.015] px-6 text-center text-[12px] leading-relaxed text-white/35">
+              <div className="flex h-[420px] items-center justify-center rounded-xl border border-white/[.08] bg-white/[.015] px-6 text-center text-[12px] leading-relaxed text-white/59">
                 No ward data on screen. The dashboard only renders what the API
                 returns — press <span className="tnum mx-1 text-white/60">R</span> or Refresh once
                 the API is up.
@@ -461,14 +461,14 @@ export default function Dashboard({ onExit, onDemo }) {
                 <div className="eyebrow">exposed</div>
                 <div className="mt-2 flex items-baseline gap-1">
                   <Odometer value={(ward?.impact?.exposed_population || 0) / 1000} decimals={1} height={1.1} className="text-[30px] font-semibold" />
-                  <span className="text-[10px] text-white/35">k people</span>
+                  <span className="text-[10px] text-white/59">k people</span>
                 </div>
               </div>
               <div className="pl-3">
                 <div className="eyebrow">relative risk</div>
                 <div className="mt-2 flex items-baseline gap-1">
                   <Odometer value={ward?.impact?.relative_risk || 1} decimals={2} height={1.1} className="text-[30px] font-semibold" />
-                  <span className="text-[10px] text-white/35">× baseline</span>
+                  <span className="text-[10px] text-white/59">× baseline</span>
                 </div>
               </div>
             </div>
@@ -510,14 +510,14 @@ export default function Dashboard({ onExit, onDemo }) {
                       transition={spring.layout}
                     />
                   )}
-                  <div className="relative truncate text-[11px] text-white/45 transition group-hover:text-white/70">
+                  <div className="relative truncate text-[11px] text-white/62 transition group-hover:text-white/70">
                     {w.ward_name}
                   </div>
                   <div className="relative mt-0.5 flex items-baseline gap-1.5">
                     <span className="display text-[26px] leading-none" style={{ color: c }}>
                       {Math.round(w.risk_score)}
                     </span>
-                    <span className="text-[9px] uppercase tracking-wider text-white/30">{w.risk_band}</span>
+                    <span className="text-[9px] uppercase tracking-wider text-white/58">{w.risk_band}</span>
                   </div>
                   {/* risk bar: width encodes the score, colour is a repeat of
                       the label above so the band never relies on colour alone */}
@@ -568,7 +568,7 @@ export default function Dashboard({ onExit, onDemo }) {
               {hourly.length ? (
                 <HourlyChart data={hourly} metric="wbgt_adj_c" unit="°C WBGT" />
               ) : (
-                <div className="flex h-[150px] items-center justify-center text-[11.5px] text-white/30">
+                <div className="flex h-[150px] items-center justify-center text-[11.5px] text-white/58">
                   {hourlyLive.error ? 'curve unavailable — API unreachable' : 'loading curve…'}
                 </div>
               )}
@@ -590,7 +590,7 @@ export default function Dashboard({ onExit, onDemo }) {
           transition={reduced ? { duration: 0 } : { duration: 0.8, ease: EASE, delay: 0.26 }}
         >
           <div className="eyebrow">data provenance</div>
-          <div className="mt-3 grid gap-6 text-[11px] leading-relaxed text-white/45 md:grid-cols-2">
+          <div className="mt-3 grid gap-6 text-[11px] leading-relaxed text-white/62 md:grid-cols-2">
             <div>
               <div className="display text-[17px] text-white/80">Measured</div>
               <ul className="mt-2 space-y-1">
@@ -621,7 +621,7 @@ export default function Dashboard({ onExit, onDemo }) {
           </div>
         </motion.section>
 
-        <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.08] pt-5 text-[10.5px] text-white/25">
+        <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.08] pt-5 text-[10.5px] text-white/56">
           <span>
             scenario {scenario > 0 ? `+${scenario} °C` : 'now'} · threshold {ALERT_THRESHOLD} · 141 wards
           </span>
