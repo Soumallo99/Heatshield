@@ -20,11 +20,11 @@ export const ESRI_ATTRIBUTION_HTML =
 export const OSM_ATTRIBUTION = '© OpenStreetMap contributors'
 
 /** Keyless ArcGIS World Imagery (Maxar / Earthstar Geographics). */
-export const ESRI_WORLD_IMAGERY_URL =
+const ESRI_WORLD_IMAGERY_URL =
   'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
 
 /** Keyless OpenStreetMap raster tiles — the fallback CDN. */
-export const OSM_TILE_URL = 'https://tile.openstreetmap.org/'
+const OSM_TILE_URL = 'https://tile.openstreetmap.org/'
 
 export function createOsmImagery() {
   return new Cesium.OpenStreetMapImageryProvider({

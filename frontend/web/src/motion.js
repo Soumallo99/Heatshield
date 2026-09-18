@@ -11,9 +11,6 @@ import { useReducedMotion } from 'framer-motion'
 
 /** Expo-out. Fast commitment, long settle — the "expensive" curve. */
 export const EASE = [0.16, 1, 0.3, 1]
-/** Expo-in-out, for elements that travel a long distance. */
-export const EASE_IO = [0.83, 0, 0.17, 1]
-
 export const spring = {
   /** large surfaces, background layers: slow, heavy, unhurried */
   glide: { type: 'spring', stiffness: 70, damping: 22, mass: 1.6 },
@@ -45,6 +42,9 @@ export function useMotionSafe() {
   }
 }
 
+/* Core forecast bands (Normal…Extreme) — the live dashboard + 2D map palette.
+   demo/contract.js has its own bandColour() for the synthetic HTSI bands
+   (Normal/Watch/Warning/Severe): same idea, different scale, not a duplicate. */
 export const bandColour = {
   Normal: '#22c55e',
   Caution: '#eab308',

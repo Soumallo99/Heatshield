@@ -15,7 +15,7 @@
 import * as Cesium from 'cesium'
 
 /** Re:Earth / Mapterhorn ellipsoidal quantized-mesh, CC BY 4.0. */
-export const KEYLESS_TERRAIN_URL = 'https://terrain.reearth.land/cesium-mesh/ellipsoid'
+const KEYLESS_TERRAIN_URL = 'https://terrain.reearth.land/cesium-mesh/ellipsoid'
 
 /** Lazily created: a hidden globe must not trigger terrain loading. */
 export async function createKeylessTerrain({ signal, onFallback } = {}) {

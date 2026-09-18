@@ -59,8 +59,6 @@ const LAYERS = {
   },
 }
 
-export const MAP_LAYER_IDS = Object.keys(LAYERS)
-
 const DELHI_CENTRE = [28.58, 77.28]
 /* Dark keyless basemap from the shared registry (Esri Dark Gray Canvas +
    place labels). Deliberately not a local URL constant: the registry is the

@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
-import { formatNumber, formatTemp, levelLabel, normaliseDemoPayload, text } from '../demo/contract.js'
+import { formatNumber, normaliseDemoPayload, text } from '../demo/contract.js'
 import { DemoScreen } from '../demo/screens.js'
 import { readJSON, staticURL } from '../staticApi.js'
 

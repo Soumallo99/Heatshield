@@ -18,7 +18,7 @@
 const BASE = '/api'
 
 /** Thrown for any non-2xx or transport failure, with the status when known. */
-export class ApiError extends Error {
+class ApiError extends Error {
   constructor(message, status = null) {
     super(message)
     this.name = 'ApiError'
@@ -60,9 +60,6 @@ export const fetchWardRisk = (id, scenario = 0) =>
 
 /** Ward registry (count must be 141). */
 export const fetchZones = () => getJSON('/zones')
-
-/** Liveness + server clock. Cheap: used to say "API reachable" truthfully. */
-export const fetchHealth = () => getJSON('/health')
 
 // /risk carries the UHI-adjusted series (wbgt_adj_c); /thermal carries the raw grid value.
 export const fetchHourly = (wardId, scenario = 0) =>

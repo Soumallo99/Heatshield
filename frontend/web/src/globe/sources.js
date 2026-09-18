@@ -26,7 +26,7 @@ import {
 import { createKeylessTerrain } from './terrain.js'
 
 /** Ordered list shown in the globe's source switcher. */
-export const MAP_STACKS = [
+const MAP_STACKS = [
   {
     id: 'esri-imagery',
     label: 'Satellite',

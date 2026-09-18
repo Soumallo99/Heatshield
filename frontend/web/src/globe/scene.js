@@ -14,7 +14,7 @@ import { createGlobeSources } from './sources.js'
 import { createGlobeViewer } from './viewer.js'
 
 /** Where the copied CesiumJS runtime assets live (public/cesium/). */
-export function configureCesiumBaseUrl() {
+function configureCesiumBaseUrl() {
   if (typeof window === 'undefined') return ''
   if (window.CESIUM_BASE_URL) return window.CESIUM_BASE_URL
   const base = new URL('cesium/', document.baseURI).href
@@ -23,7 +23,7 @@ export function configureCesiumBaseUrl() {
 }
 
 /** Camera presets: the two cities this platform covers. */
-export const AREA_VIEWS = {
+const AREA_VIEWS = {
   kolkata: { longitude: 88.3639, latitude: 22.5726, height: 42000, pitch: -62 },
   delhi: { longitude: 77.28, latitude: 28.58, height: 62000, pitch: -58 },
 }

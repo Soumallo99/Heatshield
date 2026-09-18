@@ -191,18 +191,18 @@ export const EMPTY_PHONE_PAYLOAD = normalisePhonePayload({
 
 /* Advice wording mirrors the Safety screen — one clear instruction per band,
    never colour-only, never implying a medical diagnosis. */
-export const PERSONAL_ALERT_ADVICE = {
+const PERSONAL_ALERT_ADVICE = {
   Severe: 'Stay in the coolest room you can. Confusion, fainting or hot dry skin is an emergency — seek medical help now.',
   'Very Poor': 'Avoid the sun 12:00–15:00. Drink water every hour; use a cooling centre if your home is unbearable.',
   Poor: 'Plan outdoor work for morning or evening. Carry water and check on elderly neighbours.',
 }
 
 /* Notify from this load band upward, or on absolute heat regardless of band. */
-export const PERSONAL_ALERT_TRIGGER_TEMP_C = 40
+const PERSONAL_ALERT_TRIGGER_TEMP_C = 40
 
 /* Kolkata briefs carry WBGT stress bands instead of an air-quality load
    (no AQ source is bundled for Kolkata — the payload says so). */
-export const STRESS_ALERT_ADVICE = {
+const STRESS_ALERT_ADVICE = {
   Extreme: 'WBGT is extreme — life-threatening heat stress. Stay indoors with cooling; confusion, fainting or hot dry skin is an emergency.',
   Critical: 'WBGT is critical — suspend non-essential outdoor work, stay in the coolest room you can, drink water every hour.',
 }
@@ -273,7 +273,7 @@ export function personalNotificationFor(zone, meta = {}) {
 }
 
 /** Great-circle distance in km — used only to pick the nearest zone label. */
-export function haversineKm(lat1, lon1, lat2, lon2) {
+function haversineKm(lat1, lon1, lat2, lon2) {
   const toRad = (deg) => (deg * Math.PI) / 180
   const dLat = toRad(lat2 - lat1)
   const dLon = toRad(lon2 - lon1)

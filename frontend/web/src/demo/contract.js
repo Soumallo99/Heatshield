@@ -369,11 +369,7 @@ export function normaliseDemoPayload(raw) {
   }
 }
 
-/* Convenience aliases used by screens + render contract paths. */
-export function warningsRowsOf(payload) {
-  return payload?.warnings?.rows || []
-}
-
+/* Convenience alias used by screens + render contract paths. */
 export const EMPTY_DEMO_PAYLOAD = normaliseDemoPayload({
   scenarios: { demo_disclaimer: DEMO_DISCLAIMER, scenarios: [] },
   zones: { data: [] },
@@ -385,7 +381,7 @@ export const EMPTY_DEMO_PAYLOAD = normaliseDemoPayload({
 
 /* ------------------------------------------------------- presentational maps */
 
-export const BAND_COLOURS = {
+const BAND_COLOURS = {
   Normal: '#3fb950',
   Watch: '#e3b341',
   Warning: '#f0883e',
@@ -393,14 +389,14 @@ export const BAND_COLOURS = {
   Unavailable: '#8b949e',
 }
 
-export const LEVEL_COLOURS = {
+const LEVEL_COLOURS = {
   routine: '#3fb950',
   watch: '#e3b341',
   warning: '#f0883e',
   severe: '#f85149',
 }
 
-export const LEVEL_LABELS = {
+const LEVEL_LABELS = {
   routine: 'Routine',
   watch: 'Watch',
   warning: 'Warning',

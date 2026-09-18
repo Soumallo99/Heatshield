@@ -2,9 +2,7 @@ import React from 'react'
 import {
   ALERT_LEVEL_ORDER,
   DEMO_DISCLAIMER,
-  DEMO_SCREEN_LABELS,
   bandColour,
-  finiteNumber,
   formatDate,
   formatHour,
   formatNumber,
@@ -483,8 +481,4 @@ export function DemoScreen({ screen = 'now', payload, selectedZoneId = '', leadD
   if (screen === 'notify') return h(NotifyScreen, { payload: safe, selectedZoneId })
   if (screen === 'about') return h(AboutScreen, { payload: safe })
   return h(NowScreen, { payload: safe, selectedZoneId })
-}
-
-export function demoScreenLabel(id) {
-  return DEMO_SCREEN_LABELS[id] || DEMO_SCREEN_LABELS.now
 }
