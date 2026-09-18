@@ -20,41 +20,50 @@ The Capacitor config was removed; say the word and it takes ~20 minutes to resto
 - Home-screen icon + splash screen
 - **Works offline** — the service worker caches the shell and the last-known risk data
 - **Push notifications** for Critical ward alerts (Android + iOS 16.4+)
-- Deep links: `/ward/14` opens a specific ward
+- Deep links: `#/phone` (and `#/phone?ward=14`) open straight into the citizen brief
+- **The phone app stays 2D.** The Operations dashboard's lazy CesiumJS globe is a separate
+  chunk that the citizen route never imports, so the phone cold-open budget
+  (`npm run budget`, < 120 KiB gzip) is unaffected by it. Keep it that way.
 
-## Files
+## Files — one source of truth
 
 ```
-frontend/pwa/
+frontend/web/public/
 ├── manifest.webmanifest   # name, icons, theme, standalone display, shortcuts
-└── sw.js                  # offline-first service worker + push handler
+├── sw.js                  # offline-first service worker + push handler
+├── offline.html           # last-resort page when a navigation has no cache entry
+├── icons/                 # 192 / 512 / maskable-512 / badge-72
+└── data/                  # kolkata_wards.geojson — cached by sw.js for offline use
 ```
 
-Both belong in the Vite **public** directory (`frontend/web/public/`) so they're served from
-the site root — `sw.js` served from a subdirectory gets a restricted scope and silently
-does nothing. That's the #1 PWA bug.
+These live in the Vite **public** directory so they are served from the site root — `sw.js`
+served from a subdirectory gets a restricted scope and silently does nothing. That's the #1
+PWA bug. The old duplicate `frontend/pwa/` copy (a stale v1 manifest + worker) has been
+**deleted**: two copies of `sw.js` meant one of them was always the wrong one to edit.
 
-## Wiring it up (Phase 4)
+Registration is in `frontend/web/src/main.jsx` and is **production-only** on purpose
+(`import.meta.env.PROD`): in dev, a cache-first worker fights Vite's HMR and you end up
+debugging stale modules. Exercise the offline path with `npm run build && npm run preview`.
 
-1. Copy `manifest.webmanifest` → `frontend/web/public/manifest.webmanifest`
-2. Copy `sw.js` → `frontend/web/public/sw.js`
-3. Add to `index.html`:
-   ```html
-   <link rel="manifest" href="/manifest.webmanifest" />
-   <meta name="theme-color" content="#07080d" />
-   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-   ```
-4. Register the worker in `main.tsx`:
-   ```ts
-   if ('serviceWorker' in navigator) {
-     window.addEventListener('load', () =>
-       navigator.serviceWorker.register('/sw.js', { scope: '/' }));
-   }
-   ```
-5. Generate icons (192, 512, maskable 512, badge 72):
-   ```bash
-   npx @vite-pwa/assets-generator --preset minimal public/logo.svg
-   ```
+## Already wired (nothing to copy)
+
+`index.html` links the manifest with **relative** paths (`./manifest.webmanifest`,
+`./icons/...`) so a GitHub Pages subdirectory (`/Heatshield/`) keeps working; `main.jsx`
+registers `./sw.js` with `scope: './'`. Icons are generated and committed in
+`public/icons/`.
+
+### Cache-bump discipline (do not skip)
+
+`sw.js` serves the app shell **cache-first** — that is what makes a cold open on a phone
+instant and survives airplane mode. The cost is that an installed app will happily serve
+last month's build forever. Therefore:
+
+> **Every release that changes shipped frontend code bumps `VERSION` in
+> `frontend/web/public/sw.js`** (`heatshield-phone-v2` → `v3` → …).
+
+The bump renames all three caches (shell/data/tiles), and the `activate` handler deletes
+any cache that does not start with the current `VERSION`. That is the entire migration
+path. Skip it and users stay on the old build until they clear site data by hand.
 
 ## Testing on a real phone
 

@@ -456,8 +456,10 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
                 </button>
               ))}
               <div className="note">
-                Keyless tiles only — CARTO, Esri and OpenTopoMap, with an automatic
-                OpenStreetMap fallback. No API key is used or required.
+                Keyless tiles only — Esri (Canvas / Street / Imagery) and OpenTopoMap,
+                with an automatic OpenStreetMap fallback. No API key is used or required.
+                CARTO is deliberately absent: its keyless tiles now return HTTP 200
+                watermarks reading “API KEY REQUIRED”, which no client can detect.
               </div>
             </div>
           )}

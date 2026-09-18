@@ -9,7 +9,7 @@ Locked decisions — do not relitigate at Phase 4, build to this.
 | Framework | **Vite + React 18** | Fast HMR, no SSR overhead we'd pay for |
 | Animation | **Framer Motion** | Spring physics, `AnimatePresence` exits, layout animations |
 | Styling | **Tailwind CSS** | Rapid, no CSS-file drift during a hackathon |
-| Map | **react-leaflet, 4 switchable keyless basemaps** (CARTO Dark/Voyager, Esri imagery + labels, OpenTopoMap) | Real ward polygons at z9–z20 with @2x tiles, ward search, geolocation, scale bar and fullscreen; Folium is Python-only and can't animate. Optional `VITE_MAPTILER_KEY` upgrades tile detail with no code change |
+| Map | **react-leaflet (2D, instant) + lazy CesiumJS globe (3D)**, 4 switchable keyless basemaps (Esri Dark Gray/Street/Imagery + reference labels, OpenTopoMap) | Real ward polygons at z9–z20 with @2x tiles, ward search, geolocation, scale bar and fullscreen; Folium is Python-only and can't animate. No tile-key slot anywhere — CARTO was dropped after its keyless tiles began returning "API KEY REQUIRED" watermarks with HTTP 200. The globe is a separate lazy chunk and never loads for the citizen phone route |
 | Charts | **Recharts** (or hand-rolled SVG for the hero curve) | Recharts for standard, custom SVG where we animate path-draw |
 | Backend | **FastAPI, unchanged** | Already serves clean JSON — it is the contract |
 

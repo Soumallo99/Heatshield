@@ -141,7 +141,8 @@ heavy animation needs. FastAPI is untouched — it is the data contract. Motion 
 prototyped in `frontend/prototype.html`; full spec in `frontend/UI_SPEC.md`.
 
 **Mobile decision:** PWA, not a native APK. No JDK/Android Studio toolchain, works on iOS too,
-and it wraps the same React build. Manifest + service worker ready in `frontend/pwa/`;
+and it wraps the same React build. Manifest + service worker live in
+`frontend/web/public/` (the single source — the old duplicate `frontend/pwa/` copy is gone);
 guide in `frontend/MOBILE.md`.
 
 ## Running it unattended
@@ -196,8 +197,8 @@ what is measured, what is modelled, what is missing and why, and how to rebuild 
 dataset from source.
 
 Sources: OpenCity/datameet ward polygons (ODbL) · Census 2011 population via Wikidata ·
-OpenStreetMap green/water/buildings · Open-Meteo forecast · basemaps from CARTO,
-Esri World Imagery and OpenTopoMap (all keyless — see [Map basemaps](#map-basemaps)).
+OpenStreetMap green/water/buildings · Open-Meteo forecast · basemaps from Esri
+(Canvas/Imagery/Street) and OpenTopoMap (all keyless — see [Map basemaps](#map-basemaps)).
 
 ## Quickstart
 
@@ -331,14 +332,22 @@ Installable as a PWA (offline + push) — see `frontend/MOBILE.md`.
 
 The ward map is a real slippy map, not a static image: pinch/scroll zoom to z20,
 `@2x` retina tiles, a scale bar, hover readout, ward search, geolocation, fullscreen,
-and a layer switcher with four basemaps — **Dark** (CARTO Dark Matter, default),
-**Streets** (CARTO Voyager: full street names, POIs, transit), **Satellite** (Esri
-World Imagery with a street-label overlay on top — the "hybrid" look), and **Terrain**
+and a layer switcher with four basemaps — **Dark** (Esri Dark Gray Canvas + reference
+place labels, the default, tuned for the risk choropleth), **Streets** (Esri World
+Street Map: full street names, POIs, transit), **Satellite** (Esri World Imagery with
+Esri's boundaries/places reference overlay on top — the "hybrid" look), and **Terrain**
 (OpenTopoMap relief + contours). Ward name/score labels thin out by zoom the way a
 consumer map does, and risk shading can be toggled off to read the streets underneath.
 
 All four are **keyless** — clone and run, no signup, matching the rest of the project.
 Registry lives in [`frontend/web/src/basemaps.js`](frontend/web/src/basemaps.js).
+
+**Why CARTO was removed (2026-09).** Since ~2026-08-28 CARTO's keyless raster endpoints
+answer **HTTP 200 with a watermark PNG that reads "API KEY REQUIRED"** rather than failing.
+That is the one failure mode a client cannot detect: `tileerror` never fires, so the
+`OSM_FALLBACK` never triggers and the map looks *loaded* while every tile demands a key.
+Only providers whose keyless tiles are genuinely keyless are allowed in this registry now,
+which is why it is Esri-only plus OpenTopoMap. Do not re-add a CARTO URL.
 
 **An *"API key required"* tile can never appear.** The optional keyed-provider upgrade
 (`VITE_MAPTILER_KEY` / `VITE_THUNDERFOREST_KEY`) has been removed from the shipped code —
@@ -871,8 +880,9 @@ basemaps in a web app is the **Google Maps Tile API**, which requires a GCP proj
 Scraping `mt{n}.google.com/vt` violates Google's Terms of Service and stays excluded (see the
 comment at the top of `basemaps.js`). If you hold a billing-enabled key, the supported paths are:
 
-1. Keep the keyless CARTO/ESRI basemaps (visually very close, zero cost), or
-2. Take the MapTiler upgrade above (free tier), or
+1. Keep the keyless Esri/OpenTopoMap basemaps (visually very close, zero cost), or
+2. Take a commercial keyed provider (MapTiler, Thunderforest…) as a *your-deployment-only*
+   registry entry, or
 3. Add a `google` entry to the registry in `basemaps.js` using the official Map Tiles API
    with its session flow — a self-contained change to that one file.
 

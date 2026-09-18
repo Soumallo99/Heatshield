@@ -5,7 +5,22 @@
  * https://owner.github.io/Heatshield/, where an absolute /sw.js or /api path
  * escapes the repository subdirectory and silently breaks installation.
  */
-const VERSION = 'heatshield-phone-v1'
+/*
+ * CACHE-BUMP DISCIPLINE — read this before touching anything below.
+ *
+ * The shell strategy is cache-first, which is what makes a cold open on a
+ * phone instant and offline-proof. The cost: an already-installed app keeps
+ * serving the OLD build forever, because index.html and the hashed assets it
+ * points at are answered from the cache without ever asking the network.
+ *
+ * So: EVERY release that changes shipped frontend code bumps VERSION below
+ * (…-v2 -> …-v3). The bump renames every cache, and the activate handler
+ * deletes the caches that do not start with the new VERSION — that is the
+ * whole migration mechanism. If you forget, users stay on the old build until
+ * they clear site data by hand; if you skip it "just this once", the version
+ * number stops meaning anything.
+ */
+const VERSION = 'heatshield-phone-v2'
 const SHELL_CACHE = `${VERSION}-shell`
 const DATA_CACHE = `${VERSION}-data`
 const TILE_CACHE = `${VERSION}-tiles`
@@ -24,12 +39,15 @@ const APP_SHELL = [
 ]
 const OFFLINE_PAGE = scopedURL('offline.html')
 const GEOJSON = scopedURL('data/kolkata_wards.geojson')
+/* Tile hosts get their own bounded cache. Keep this list to providers the
+ * shipped basemap registry (src/basemaps.js) may actually request — CARTO was
+ * removed from both places after ~2026-08-28, when its keyless raster
+ * endpoints started answering HTTP 200 with an "API KEY REQUIRED" watermark.
+ * tile.openstreetmap.org is here because it is the registry's OSM_FALLBACK. */
 const TILE_HOSTS = [
-  'basemaps.cartocdn.com',
   'server.arcgisonline.com',
   'tile.opentopomap.org',
-  'api.maptiler.com',
-  'tile.thunderforest.com',
+  'tile.openstreetmap.org',
 ]
 
 async function trimTileCache() {
