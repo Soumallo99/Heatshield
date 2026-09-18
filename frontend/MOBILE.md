@@ -59,7 +59,7 @@ instant and survives airplane mode. The cost is that an installed app will happi
 last month's build forever. Therefore:
 
 > **Every release that changes shipped frontend code bumps `VERSION` in
-> `frontend/web/public/sw.js`** (`heatshield-phone-v2` → `v3` → …).
+> `frontend/web/public/sw.js`** (`heatshield-phone-v3` → `v4` → …).
 
 The bump renames all three caches (shell/data/tiles), and the `activate` handler deletes
 any cache that does not start with the current `VERSION`. That is the entire migration

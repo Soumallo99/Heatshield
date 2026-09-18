@@ -145,7 +145,8 @@ tests/         164 test cases, incl. the SSR harnesses tests/mobile/render_mobil
    urban form and socioeconomic deprivation — *not* physiological frailty. Do not invent numbers
    to fill the gap, and do not quietly add a proxy that implies otherwise.
 2. **PWA only. No APK, no Capacitor, no Android Studio.** Do not add `npx cap`, Gradle, or Java
-   requirements. `frontend/web/public/sw.js` (`heatshield-v2`) is the offline story. A store-style
+   requirements. `frontend/web/public/sw.js` is the offline story — its cache name is versioned
+   (`heatshield-phone-v<N>`), and every shipped frontend change bumps it. A store-style
    Android APK/AAB is still available **without touching this rule**: package the *deployed* PWA
    through PWABuilder (TWA) — documented in README → "Install on Android". Packaging happens
    outside the repo, so a clone still needs only Python + Node.
