@@ -39,8 +39,23 @@ jobs:
         working-directory: frontend/web
         run: npm ci
 
+      # Failures are echoed as check-run annotations. The raw job log lives on a
+      # host that some networks (and sandboxes) cannot reach; annotations are on
+      # the API, so "which test broke" is answerable from `gh` alone.
       - name: Run tests
-        run: python -m pytest tests -q
+        run: |
+          set -o pipefail
+          if python -m pytest tests -q 2>&1 | tee /tmp/pytest.log; then
+            exit 0
+          fi
+          status=$?
+          grep -E '^(FAILED|ERROR)' /tmp/pytest.log | tail -10 | while IFS= read -r line; do
+            printf '::error title=Pytest failure::%s\n' "${line//\%/%25}"
+          done
+          tail -c 1500 /tmp/pytest.log | sed -e 's/%/%25/g' -e 's/\r//g' | awk '{printf "%s%%0A", $0}' | while IFS= read -r encoded; do
+            printf '::error title=Pytest output (tail)::%s\n' "$encoded"
+          done
+          exit "$status"
 
       # Hits the live Open-Meteo API, so it can fail for reasons outside the
       # code (rate limit, upstream outage). The 52 unit tests above are the
