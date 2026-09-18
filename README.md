@@ -266,17 +266,18 @@ daily_peak(df).head()        # per-ward daily Tmax/Tmin/RH/solar
 ```
 heatshield/
 ├── core/
-│   ├── config.py        # paths, API params, risk bands, Twilio env
-│   └── weather.py       # PHASE 1: fetch -> tidy -> cache
-├── app/
-│   └── main.py          # FastAPI: /health /zones /forecast /thermal/*
+│   ├── config.py        # paths, API params, risk bands, Twilio env, live layers
+│   ├── weather.py       # PHASE 1: fetch -> tidy -> cache
+│   └── live.py          # the globe's three live layers (proxied, keyless)
 ├── frontend/
 │   ├── UI_SPEC.md       # locked stack, routes, animation inventory
 │   ├── MOBILE.md        # PWA guide (install, offline, push, cache-bump discipline)
 │   ├── prototype.html   # animated concept, zero-dependency
 │   └── web/             # Vite + React app
 │       ├── public/      # manifest.webmanifest, sw.js, icons, offline.html (single source)
+│       ├── plugins/     # Vite plugins: site metadata, satellite.js wasm stub
 │       └── src/globe/   # lazy CesiumJS 3D globe (vendored from gods-eye-view, MIT)
+│                        #   + liveData.js / live.js — the opt-in live layers
 ├── data/
 │   ├── wards.csv        # 141 real KMC ward centroids + real Census 2011 demographics
 │   ├── raw/             # timestamped raw JSON from Open-Meteo
@@ -358,6 +359,36 @@ markers in Delhi NCR.
 - **Runtime assets.** `npm run build` (and `npm run dev`) first copies CesiumJS's runtime assets
   into `frontend/web/public/cesium/` via `scripts/copy-cesium-assets.mjs`; that directory is
   gitignored, so no third-party build output is committed.
+
+### Live tracking layers (opt-in)
+
+The globe can overlay three live feeds, and starts with **all three off**:
+
+| Button | Layer | Source | Asked for through |
+|---|---|---|---|
+| **Aircraft** | ADS-B traffic, highest first | adsb.lol (community feeders), 250 nm around the city on screen | `./api/live/aircraft` |
+| **Quakes** | Earthquakes, past day, M2.5+ | USGS Earthquake Hazards Program (public domain) | `./api/live/earthquakes` |
+| **Satellites** | Orbits, propagated in the browser | CelesTrak GP element sets, SGP4 via satellite.js | `./api/live/satellites` |
+
+Four rules hold them together, and each one is tested:
+
+- **The browser never talks to a tracking provider.** The app calls `./api/live/*` on its own
+  origin; the FastAPI process calls the upstream (`core/live.py`). The only third-party hosts
+  this page reaches are the map tile providers, and those are listed in `public/sw.js`.
+- **Keyless, like everything else.** None of the three takes a key, so there is no key to leak.
+- **Nothing is invented.** An upstream that does not answer, an aircraft reporting no position
+  or a fix older than 120 s, and an element set that will not propagate are *dropped*: the
+  payload comes back `available: false` with the reason, and the globe says so where the
+  aircraft would have been. A layer that cannot be drawn is never drawn from a guess.
+- **Additive, never load-bearing.** No number in HeatShield is computed from these layers.
+  They are context for an operator; the choropleth and every figure on it are complete
+  without them — which is also why an upstream failure is a payload that says so rather
+  than a 503.
+
+`HS_LIVE_LAYERS=0` turns all three off for a deployment with no egress: the routes then answer
+"off" instead of waiting on a timeout. The suite runs that way with a faked upstream
+(`tests/test_live_layers.py`, `frontend/web/scripts/test-live-layers.mjs`) — **no test in this
+repository needs the network.**
 
 ### Map basemaps
 

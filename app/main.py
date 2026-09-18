@@ -44,6 +44,7 @@ from core.risk import compute_risk, daily_risk, risk_band, ward_ranking
 from core.subscribers import (add_subscriber as reg_add,
                               load_registry, opt_out as reg_opt_out,
                               recipients_for_ward, registry_stats)
+from core import live as live_layers
 from core.thermal import classify_wbgt, compute_thermal, daily_thermal, heatwave_flags, work_rest
 from core.weather import UpstreamError, daily_peak, get_forecast, load_wards
 
@@ -403,6 +404,10 @@ def root():
             "/ncr/zones", "/ncr/forecast", "/ncr/air-quality", "/ncr/heat-aqi",
             "/ncr/daily", "/ncr/summary", "/ncr/metadata", "/ncr/validation",
             "/ncr/alerts", "/heatwave/advance",
+            # Optional live tracking layers for the operations globe. They are
+            # additive and off by default in the UI; nothing on this platform is
+            # computed from them.
+            "/live/aircraft", "/live/earthquakes", "/live/satellites",
             "/warnings/advance", "/notifications/preview", "/notifications/dispatch",
             "/demo/scenarios", "/demo/zones", "/demo/forecast", "/demo/thermal",
             "/demo/warnings", "/demo/notifications",
@@ -902,6 +907,65 @@ def _kolkata_climatology_note() -> dict:
             "mean must never masquerade as a normal."
         ),
     }
+
+
+# ------------------------------------------------------------------ live layers
+# Three additive layers for the operations globe: aircraft, earthquakes and
+# satellites. The browser calls /api/live/* and this process fetches the three
+# public upstreams (core/live.py), which is what keeps a third-party host out
+# of the browser while the globe can still show something live.
+#
+# Deliberately absent from _CACHEABLE_READS: the response cache cannot tell a
+# successful payload from a degraded one, and an "unavailable" replayed for
+# another two minutes would outlive the outage that caused it. Successful
+# payloads are held briefly inside core/live.py instead, so a burst of
+# operators re-opening the globe is one upstream request, not thirty.
+
+@app.get("/live/aircraft")
+def live_aircraft(
+    lat: float = Query(22.5726, ge=-90, le=90, description="Centre of the search circle"),
+    lon: float = Query(88.3639, ge=-180, le=180, description="Centre of the search circle"),
+    radius_nm: int = Query(250, ge=10, le=250,
+                           description="Radius in nautical miles; adsb.lol accepts up to 250"),
+    limit: int = Query(150, ge=1, le=500, description="Most aircraft to return"),
+):
+    """Live ADS-B traffic around a point, highest first.
+
+    The globe's opt-in layer, not an input to anything: no number on this
+    platform is derived from an aircraft position.
+    """
+    return live_layers.aircraft(lat=lat, lon=lon, radius_nm=radius_nm, limit=limit)
+
+
+@app.get("/live/earthquakes")
+def live_earthquakes(
+    window: Literal["hour", "day", "week"] = Query(
+        "day", description="USGS summary feed; `month` is deliberately not offered"),
+    min_mag: float = Query(2.5, ge=0, le=10, description="Smallest magnitude to return"),
+    limit: int = Query(200, ge=1, le=1000, description="Most events to return"),
+):
+    """USGS events in the last hour/day/week, strongest first."""
+    return live_layers.earthquakes(window=window, min_mag=min_mag, limit=limit)
+
+
+@app.get("/live/satellites")
+def live_satellites(
+    group: str = Query("stations", description="CelesTrak GP group, e.g. stations, weather, gps-ops"),
+    limit: int = Query(60, ge=1, le=300, description="Most element sets to return"),
+):
+    """CelesTrak GP element sets for one group — positions are propagated in the browser.
+
+    Sending element sets rather than positions is deliberate: where a satellite
+    is depends on when you ask, and the globe asks every frame. One element set
+    lasts minutes; one position would be wrong immediately and expensive to keep
+    right.
+    """
+    if group not in live_layers.SATELLITE_GROUPS:
+        # Not a free-form query: `group` reaches CelesTrak's query interface,
+        # so the whitelist is the check that keeps this server from being used
+        # to ask that host for arbitrary things.
+        raise HTTPException(422, f"group must be one of {live_layers.SATELLITE_GROUPS}")
+    return live_layers.satellites(group=group, limit=limit)
 
 
 @app.get("/warnings/advance")

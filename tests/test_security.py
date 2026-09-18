@@ -339,6 +339,14 @@ def test_app_code_contacts_only_the_hosts_it_is_supposed_to(built_site):
         "github.com",                  # provenance link in the demo credits
         "www.openstreetmap.org",       # OSM attribution link in the sources list
                                        # (a link a reader clicks, not a fetch)
+        "celestrak.org",               # the same thing for the globe's live
+                                       # layers: the sources list links each
+                                       # provider's own documentation. The data
+                                       # itself never comes from the browser —
+                                       # /api/live/satellites is proxied by the
+                                       # API, and tests/test_live_layers.py
+                                       # fails if these hosts appear in the
+                                       # globe's own sources as URLs.
         "localhost", "127.0.0.1",      # documented dev-only API target
         "reactjs.org",                 # React's error-decoder URL in a message string
     }

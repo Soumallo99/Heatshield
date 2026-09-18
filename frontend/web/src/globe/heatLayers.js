@@ -200,6 +200,115 @@ export function addZoneMarkers(viewer, { rows = [], selectedZoneId } = {}) {
   return { update, destroy, size: () => entities.length }
 }
 
+/* -------------------------------------------------------------------------- */
+/* Live tracking layers (opt-in; see ../globe/liveData.js)                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * One colour and one label rule per live layer.
+ *
+ * Every point also carries a text label, for the same reason the choropleth
+ * does: colour alone is not information. Which is doubly true here, because an
+ * unlabelled dot over the ocean could be anything.
+ */
+export const LIVE_LAYER_STYLE = {
+  aircraft: { colour: '#7dd3fc', pixelSize: 7, outline: 1.5 },
+  earthquakes: { colour: '#fb923c', pixelSize: 8, outline: 1.5 },
+  satellites: { colour: '#c4b5fd', pixelSize: 6, outline: 1 },
+}
+
+/** What a live row says about itself on the globe. */
+export function liveLabel(layerId, row) {
+  if (layerId === 'aircraft') {
+    return row?.callsign || row?.registration || row?.icao || 'unknown aircraft'
+  }
+  if (layerId === 'earthquakes') {
+    const mag = Number(row?.mag)
+    return `${Number.isFinite(mag) ? `M ${mag.toFixed(1)}` : 'M ?'} · ${row?.place || 'unknown location'}`
+  }
+  if (layerId === 'satellites') {
+    return row?.name || 'unknown object'
+  }
+  return row?.name || ''
+}
+
+/** Metres above the ellipsoid for a live row — satellites are the only high ones. */
+export function liveHeight(layerId, row) {
+  if (layerId === 'satellites') {
+    const km = Number(row?.alt_km)
+    return Number.isFinite(km) ? km * 1000 : 0
+  }
+  if (layerId === 'aircraft') {
+    const metres = Number(row?.alt_m)
+    return Number.isFinite(metres) ? metres : 0
+  }
+  return 0
+}
+
+/**
+ * Draw one live layer.
+ *
+ * Points are drawn with the depth test disabled so an aircraft at 11 km or a
+ * satellite at 420 km is visible from the surface instead of disappearing
+ * behind terrain — the alternative (a camera that has to be above 420 km to
+ * see the layer it just switched on) reads as a broken layer.
+ *
+ * @returns {{ update: (next: object) => void, destroy: () => void, size: () => number }}
+ */
+export function addLivePoints(viewer, { layerId, rows = [] } = {}) {
+  const style = LIVE_LAYER_STYLE[layerId] || LIVE_LAYER_STYLE.aircraft
+  const entities = []
+
+  const add = (row, index) => {
+    const lat = Number(row?.lat)
+    const lon = Number(row?.lon)
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return
+    const magnitude = Number(row?.mag)
+    const pixelSize = layerId === 'earthquakes' && Number.isFinite(magnitude)
+      ? Math.min(26, style.pixelSize + Math.max(0, magnitude) * 2)
+      : style.pixelSize
+    entities.push(
+      viewer.entities.add({
+        id: `live-${layerId}-${index}`,
+        position: Cesium.Cartesian3.fromDegrees(lon, lat, liveHeight(layerId, row)),
+        point: {
+          pixelSize,
+          color: colourFor(style.colour, 0.95),
+          outlineColor: colourFor('#07080d', 0.9),
+          outlineWidth: style.outline,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+        label: {
+          text: liveLabel(layerId, row),
+          ...labelStyle(),
+          // The ward-label distance window (0–90 km) would hide these: a
+          // satellite is 420 km up and an earthquake can be on the far side of
+          // the planet, so the live labels have no distance cut-off at all.
+          distanceDisplayCondition: undefined,
+          // No background either: with a hundred aircraft the boxes merge into
+          // a wall of colour, and the outline already carries the text.
+          backgroundColor: undefined,
+          scaleByDistance: new Cesium.NearFarScalar(200000, 0.9, 25000000, 0.55),
+        },
+      }),
+    )
+  }
+
+  rows.forEach(add)
+
+  function update({ rows: nextRows = rows } = {}) {
+    destroy()
+    ;(nextRows || []).forEach(add)
+  }
+
+  function destroy() {
+    for (const entity of entities) viewer.entities.remove(entity)
+    entities.length = 0
+  }
+
+  return { update, destroy, size: () => entities.length }
+}
+
 /**
  * Hover + click picking for whatever entities are on screen.
  * Returns a teardown function; the handler is owned by the caller's scene.

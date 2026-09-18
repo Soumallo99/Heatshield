@@ -61,6 +61,23 @@ The 2D map (`leaflet`, `react-leaflet`, `@types/leaflet`) keeps its own
 attribution control on screen; every basemap entry in
 `frontend/web/src/basemaps.js` carries its provider's credit string.
 
+### satellite.js — MIT
+
+- Upstream: <https://github.com/shashwatak/satellite-js> · dependency
+  `satellite.js` in `frontend/web/package.json`, reached only through the lazy
+  globe chunk (`src/globe/liveData.js`).
+- Used for one thing: turning a CelesTrak GP element set into a position
+  (SGP4). The alternative — computing positions on the server — would mean an
+  upstream round trip per animation frame.
+- **Its WebAssembly build is deliberately not shipped.** `dist/index.js`
+  re-exports a wasm tree whose dynamic import pulls ~126 kB of Emscripten glue
+  (with the wasm inlined as base64) plus a second pthreads build that spawns
+  Workers from a runtime-derived URL — the kind of asset that goes missing when
+  the app is served from a repository subdirectory. `plugins/satelliteWasmStub.js`
+  replaces that entry with a module whose runtime factories reject with an
+  explanation, so the build uses satellite.js's pure-JavaScript SGP4
+  implementation only. No wasm is fetched, and no worker is spawned.
+
 ---
 
 ## Runtime services (fetched, never bundled)
@@ -75,6 +92,9 @@ attribution control on screen; every basemap entry in
 | **Open-Meteo** | the forecast this whole platform is built on | CC-BY-4.0 (attribution + link) | cited on the dashboard and in `DATA.md` |
 | **KMC ward boundaries** (OpenCity / datameet) | the 141 ward polygons | ODbL 1.0 | globe ward legend + `DATA.md` |
 | **Census of India 2011 PCA** | populations, literacy, workers | Open Government Data | `DATA.md` |
+| **adsb.lol** (`api.adsb.lol`, keyless) | the globe's optional live aircraft layer | Public ADS-B aggregation from volunteer receivers; no key. Coverage follows where the feeders are, so an empty layer is not a bug | globe HUD + the layer's status line; fetched by the API (`/api/live/aircraft`), never by the browser |
+| **USGS Earthquake Hazards Program** (`earthquake.usgs.gov`, keyless) | the globe's optional earthquake layer | US Government work, public domain | as above, via `/api/live/earthquakes` |
+| **CelesTrak** (`celestrak.org`, keyless) | the globe's optional satellite layer — GP element sets, propagated in the browser | Public GP data; see <https://celestrak.org> for terms | as above, via `/api/live/satellites` |
 
 Attribution is drawn, not implied: the 2D maps render the credit of the layer
 actually on screen (bottom-right), and it follows the tiles when they degrade to
@@ -86,6 +106,15 @@ keyless raster endpoints answer HTTP 200 with a watermark PNG reading "API KEY
 REQUIRED" rather than failing, which is undetectable client-side (`tileerror`
 never fires). All map layers now come from Esri + OpenTopoMap, with OSM as the
 fallback. See `frontend/web/src/basemaps.js` for the full reasoning.
+
+**Live tracking layers add no host to the browser.** The globe's three optional
+layers (aircraft, earthquakes, satellites) are served by *this* project's API
+under `/api/live/*`; the FastAPI process calls adsb.lol, the USGS and
+CelesTrak, and the browser only ever talks to HeatShield. So the list of
+third-party origins a visitor's browser reaches is unchanged by them: this site
+plus the map tile providers above. They are also off by default, and an
+upstream that does not answer is reported as unavailable in the layer's own
+status line rather than filled in with a plausible-looking row.
 
 **No API key is required, or possible, anywhere in this project** — 2D or 3D.
 There is no key slot to misconfigure: the globe's source catalogue contains only

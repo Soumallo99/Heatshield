@@ -20,11 +20,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { bandColour } from '../motion.js'
 import { reportError } from '../log.js'
+import { formatAge } from '../live.js'
 import { levelColour, levelLabel, formatNumber, formatTemp, text } from '../demo/contract.js'
 import {
-  addWardChoropleth, addWardLabel, addZoneMarkers, bindPicking,
+  addWardChoropleth, addWardLabel, addZoneMarkers, addLivePoints, bindPicking,
   PRISM_METRES_PER_POINT, PRISM_NOTE,
 } from './heatLayers.js'
+import { LIVE_LAYERS, positionsFor } from './liveData.js'
+import { useLiveLayer } from './live.js'
 // Cesium's own stylesheet. Required, not optional: `.cesium-widget canvas`
 // (100% width/height) and the credit-display layout come from here, so without
 // it the canvas collapses. It is bundled with the globe chunk's CSS, which is
@@ -34,6 +37,20 @@ import './globe.css'
 
 const BAND_LEGEND = ['Normal', 'Caution', 'Danger', 'Critical', 'Extreme']
 const ALERT_LEGEND = ['routine', 'watch', 'warning', 'severe']
+
+/**
+ * Where the live layers look, per city. The aircraft layer is a radius search,
+ * so it has to be centred on the city the operator is actually looking at —
+ * asking for traffic around Kolkata while flying over Delhi would show nothing
+ * and look broken.
+ */
+const LIVE_CENTRES = {
+  kolkata: { lat: 22.5726, lon: 88.3639 },
+  delhi: { lat: 28.6139, lon: 77.209 },
+}
+const LIVE_RADIUS_NM = 250
+/** How often a satellite's position is recomputed from its element set. */
+const ORBIT_TICK_MS = 15000
 
 /** Hovered/selected entity -> the tooltip the operator sees. */
 function tooltipFor(entityId, { wards, rows }) {
@@ -82,6 +99,7 @@ export default function HeatGlobe({
   const choroplethRef = useRef(null)
   const markersRef = useRef(null)
   const labelsRef = useRef([])
+  const livePointsRef = useRef(null)
   const [status, setStatus] = useState('loading')
   const [stacks, setStacks] = useState([])
   const [activeStack, setActiveStack] = useState('esri-imagery')
@@ -89,8 +107,38 @@ export default function HeatGlobe({
   const [hover, setHover] = useState(null)
   const [extrude, setExtrude] = useState(false)
   const [ready, setReady] = useState(false)
+  // Live tracking layers: off until an operator presses one. Off by default
+  // because they are additive — the choropleth, the zone markers and every
+  // number on this globe are complete without them — and because each one is a
+  // request to somebody else's free service.
+  const [liveId, setLiveId] = useState('')
+  const [points, setPoints] = useState([])
+  const [orbitTick, setOrbitTick] = useState(0)
 
   const onError = useCallback((message) => setNotice(message), [])
+
+  const liveParams = useMemo(
+    () => (liveId === 'aircraft'
+      ? { ...(LIVE_CENTRES[area] || LIVE_CENTRES.kolkata), radius_nm: LIVE_RADIUS_NM }
+      : null),
+    [liveId, area],
+  )
+  const live = useLiveLayer(liveId || null, { enabled: Boolean(liveId) && ready, params: liveParams })
+  const liveLayer = LIVE_LAYERS.find((layer) => layer.id === liveId) || null
+
+  const liveStatus = useMemo(() => {
+    if (!liveId) return ''
+    if (live.loading && !points.length) return 'loading…'
+    if (live.unavailable) return live.notice || 'no live data available'
+    if (live.status === 'ready') {
+      const age = formatAge(live.lastUpdated)
+      const shown = `${points.length} shown`
+      const truncated = live.payload?.truncated ? ' — the nearest/strongest only' : ''
+      const note = live.notice ? ` ${live.notice}` : ''
+      return `${shown}${age ? ` · updated ${age}` : ''}${truncated}${note}`
+    }
+    return ''
+  }, [liveId, live.loading, live.unavailable, live.status, live.notice, live.lastUpdated, live.payload, points.length])
 
   /* ---- boot once -------------------------------------------------------- */
   useEffect(() => {
@@ -205,6 +253,53 @@ export default function HeatGlobe({
     scene.requestRender()
   }, [wards, rows, selectedId, extrude, mode, ready])
 
+  /* ---- live layers ------------------------------------------------------ */
+  /* Satellites arrive as element sets, not positions, so their place on the
+     globe is recomputed here on a slow tick: an object in low Earth orbit
+     crosses a degree of longitude every fifteen seconds or so, and a dot that
+     never moves while its label says "ISS" is the wrong kind of comfort.
+     Aircraft and earthquake rows already carry a position and pass straight
+     through (positionsFor returns them unchanged). */
+  useEffect(() => {
+    if (liveId !== 'satellites') return undefined
+    const id = setInterval(() => setOrbitTick((value) => value + 1), ORBIT_TICK_MS)
+    return () => clearInterval(id)
+  }, [liveId])
+
+  useEffect(() => {
+    let cancelled = false
+    if (!liveId || !live.rows.length) {
+      setPoints([])
+      return undefined
+    }
+    positionsFor(liveId, live.rows)
+      .then((rows) => {
+        if (!cancelled) setPoints(rows)
+      })
+      .catch((error) => {
+        reportError('globe-live-layer', error)
+        if (!cancelled) setPoints([])
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [liveId, live.rows, orbitTick])
+
+  useEffect(() => {
+    const scene = sceneRef.current
+    if (!scene || !ready) return undefined
+    livePointsRef.current?.destroy()
+    livePointsRef.current = null
+    if (liveId && points.length) {
+      livePointsRef.current = addLivePoints(scene.viewer, { layerId: liveId, rows: points })
+    }
+    scene.requestRender()
+    return () => {
+      livePointsRef.current?.destroy()
+      livePointsRef.current = null
+    }
+  }, [liveId, points, ready])
+
   /* ---- picking ---------------------------------------------------------- */
   useEffect(() => {
     const scene = sceneRef.current
@@ -282,6 +377,28 @@ export default function HeatGlobe({
               </button>
             ))}
           </div>
+          {/* Live tracking layers. Off by default, one press on, one press
+              off, and the status line below always says what is on screen —
+              including when the honest answer is "nothing, and here is why". */}
+          <div className="globe-chips" role="group" aria-label="Live tracking layers">
+            {LIVE_LAYERS.map((layer) => (
+              <button
+                key={layer.id}
+                type="button"
+                className={`globe-chip${layer.id === liveId ? ' is-on' : ''}`}
+                aria-pressed={layer.id === liveId}
+                title={layer.hint}
+                onClick={() => setLiveId((current) => (current === layer.id ? '' : layer.id))}
+              >
+                {layer.label}
+              </button>
+            ))}
+          </div>
+          {liveId && liveStatus && (
+            <p className="globe-notice" role="status">
+              {liveLayer?.title} — {liveStatus}
+            </p>
+          )}
           <div className="globe-chips">
             <button type="button" className="globe-chip" onClick={flyHome} title="Re-centre the camera">
               ⌂ Recentre
@@ -347,6 +464,9 @@ export default function HeatGlobe({
           contributors · Terrain: Re:Earth / Mapterhorn quantized mesh (CC BY 4.0), ellipsoid on
           failure · Globe: CesiumJS (Apache-2.0) · globe bootstrap derived from gods-eye-view (MIT)
           — see THIRD-PARTY.md. No API key is used or required anywhere on this map.
+          {live.payload?.source?.attribution
+            ? ` Live layer: ${live.payload.source.attribution} — fetched by the HeatShield API, not by your browser.`
+            : null}
         </p>
         {/* Cesium's own credit line renders here; provider attribution is a licence term. */}
         <div ref={creditRef} className="globe-credits" />

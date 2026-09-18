@@ -48,13 +48,22 @@ const SOURCES = [
       'Elevation for the operations globe. If terrain cannot load, the globe degrades to a smooth ellipsoid and announces it rather than pretending the surface is flat ground.',
   },
   {
+    id: 'live-tracking',
+    role: 'Live tracking layers on the operations globe (optional)',
+    title: 'adsb.lol · USGS · CelesTrak',
+    href: 'https://celestrak.org/NORAD/documentation/gp-data-formats.php',
+    licence: 'Public feeds, keyless — fetched by the HeatShield API, never by your browser',
+    detail:
+      'The 3D globe can overlay live aircraft (adsb.lol ADS-B), earthquakes (USGS) and satellite orbits (CelesTrak element sets, propagated in the browser with satellite.js). All three are off until you turn one on, none of them feeds a heat number, and an upstream that does not answer is reported as unavailable rather than filled in.',
+  },
+  {
     id: 'software',
     role: 'Software this site is built on',
-    title: 'CesiumJS · Leaflet · React · gods-eye-view',
+    title: 'CesiumJS · Leaflet · React · gods-eye-view · satellite.js',
     href: 'https://github.com/Soumallo99/Heatshield/blob/main/THIRD-PARTY.md',
-    licence: 'Apache-2.0 (CesiumJS) · BSD-2-Clause (Leaflet) · MIT (React) · MIT (gods-eye-view, pinned snapshot)',
+    licence: 'Apache-2.0 (CesiumJS) · BSD-2-Clause (Leaflet) · MIT (React) · MIT (gods-eye-view, pinned snapshot) · MIT (satellite.js)',
     detail:
-      'The 3D globe’s provider architecture is adapted from gods-eye-view (MIT); the licence text, the pinned commit and the exact carve-outs are listed in THIRD-PARTY.md in the repository.',
+      'The 3D globe’s provider architecture is adapted from gods-eye-view (MIT); the licence text, the pinned commit and the exact carve-outs are listed in THIRD-PARTY.md in the repository. Satellite orbits are propagated with satellite.js (MIT), whose WebAssembly build is deliberately not shipped.',
   },
 ]
 

@@ -19,12 +19,17 @@
  *     no signal.
  *
  * CACHE-BUMP DISCIPLINE still applies to the asset caches: EVERY release that
- * changes shipped frontend code bumps VERSION below (…-v5 -> …-v6). The bump
+ * changes shipped frontend code bumps VERSION below (…-v6 -> …-v7). The bump
  * renames every cache and the activate handler deletes the ones that do not
  * start with the new VERSION, so an installed app reclaims storage instead of
  * accumulating a copy of every build it has ever run.
+ *
+ * v7 ships the globe's live tracking layers. They add no new host to cache —
+ * the app asks this origin's ./api/live/*, which the branch below already
+ * treats network-first, and the three upstreams (adsb.lol, USGS, CelesTrak)
+ * are fetched by the API process, never by the browser.
  */
-const VERSION = 'heatshield-phone-v6'
+const VERSION = 'heatshield-phone-v7'
 const SHELL_CACHE = `${VERSION}-shell`
 const DATA_CACHE = `${VERSION}-data`
 const TILE_CACHE = `${VERSION}-tiles`
