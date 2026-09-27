@@ -41,7 +41,14 @@ def test_large_json_responses_are_compressed(client: TestClient):
     response = client.get("/risk/ranking", headers={"Accept-Encoding": "gzip"})
     assert response.status_code == 200
     assert response.headers.get("content-encoding") == "gzip"
-    assert response.headers.get("vary") == "Accept-Encoding", "a cache must not serve gzip to a client that cannot read it"
+    # Read as a set, not as an equality. CORS is enabled with an explicit
+    # origin list, so starlette appends `Origin` — and it is right to: the
+    # `Access-Control-Allow-Origin` header really does differ per origin, and a
+    # shared cache that ignored it would hand one site's CORS grant to another.
+    # Asserting an exact `"Accept-Encoding"` here was asserting that away.
+    vary = {part.strip().lower() for part in response.headers.get("vary", "").split(",")}
+    assert "accept-encoding" in vary, "a cache must not serve gzip to a client that cannot read it"
+    assert "origin" in vary, "the CORS headers vary by origin, so the cache has to be told"
     # httpx transparently decodes, so the wire size is the Content-Length header.
     assert '"ward_id"' in response.text, "the body must still be the JSON the client asked for"
     wire = int(response.headers["content-length"])

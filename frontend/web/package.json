@@ -12,7 +12,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "copy:cesium": "node scripts/copy-cesium-assets.mjs",
     "a11y": "node scripts/audit-a11y.mjs",
-    "test": "node --test scripts/test-routes.mjs scripts/test-fetch.mjs scripts/test-route-loading.mjs scripts/test-app-sweep.mjs"
+    "test": "node --test scripts/test-basemaps.mjs scripts/test-routes.mjs scripts/test-fetch.mjs scripts/test-route-loading.mjs scripts/test-app-sweep.mjs scripts/check-tile-zoom.mjs",
+    "check:tiles": "node scripts/check-tile-zoom.mjs"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.22",

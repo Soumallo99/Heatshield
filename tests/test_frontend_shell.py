@@ -205,11 +205,101 @@ def test_the_map_shows_the_credit_of_the_layer_on_screen():
     # is rendered by the app and follows the effective — possibly degraded — layer.
     assert 'role="note"' in risk_map
     assert "{effectiveBasemap.attribution}" in risk_map
-    assert "OSM_FALLBACK" in risk_map, "the fallback's own credit must reach the same element"
+    # The fallback's own credit has to reach that same element. The stage
+    # machine lives in basemaps.js now, so RiskMap is checked for delegating to
+    # it and the helper is checked for wiring the fallback's attribution in.
+    assert "basemapFor(basemap, stage)" in risk_map
+    registry = (WEB / "src" / "basemaps.js").read_text(encoding="utf-8")
+    assert "stage === 1 ? OSM_FALLBACK : NO_BASEMAP" in registry
 
     demo_map = (WEB / "src" / "demo" / "DemoMap.jsx").read_text(encoding="utf-8")
     assert "<AttributionControl" in demo_map
-    assert "tilesDegraded ? OSM_FALLBACK.attribution : dark.attribution" in demo_map
+    # The credit follows the *resolved* layer, not the chosen one, so it stays
+    # honest through all three stages including the tileless one.
+    assert "attribution={tiles.attribution}" in demo_map
+
+
+def test_no_basemap_layer_asks_for_retina_tiles():
+    """`detectRetina` looks like a free sharpness win and is actually the
+    reason the map holes out at high zoom.
+
+    Leaflet 1.9 sets `zoomOffset = 1` and then computes the requested zoom as
+    `_clampZoom(zoom) + zoomOffset` — the offset is applied *after* the
+    `maxNativeZoom` clamp (leaflet-src.js, `_getZoomForUrl`). So on any
+    high-DPI screen every provider here is asked for `maxNativeZoom + 1`:
+    z17 from an Esri Canvas cache that Esri documents as ending at z16 for
+    India, z18 from OpenTopoMap whose deepest is z17. Those requests 404,
+    each one firing `tileerror`, until the counter trips and the map swaps
+    itself for a fallback the operator never asked for. None of these
+    providers publishes `@2x` tiles, so the flag was never buying sharpness —
+    only breakage."""
+    for name in ("src/components/RiskMap.jsx", "src/demo/DemoMap.jsx"):
+        source = (WEB / name).read_text(encoding="utf-8")
+        # Matched as a bare prop, not as a substring: the comment explaining
+        # the ban legitimately names the flag, and banning the word would
+        # stop the next person from finding out why.
+        assert not re.search(r"^\s*detectRetina\s*$", source, re.M), (
+            f"{name} re-enabled detectRetina"
+        )
+
+    # …and the reason is recorded where the next person will look.
+    registry = (WEB / "src" / "basemaps.js").read_text(encoding="utf-8")
+    assert "detectRetina" in registry, "the ban is only a comment away from being undone"
+    assert "maxNativeZoom" in registry
+
+
+def test_the_map_can_never_dead_end_because_it_has_a_tileless_stage():
+    """The CARTO failure mode is a tile that answers 200 *with* a watermark,
+    which no client can detect. The only airtight answer is a stage that
+    requests no tiles at all: nothing served, nothing to stamp."""
+    registry = (WEB / "src" / "basemaps.js").read_text(encoding="utf-8")
+    risk_map = (WEB / "src" / "components" / "RiskMap.jsx").read_text(encoding="utf-8")
+    demo_map = (WEB / "src" / "demo" / "DemoMap.jsx").read_text(encoding="utf-8")
+
+    assert "export const NO_BASEMAP" in registry
+    block = registry.split("export const NO_BASEMAP", 1)[1].split("}", 1)[0]
+    assert "url: null" in block, "the tileless stage has to be genuinely tileless"
+
+    # Offered as a choice, not only as an emergency — otherwise an operator on
+    # a bad connection has to wait for the map to notice.
+    assert "NO_BASEMAP," in registry
+    assert "basemapFor" in risk_map and "basemapFor" in demo_map
+
+    # A `null` url reaching <TileLayer url={null}/> throws in Leaflet, so both
+    # maps must gate the layer on it.
+    assert "{effectiveBasemap.url && (" in risk_map
+    assert "{tiles.url && (" in demo_map
+
+
+def test_tile_health_is_measured_per_stage_and_only_ever_steps_down():
+    """Two failure modes this locks out:
+
+    - counting raw errors trips the fallback on the couple of 404s you always
+      get at the ragged edge of a provider's coverage;
+    - letting the stage go back up makes the map oscillate between providers
+      while a flaky network flaps, which is worse than picking one.
+    """
+    registry = (WEB / "src" / "basemaps.js").read_text(encoding="utf-8")
+    assert "export const TILE_FAIL_LIMIT" in registry
+
+    for name in ("src/components/RiskMap.jsx", "src/demo/DemoMap.jsx"):
+        source = (WEB / name).read_text(encoding="utf-8")
+        assert "noteTileResult(1)" in source, f"{name} does not count a failed tile"
+        assert "noteTileResult(-1)" in source, f"{name} does not let a good tile cancel a bad one"
+        # Monotonic: `next > s ? next : s` and never the reverse.
+        assert "(next > s ? next : s)" in source, f"{name} can un-degrade and then oscillate"
+
+
+def test_the_degradation_notice_names_the_stage_the_map_is_in():
+    """The map used to change provider silently. An operator comparing two
+    days could not tell why the background looked different."""
+    registry = (WEB / "src" / "basemaps.js").read_text(encoding="utf-8")
+    assert "export function degradeNotice" in registry
+
+    risk_map = (WEB / "src" / "components" / "RiskMap.jsx").read_text(encoding="utf-8")
+    assert 'role="status"' in risk_map
+    assert "{degradeNotice(basemap, stage)}" in risk_map
+    assert "ward boundaries only" in registry, "the tileless stage needs its own sentence"
 
 
 def test_the_worker_caches_the_same_tile_hosts_the_maps_request():

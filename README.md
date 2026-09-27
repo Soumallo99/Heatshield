@@ -1206,18 +1206,68 @@ python scripts/warmup.py --url "$BASE"                             # heavy reads
 ### Maps are keyless — no "API key required", ever
 
 Every map (operations dashboard, Heat Risk Demo, Delhi NCR ops) renders out of the box with
-keyless CARTO/Esri/OpenTopoMap tiles. The former *optional* commercial-key upgrade was
-**removed from the shipped code entirely**: a misconfigured, expired or placeholder key could
-paint the map with the provider's *"API key required"* error tiles, and a prototype must never
-depend on a key nobody has. There is now no tile-key slot anywhere — `frontend/web/src/basemaps.js`
-contains only keyless providers plus `OSM_FALLBACK` (automatic OpenStreetMap tiles on a
-different CDN when one is blocked, with an honest on-map notice; a test enforces that no keyed
-provider can creep back in).
+keyless tiles. There is no tile-key slot anywhere in the shipped code: a misconfigured, expired
+or placeholder key could paint the map with the provider's *"API key required"* error tiles, and
+a prototype must never depend on a key nobody has.
 
-If you genuinely want commercial tiles **for your own deployment**, add an entry to the
-registry in `basemaps.js` yourself — a plain `{ id, label, hint, url, attribution, … }` object
-consumed by `<TileLayer/>` — and keep the `tileerror` fallback behaviour in
-`RiskMap.jsx`/`DemoMap.jsx` intact so a bad key can never blank the map again.
+`frontend/web/src/basemaps.js` is the single registry, and it holds only providers whose keyless
+tiles are genuinely keyless:
+
+| Entry | Provider | Deepest zoom |
+| --- | --- | --- |
+| Dark (default) | Esri Dark Gray Canvas + place labels | z16 in India |
+| Streets | Esri World Street Map | z19 |
+| Satellite | Esri World Imagery + boundaries/places | z19 |
+| Terrain | OpenTopoMap | z17 |
+| Wards only | **no tiles at all** — local ward polygons | — |
+
+**CARTO is deliberately absent and must not come back.** Around 2026-08-28 its keyless raster
+endpoints began answering HTTP 200 with a watermark PNG reading "API KEY REQUIRED" instead of
+failing. A failed request is detectable; a *successful* watermark is not — the map would have
+looked loaded while every tile shouted for a key. Google's `mt{n}.google.com/vt` is excluded for
+the same class of reason (see below).
+
+### Three stages, and the last one cannot be watermarked
+
+1. the provider you picked;
+2. OpenStreetMap on a different CDN, if that provider stops answering;
+3. **Wards only** — zero tile requests.
+
+Stage 3 is the guarantee. A watermark can only land on a pixel somebody else served, so with
+`url: null` there is no third party left in a position to stamp anything. It is fully functional
+rather than a grey shell: all 141 ward polygons, the risk choropleth, labels, hover and selection
+are local vector data, and the service worker precaches `data/kolkata_wards.geojson` on install —
+so this is also the one view that still answers on a phone with no signal. It is offered as an
+ordinary choice in the layer switcher, not held back as an emergency.
+
+The stage is measured, not guessed: a loaded tile cancels out a failed one, so the couple of 404s
+you always get at the ragged edge of a provider's coverage cannot throw away a working basemap —
+only a CDN that is genuinely not answering accumulates failures. The stage never steps back up, so
+a flapping network cannot bounce you between providers mid-shift, and an on-map notice names the
+stage you are actually in.
+
+### Two bugs worth knowing about
+
+Both made the map look fine in review and wrong on a real screen.
+
+**`detectRetina` is off everywhere.** It sets Leaflet's `zoomOffset = 1`, and Leaflet adds that
+offset *after* the `maxNativeZoom` clamp, so on any high-DPI screen every provider was asked for
+one zoom level deeper than it has — z17 from an Esri cache Esri documents as ending at z16 for
+India. Those requests 404, and each one tripped the failure counter until the map swapped itself
+for a fallback the operator never asked for. It is invisible on a 1× monitor, which is why it
+survived review. `npm test` now proves it against the real Leaflet build
+(`scripts/check-tile-zoom.mjs`). The trade is stated plainly: context tiles are mildly soft on a
+retina screen, because none of these providers publishes `@2x` tiles. The choropleth is SVG, stays
+razor sharp, and is what carries the information.
+
+**Attribution follows the layer actually drawn.** Each credit string is copied from the
+`copyrightText` of the ArcGIS service it belongs to (checked against
+`…/<service>/MapServer?f=json`); the previous version credited satellite imagery on a basemap that
+contained none, which is both wrong and a breach of the terms the tiles are used under.
+
+If you genuinely want commercial tiles **for your own deployment**, add an entry to the registry
+in `basemaps.js` yourself — a plain `{ id, label, hint, url, attribution, … }` object consumed by
+`<TileLayer/>` — and keep the staged fallback intact so a bad key can never blank the map again.
 
 ### Using Google tiles (and why there is no Google key field)
 

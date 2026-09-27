@@ -53,7 +53,7 @@ Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
 | Ward-hours fetched per cycle | **20,304** (141 × 144 h) |
 | Ward-days scored | **846** (141 × 6 days) — see the window note below |
 | Open-Meteo requests per cycle | **4** (batched 40 coords/request) |
-| Tests | **172 passed** (`HS_FORECAST_DAYS=5`) |
+| Tests | **374 passed** (`HS_FORECAST_DAYS=5`) |
 | `/zones` count | **141** |
 | Alert threshold | **60.0** (`DEFAULT_RISK_THRESHOLD` in `core/alerts.py`) |
 | Default min lead | **1 day** (`DEFAULT_MIN_LEAD_DAYS`) |
@@ -64,6 +64,10 @@ Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
 | Alert languages | **3** wired (`en`, `hi`, `bn`) of the **12** SACHET publishes (`core/i18n.py`) |
 | CAP feed | **CAP 1.2** — `/alerts/cap`, `/alerts/cap.xml`, `/alerts/geojson`; synthetic events refused |
 | City surfaces | Dashboard **and** Citizen tab both switch **Kolkata ↔ Delhi NCR** (`DelhiOps.jsx` reuses the demo contract over live `/warnings/advance`; `/citizen/kolkata` ships the WBGT-led Kolkata brief) |
+| Basemaps | **4 keyless tile providers + 1 tileless stage** (`frontend/web/src/basemaps.js`). No key slot exists anywhere. CARTO is banned: since ~2026-08-28 its keyless tiles answer HTTP 200 with an "API KEY REQUIRED" watermark, which no client can detect |
+| Map degradation | **3 stages** — chosen provider → OpenStreetMap → **no tiles at all**. Stage 2 issues zero tile requests, so nothing can watermark, key-gate or CDN-block the map; it draws local ward polygons and is precached by the service worker, so it is the one view that works with no signal |
+| `detectRetina` | **off on every tile layer.** Leaflet adds its `zoomOffset` *after* the `maxNativeZoom` clamp, so on a high-DPI screen the flag asks every provider for one level deeper than it has — 404s, then a silent fallback swap. Proven by `npm test` (`scripts/check-tile-zoom.mjs`) |
+| Stale forecast cache | `/forecast` serves the most recent rows on record with **`stale: true`** and a `notice`. It used to index row 0 of an empty window and 500 every time the refresh cron missed a run |
 
 A full cycle takes **~4 seconds**. If yours takes minutes, you have un-batched the API calls.
 

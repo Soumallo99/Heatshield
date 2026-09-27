@@ -367,6 +367,28 @@ def _window(df: pd.DataFrame, hours: int, ward_id: int | None = None) -> pd.Data
     return df[df["timestamp_local"] >= _now_local()].head(hours)
 
 
+def _latest_window(df: pd.DataFrame, hours: int, ward_id: int | None = None) -> pd.DataFrame:
+    """
+    The most recent `hours` hourly timestamps that are already in the past.
+
+    The stale-cache fallback for `/forecast`: once a cached run is older than
+    its own horizon the forward-looking window is empty, and the route used to
+    answer that by indexing row 0 of an empty frame — an IndexError, i.e. a 500
+    on the flagship route, every time the refresh cron missed a run.
+
+    The ward filter runs first for the same reason it does in `_window`, and
+    the timestamps are picked by value rather than with `head()`/`tail()` so a
+    ward-major frame cannot collapse to the last ward in the file.
+    """
+    if ward_id is not None:
+        df = df[df["ward_id"] == ward_id]
+    past = df[df["timestamp_local"] < _now_local()]
+    if past.empty:
+        return past
+    stamps = past["timestamp_local"].sort_values().unique()[-hours:]
+    return past[past["timestamp_local"].isin(stamps)]
+
+
 def _records(frame: pd.DataFrame, *, timestamp_columns: tuple[str, ...] = ("timestamp_local",),
              date_columns: tuple[str, ...] = ("date",)) -> list[dict]:
     """JSON-safe records for provider data.
@@ -460,7 +482,21 @@ def forecast(
 
     if ward_id is not None and ward_id not in set(df["ward_id"]):
         raise HTTPException(404, f"ward_id {ward_id} not found")
-    df = _window(df, hours, ward_id)
+
+    full = df
+    df = _window(full, hours, ward_id)
+    # A cache older than its own horizon has nothing left in "the next N
+    # hours". Falling back to the most recent rows keeps the dashboard alive;
+    # calling it out in the payload is what keeps that from being a lie — an
+    # operator is told the numbers are behind, instead of being quietly handed
+    # last week's weather dressed as a forecast.
+    stale = df.empty
+    if stale:
+        df = _latest_window(full, hours, ward_id)
+        if df.empty:
+            raise HTTPException(
+                404, "No forecast rows available — the cache is empty. Run: python -m scripts.refresh"
+            )
 
     out = df.copy()
     out["timestamp_local"] = out["timestamp_local"].dt.strftime("%Y-%m-%dT%H:%M")
@@ -468,7 +504,13 @@ def forecast(
     return {
         "rows": len(out),
         "window": [out["timestamp_local"].min(), out["timestamp_local"].max()],
-        "fetched_at": df["fetched_at"].iloc[0].isoformat(),
+        "fetched_at": pd.Timestamp(df["fetched_at"].iloc[0]).isoformat(),
+        "stale": stale,
+        "notice": (
+            "Cache is older than the requested window — showing the most recent "
+            "rows on record. Run: python -m scripts.refresh"
+            if stale else ""
+        ),
         "data": out.to_dict(orient="records"),
     }
 
