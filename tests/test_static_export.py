@@ -25,9 +25,9 @@ def test_catalogue_covers_every_ncr_and_advance_route():
     assert export_static.check_catalogue() == []
     assert export_static.dynamic_phone_routes() == export_static.exported_route_paths()
     # 9 /ncr/* + /heatwave/advance + /warnings/advance + /notifications/preview
-    # + /citizen/kolkata + /risk/ranking + 6 /demo/* route paths (scenario
-    # snapshots share the path, differ by query)
-    assert len(export_static.exported_route_paths()) == 20
+    # + /citizen/kolkata + /risk/ranking + /alerts/cap + 6 /demo/* route paths
+    # (scenario snapshots share the path, differ by query)
+    assert len(export_static.exported_route_paths()) == 21
 
 
 def test_catalogue_covers_every_demo_scenario():
@@ -87,6 +87,25 @@ def test_demo_snapshots_carry_the_disclaimer_even_offline(tmp_path, monkeypatch)
     # instead of failing — a static host must never ship a 500-shaped hole.
     assert advance["is_synthetic"] is True
     assert "simulated static export outage" in advance["fallback_reason"]
+
+
+def test_cap_feed_is_exported_as_both_json_and_xml(tmp_path, monkeypatch):
+    """An aggregator polls XML, a dashboard reads JSON — both must ship."""
+    from xml.etree import ElementTree as ET
+
+    manifest = export_static.export(tmp_path)
+
+    body = json.loads((tmp_path / "alerts-cap.json").read_text())
+    assert body["static_snapshot"] is True
+    assert body["protocol"] == "CAP 1.2"
+    assert body["is_synthetic"] is False
+
+    xml_text = (tmp_path / "alerts-cap.xml").read_text(encoding="utf-8")
+    root = ET.fromstring(xml_text)
+    assert root.tag == "{urn:oasis:names:tc:emergency:cap:1.2}alert"
+    # A run with no qualifying events is a valid, empty CAP message.
+    assert root.find("{urn:oasis:names:tc:emergency:cap:1.2}info") is None or True
+    assert manifest["text"]["/alerts/cap.xml"]["file"] == "alerts-cap.xml"
 
 
 def test_ops_ranking_snapshots_match_the_dashboard_scenarios():

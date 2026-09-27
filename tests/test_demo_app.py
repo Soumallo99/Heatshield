@@ -207,7 +207,15 @@ def test_both_cities_are_switchable_in_dashboard_and_citizen_tab():
     assert "cartocdn" not in lowered
     assert not (WEB / ".env.example").exists()  # keyed-tile env slot removed
     risk_map = (WEB / "src" / "components" / "RiskMap.jsx").read_text(encoding="utf-8")
-    assert "OSM_FALLBACK" in risk_map and "tileerror" in risk_map
+    # The degradation ladder moved into basemaps.js, so RiskMap is checked
+    # for delegating to it and for counting tile outcomes; the OpenStreetMap
+    # rung is checked where it is now defined.
+    assert "basemapFor(basemap, stage)" in risk_map
+    assert "tileerror" in risk_map and "tileload" in risk_map
+    assert "stage === 1 ? OSM_FALLBACK : NO_BASEMAP" in basemaps_src
+    # …and the ladder ends somewhere unbreakable: a stage that requests no
+    # tiles cannot be watermarked, key-gated or CDN-blocked.
+    assert "url: null" in basemaps_src
     # Every other tile surface must take its providers from the same registry.
     demo_map = (WEB / "src" / "demo" / "DemoMap.jsx").read_text(encoding="utf-8")
     assert "getBasemap('dark')" in demo_map and "cartocdn" not in demo_map.lower()

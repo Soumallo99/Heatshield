@@ -53,14 +53,21 @@ Editor setup: `VSCODE.md` (VS Code) or `ANTIGRAVITY.md` (Google Antigravity).
 | Ward-hours fetched per cycle | **20,304** (141 × 144 h) |
 | Ward-days scored | **846** (141 × 6 days) — see the window note below |
 | Open-Meteo requests per cycle | **4** (batched 40 coords/request) |
-| Tests | **172 passed** (`HS_FORECAST_DAYS=5`) |
+| Tests | **374 passed** (`HS_FORECAST_DAYS=5`) |
 | `/zones` count | **141** |
 | Alert threshold | **60.0** (`DEFAULT_RISK_THRESHOLD` in `core/alerts.py`) |
 | Default min lead | **1 day** (`DEFAULT_MIN_LEAD_DAYS`) |
 | Demo scenarios | **4** — fixed clock, issued **2026-05-18T06:00 IST**, 8 zones × leads 0–5 = 48 rows each |
 | Demo disclaimer | defined **once**, in `core/warnings.py` (`DEMO_DISCLAIMER`) |
-| Static exports | **31** files in `frontend/web/public/static-api/` (`scripts/export_static.py`) |
+| Static exports | one file per route in `scripts/export_static.EXPORTS` (JSON) + the CAP XML + `citizen.json` + `manifest.json` — `--check` asserts the catalogue equals the live FastAPI route table |
+| UTCI polynomial | **210** terms, total degree **6** (`core/utci.py`) — verified against the published reference to ~1e-12 °C |
+| Alert languages | **3** wired (`en`, `hi`, `bn`) of the **12** SACHET publishes (`core/i18n.py`) |
+| CAP feed | **CAP 1.2** — `/alerts/cap`, `/alerts/cap.xml`, `/alerts/geojson`; synthetic events refused |
 | City surfaces | Dashboard **and** Citizen tab both switch **Kolkata ↔ Delhi NCR** (`DelhiOps.jsx` reuses the demo contract over live `/warnings/advance`; `/citizen/kolkata` ships the WBGT-led Kolkata brief) |
+| Basemaps | **4 keyless tile providers + 1 tileless stage** (`frontend/web/src/basemaps.js`). No key slot exists anywhere. CARTO is banned: since ~2026-08-28 its keyless tiles answer HTTP 200 with an "API KEY REQUIRED" watermark, which no client can detect |
+| Map degradation | **3 stages** — chosen provider → OpenStreetMap → **no tiles at all**. Stage 2 issues zero tile requests, so nothing can watermark, key-gate or CDN-block the map; it draws local ward polygons and is precached by the service worker, so it is the one view that works with no signal |
+| `detectRetina` | **off on every tile layer.** Leaflet adds its `zoomOffset` *after* the `maxNativeZoom` clamp, so on a high-DPI screen the flag asks every provider for one level deeper than it has — 404s, then a silent fallback swap. Proven by `npm test` (`scripts/check-tile-zoom.mjs`) |
+| Stale forecast cache | `/forecast` serves the most recent rows on record with **`stale: true`** and a `notice`. It used to index row 0 of an empty window and 500 every time the refresh cron missed a run |
 
 A full cycle takes **~4 seconds**. If yours takes minutes, you have un-batched the API calls.
 
@@ -97,6 +104,19 @@ weather, B = POD/FAR/CSI verification) · `scripts/build_wards.py` + `scripts/bu
 | Globe temp `Tg` | `Ta + (ε·S) / (4·(h_conv + h_rad))`, `Nu = 2 + 0.6·√Re·Pr^⅓` (Ranz–Marshall). Wind floored at 0.13 m/s. **The `/4` is not a typo** |
 | WBGT | `0.7·Tw + 0.2·Tg + 0.1·Ta` when solar > 20, else `0.7·Tw + 0.3·Ta` |
 | IMD heatwave (coastal) | Heatwave if `Tmax ≥ 37 °C` or departure `≥ 4.5 °C`; severe if `≥ 40 °C` or `≥ 6.4 °C` |
+| **UTCI** | `Ta + Offset(Ta, Tmrt − Ta, va₁₀, e)` — Bröde et al. (2012) 6th-order polynomial, 210 coefficients. `Tmrt` by ISO 7726 from the **same** globe temperature as `Tg`. Inputs clamped to the published envelope, never extrapolated |
+
+### Three indices, three jobs — do not collapse them (`core/utci.py`)
+
+| Index | Audience | Drives |
+|---|---|---|
+| **WBGT** (ISO 7243) | occupational | the risk model: hazard score, work/rest |
+| **Heat Index** (NWS) | public, English | SMS copy |
+| **UTCI** (Bröde 2012) | public health | CAP severity, population stress category |
+
+UTCI is **not** an input to the risk score. It shares the globe temperature with
+WBGT so the two radiation-aware metrics cannot disagree about the sun, but WBGT
+stays the model driver.
 
 ### Risk (`core/risk.py`)
 
@@ -123,11 +143,14 @@ horizon end. Changing that silently changes the headline number.
 ```
 core/          weather · thermal · risk · alerts · subscribers · config      ← Kolkata engine
                coupled · htsi · health_impact · warnings · demo · notify     ← NCR impact engine
+               utci · cap · geo · i18n · datagov                             ← Phase 8 interop
 app/main.py    FastAPI: /health /zones /risk/ranking /alerts/* /subscribers* /ncr/*
                /heatwave/advance /warnings/advance /notifications/* /demo/*
                /citizen/kolkata /docs
 scripts/       refresh · schedule · hindcast · build_wards · build_demographics · package
                build_climatology · validate_coupled_aqi · export_static · dispatch_notifications
+               gen_fixtures (synthetic load-test rows, fenced out of the pipeline)
+ops/           console.py — read-only Streamlit operator view over data/processed/*.csv
 frontend/web/  Vite + React + Framer Motion + Tailwind dashboard
                src/mobile (citizen phone PWA) · src/demo (Heat Risk Demo)
 data/          wards, census, processed outputs, cache, subscribers.csv,
@@ -196,17 +219,28 @@ tests/         164 test cases, incl. the SSR harnesses tests/mobile/render_mobil
 
 Ordered roughly by value to the judges:
 
-1. **CAP / GeoJSON alert output** and a documented hand-off to **SACHET** (`sachet.ndma.gov.in`,
-   NDMA's national CAP portal, 12 regional languages). Twilio is the pilot channel only.
-2. **UTCI** — the SIH problem statement names both WBGT *and* UTCI; only WBGT is implemented.
-3. **NCMRWF / IMD NCUM ingestion** instead of Open-Meteo. Engineering is trivial (only
+**Closed in Phase 8** — see [`INTEGRATIONS.md`](INTEGRATIONS.md) for the reasoning and
+the resource-by-resource triage:
+
+1. ~~**CAP / GeoJSON alert output** + SACHET hand-off~~ → `core/cap.py`, `core/geo.py`;
+   served at `/alerts/cap`, `/alerts/cap.xml`, `/alerts/geojson`.
+2. ~~**UTCI**~~ → `core/utci.py`, wired through thermal · risk · htsi · the API.
+3. ~~**Hindi/Bengali alert copy**~~ → `core/i18n.py`, wired through
+   `core/alerts.compose_message()` and the CAP `<info>` blocks.
+
+Still open, roughly by value:
+
+1. **NCMRWF / IMD NCUM ingestion** instead of Open-Meteo. Engineering is trivial (only
    `core/weather.py` changes); access is an MoU, not a code problem.
-4. **Bias correction / ensemble spread / real-time assimilation** — currently a deterministic
-   single-model run with no uncertainty quantified end-to-end.
-5. **Scale-out above ~10,000 wards:** CSV → PostGIS, parquet → Redis, one pandas process →
+2. **Bias correction / ensemble spread / real-time assimilation** — currently a deterministic
+   single-model run with no uncertainty quantified end-to-end. **Closer now:** `core/datagov.py`
+   catalogues the IMD station observations this needs, and `scripts/hindcast.py` (B) already
+   computes POD/FAR/CSI once observed data is wired in.
+3. **Scale-out above ~10,000 wards:** CSV → PostGIS, parquet → Redis, one pandas process →
    chunked/parallel. See the numbers in section 8.
-6. **Hindi/Bengali alert copy** — currently English-only.
-7. **Real mortality calibration.** The boundary is now formalised in `core/health_impact.py`:
+4. **Nine of SACHET's twelve languages** — each needs a reviewer, not a machine. Add them to
+   `core/i18n._TEMPLATES` as they are signed off; the CAP feed picks them up automatically.
+5. **Real mortality calibration.** The boundary is now formalised in `core/health_impact.py`:
    three explicit model statuses, a strict observed-outcome CSV schema
    (`load_health_outcomes`) and an evaluation-report requirement — the repo ships only labelled
    synthetic examples, so `validated_observed_outcome_model` is unreachable by design and
@@ -240,6 +274,8 @@ city**, so cross-city ward scores are not comparable without per-city calibratio
 | `data/census2011_ward_demographics.csv` | Census 2011 PCA, Kolkata | **Real** |
 | `data/processed/forecast_hourly.csv` | Open-Meteo, fetched live | **Real, live** |
 | `data/mortality_labels.SYNTHETIC.example.csv` | Generated for validation | **Synthetic** — labelled as such |
+| UTCI coefficient table | Bröde et al. (2012), doi:10.1007/s00484-011-0454-1, ESM 3 | **Real** — verified against the Apache-2.0 reference implementation to ~1e-12 °C (see `THIRD-PARTY.md`) |
+| Ward geometry for CAP areas | `frontend/web/public/data/kolkata_wards.geojson` (datameet) | **Real**, ODbL — 141 polygons; missing ⇒ area-sized circles, reported in `geometry.shape` |
 | Population 60+, slum share | — | **Absent on purpose** |
 
 Full detail in `DATA.md`.
@@ -249,10 +285,13 @@ Full detail in `DATA.md`.
 ## 10. Before you open a PR
 
 ```bash
-HS_FORECAST_DAYS=5 python -m pytest -q                    # must be 172 passed
+HS_FORECAST_DAYS=5 python -m pytest -q                    # must be green (see the count in CI)
 python -m scripts.refresh                                 # must still print 20,304 / 846
 HS_FORECAST_DAYS=5 python -m scripts.export_static --check # catalogue == FastAPI routes
 HS_FORECAST_DAYS=5 python -m scripts.export_static        # refresh public/static-api/
+python -m core.utci                                       # UTCI validation table
+python -m core.cap                                        # CAP XML + GeoJSON + SACHET hand-off
+python -m core.i18n                                       # one warning, three languages
 cd frontend/web && npm run build                          # must succeed
 cd frontend/web && npm run budget                         # phone cold-open gate (120 KiB gzip)
 ```
@@ -291,6 +330,13 @@ live_send_allowed()   # needs BOTH:
 
 If either is missing, `dispatch(events, dry_run=False)` **raises `PermissionError`** with a
 readable reason. It fails loudly — it never silently swallows the request, and it never sends.
+
+### The second optional credential
+
+**`HS_DATAGOV_API_KEY`** enables the data.gov.in adapter (`core/datagov.py`) — the path
+to the demographic gaps `DATA.md` documents as absent. It is optional in the strict
+sense: with no key, `fetch_resource()` raises `NotConfiguredError` and **nothing else
+in the pipeline changes**. Never make a *warning* depend on it.
 
 ### If you're asked to add a keyed provider
 

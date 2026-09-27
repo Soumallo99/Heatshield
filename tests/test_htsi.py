@@ -157,10 +157,18 @@ def inspect_signature(function) -> str:
     return str(inspect.signature(function))
 
 
-def test_utci_is_explicitly_unavailable_rather_than_faked():
+def test_utci_is_documented_with_a_real_formula_and_a_validity_envelope():
+    """UTCI used to be a placeholder saying 'NOT COMPUTED'. It is computed now,
+    so the metadata must carry the formula, the envelope and the honest
+    limitations — the same standard every other metric in this layer meets."""
     utci_meta = HTSI_METADATA["metrics"]["utci_c"]
-    assert utci_meta["formula"] is None
-    assert "NOT COMPUTED" in utci_meta["limitations"]
+    assert utci_meta["formula"]
+    assert "Bröde" in utci_meta["formula"]
+    assert utci_meta["quality_best_case"] == QUALITY_ESTIMATED
+    assert utci_meta["validity_envelope"]
+    # the limitations have to say which way each fallback biases the number
+    assert "OVERSTATES" in utci_meta["limitations"]
+    assert "UNDERSTATES" in utci_meta["limitations"]
 
 
 def test_wbgt_estimate_consistency_with_core_physics():

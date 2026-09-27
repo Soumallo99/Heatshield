@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
+import { ALERT_LANGUAGES, capFeedURL } from '../api'
 import { bandColour, EASE, spring } from '../motion'
 
 const DAYNAME = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -10,13 +11,46 @@ function fmtDate(d) {
 }
 
 /**
+ * The language the warning goes out in.
+ *
+ * Only the words switch — the server keeps every number, unit and date format
+ * identical across languages, so a resident reading Bengali sees the same
+ * 41.2 °C an English reader does.
+ */
+function LanguageSwitcher({ lang, onLang }) {
+  return (
+    <div
+      className="flex gap-1 rounded-full border border-white/10 bg-white/[.04] p-1"
+      role="group"
+      aria-label="Alert language"
+    >
+      {ALERT_LANGUAGES.map(([code, label]) => (
+        <button
+          key={code}
+          onClick={() => onLang(code)}
+          aria-pressed={lang === code}
+          title={code === 'en'
+            ? 'English — authoritative copy'
+            : `${label} — operational draft, reviewed by the issuing authority before a live send`}
+          className={`relative rounded-full px-2.5 py-1 text-[11px] transition ${lang === code
+            ? 'bg-white/[.14] text-white'
+            : 'text-white/62 hover:text-white/80'}`}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+/**
  * Alert planning panel.
  *
  * The whole point of the system is lead time, so lead time is the headline number.
  * Each row animates in on a stagger, and the lead badge pulses — it is the one
  * figure that says "there is still time to act".
  */
-export default function AlertsPanel({ alerts, scenario, onScenario }) {
+export default function AlertsPanel({ alerts, scenario, onScenario, lang = 'en', onLang }) {
   const rows = alerts?.data || []
   const total = alerts?.total_events ?? 0
   const pending = alerts?.pending_after_dedupe ?? 0
@@ -39,6 +73,7 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
         </div>
 
         <div className="flex items-center gap-3">
+          {onLang && <LanguageSwitcher lang={lang} onLang={onLang} />}
           {total > 0 && (
             <motion.div
               className="flex items-baseline gap-1.5 rounded-full border border-orange-500/40 bg-orange-500/10 px-3 py-1"
@@ -115,6 +150,7 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
                       <div className="truncate text-[12.5px] font-medium text-white/85">{r.ward_name}</div>
                       <div className="mt-0.5 text-[10.5px] text-white/60">
                         {fmtDate(r.event_date)} · WBGT {r.wbgt_peak_c?.toFixed(1)}°
+                        {r.utci_peak_c != null && <> · UTCI {r.utci_peak_c.toFixed(1)}°</>}
                       </div>
                     </div>
 
@@ -142,6 +178,14 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
                     <span className="tnum text-[10.5px] text-white/60">
                       risk {Math.round(r.risk_score)} · {r.exposed_population?.toLocaleString('en-IN')} exposed
                     </span>
+                    {r.sms_segments > 1 && (
+                      <span
+                        className="tnum rounded bg-white/[.06] px-1.5 py-0.5 text-[9.5px] text-white/55"
+                        title="SMS segments this message costs. Devanagari and Bengali are UCS-2, so a segment holds 70 characters instead of 160."
+                      >
+                        {r.sms_segments} SMS
+                      </span>
+                    )}
                   </div>
 
                   {/* lead-time bar: how much warning remains, visually */}
@@ -167,6 +211,20 @@ export default function AlertsPanel({ alerts, scenario, onScenario }) {
           credentials are configured and dispatch is invoked.
         </p>
       )}
+
+      {/* The SMS channel reaches subscribers; CAP is what the national
+          alerting infrastructure reads. Both are composed from one source. */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-white/[.07] pt-3 text-[10.5px] text-white/52">
+        <span className="eyebrow">interop</span>
+        <span>same warning, published as</span>
+        <a
+          className="underline decoration-white/25 underline-offset-2 hover:text-white/80"
+          href={capFeedURL()}
+        >
+          CAP 1.2
+        </a>
+        <span>— the format NDMA&rsquo;s SACHET portal ingests ({alerts?.language || 'en-IN'} block per language).</span>
+      </div>
     </motion.section>
   )
 }

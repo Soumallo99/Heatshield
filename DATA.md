@@ -14,11 +14,33 @@ Last verified 2026-09-01.
 | Weather forecast | Open-Meteo (aggregates DWD ICON, ECMWF, Météo-France, NOAA GFS) | CC-BY-4.0 | Live fetch, 5-day hourly |
 | Physics | Stull 2011 (wet bulb), Rothfusz/NWS (heat index), ISO 7243 (WBGT), Ranz–Marshall (convection) | Published literature | HI within ±0.4 °C of the NWS chart; Tw within 0.18 °C mean of psychrometric inversion |
 | Heatwave criteria | IMD (India Meteorological Department) | Published | Coastal preset applied for Kolkata |
-| Basemap (Dark, Streets) | Esri Dark Gray Canvas / World Street Map (+ Canvas reference labels) | Esri terms, attribution required | Keyless; attribution rendered in-app. CARTO was removed 2026-09 — its keyless endpoints now return HTTP 200 watermark tiles reading "API KEY REQUIRED", which no client can detect |
+| **UTCI** (coefficient table) | Bröde et al. (2012), *Int J Biometeorol* 56(3):481–494, doi:10.1007/s00484-011-0454-1 — Electronic Supplementary Material 3 | Open access | 210-coefficient 6th-order polynomial; **verified against the Apache-2.0 reference implementation (ECMWF `thermofeel`) across 4,000 random points in the validity envelope to ~1e-12 °C before any value was baked into a test**. `thermofeel` is not a dependency — the table is vendored, see `THIRD-PARTY.md` |
+| Mean radiant temperature (for UTCI) | ISO 7726 black-globe conversion of the globe temperature already computed for WBGT | Published standard | 10 m wind scaled to the 1.1 m globe height with the log law (z0 = 0.01 m) |
+| Ward geometry for alert areas | `frontend/web/public/data/kolkata_wards.geojson` (datameet/Municipal_Spatial_Data); `data/geo/` when the offline build has run | ODbL-1.0 | 141 polygons. If missing, CAP falls back to centroid circles sized from each ward's real area, and `geometry.shape` says which is in use |
+| Basemap (Dark, Streets) | Esri Dark Gray Canvas / World Street Map (+ Canvas reference labels) | Esri terms, attribution required | Keyless; attribution rendered in-app and re-checked against the service's own `copyrightText` on 2026-09-27. CARTO was removed 2026-09 — its keyless endpoints now return HTTP 200 watermark tiles reading "API KEY REQUIRED", which no client can detect |
 | Basemap (Satellite) | Esri World Imagery (Vantor, Earthstar Geographics) + Esri `Reference/World_Boundaries_and_Places` label overlay | Esri terms, attribution required | Keyless; hybrid label layer drawn on top (real labels to z12, upscaled beyond) |
 | Basemap (Terrain) | OpenTopoMap (OSM + SRTM relief) | CC-BY-SA | Keyless |
+| Basemap (Wards only) | **no tiles** — 141 KMC ward polygons drawn locally from `data/kolkata_wards.geojson` | datameet / OpenCity, ODbL | Zero tile requests, so nothing can watermark the map and it works with no signal (the service worker precaches the GeoJSON on install) |
 | 3D globe imagery / terrain | Esri World Imagery (keyless ArcGIS World_Imagery) + OSM fallback; Re:Earth/Mapterhorn quantized-mesh terrain (CC-BY-4.0) | Esri terms / ODbL / CC-BY-4.0 | Keyless only — the globe has no key slot at all. See `frontend/web/src/globe/` and `THIRD-PARTY.md` |
 | Basemap (optional upgrade) | MapTiler / Thunderforest | Commercial, key required | Not in the shipped registry — no tile-key slot exists. Google tiles are **not** used — scraping them breaks the Maps ToS |
+
+## 🧮 Three thermal indices, three jobs
+
+They are complementary, not interchangeable, and the payload keeps them separate:
+
+| Index | Standard | Audience | What it drives | Units |
+|---|---|---|---|---|
+| **WBGT** | ISO 7243 (`0.7·Tw + 0.2·Tg + 0.1·Ta`) | occupational | the **risk model**: hazard score, work/rest rules | °C |
+| **Heat Index** | NWS Rothfusz regression | public (English) | SMS copy | °C |
+| **UTCI** | Bröde et al. (2012), Fiala model | public health | CAP severity, population heat-stress category | °C equivalent temperature |
+
+UTCI is an *equivalent temperature*: the air temperature of a reference
+environment that would provoke the same physiological strain as the actual
+air temperature + radiation + wind + humidity. It is **not** an input to the
+risk score — WBGT stays the model driver. Inputs are clamped to the published
+validity envelope (Ta −50…+50 °C, Tmrt−Ta −30…+70 °C, wind 0.5–17 m/s, vapour
+pressure 0–5 kPa) and never extrapolated; the envelope ships with every
+payload in `core.utci.UTCI_METADATA`.
 
 ## ⚙️ Modelled (real inputs, constructed relationship)
 
@@ -27,6 +49,9 @@ Last verified 2026-09-01.
   ward set so it is self-calibrating. Capped at 3.5 °C, inside the measured Kolkata
   UHI range of 2–4 °C. Absolute humidity is held constant while temperature rises,
   so relative humidity falls instead of inventing moisture.
+- **UTCI.** Real forecast inputs, published polynomial, physiological model
+  behind it. The index is citable; the *strain* it predicts is a model
+  response, not a measurement.
 - **Risk score (0–100).** `hazard × (0.55 + 0.45 × vulnerability/100)`. The structure
   is standard risk practice (Hazard × Exposure × Vulnerability); the specific weights
   and the hazard exponent are ours, not calibrated against outcomes.

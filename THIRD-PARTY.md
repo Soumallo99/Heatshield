@@ -63,6 +63,38 @@ attribution control on screen; every basemap entry in
 
 ---
 
+### UTCI polynomial coefficient table — Apache-2.0 (reference implementation)
+
+- Method: Bröde, P.; Fiala, D.; Błażejczyk, K.; Holmér, I.; Jendritzky, G.;
+  Kampmann, B.; Tinz, B.; Havenith, G. (2012), *Deriving the operational
+  procedure for the Universal Thermal Climate Index (UTCI)*, International
+  Journal of Biometeorology 56(3):481–494, doi:10.1007/s00484-011-0454-1.
+  The coefficients are the published table in that paper's Electronic
+  Supplementary Material 3 (open access).
+- Where: `core/utci.py` → `UTCI_POLYNOMIAL` (210 terms, total degree 6).
+- How the table was produced: transcribed from the Apache-2.0 reference
+  implementation **ECMWF [thermofeel](https://github.com/ecmwf-projects/thermofeel)**
+  (`calculate_utci_polynomial`), extracted programmatically with an AST walk so
+  no coefficient was retyped by hand.
+- Verification: the vendored table agrees with `thermofeel` to **~1e-12 °C**
+  across 4,000 random points spanning the published validity envelope, and
+  `tests/test_utci.py` pins five reference values plus the index's defining
+  property (UTCI equals air temperature at the reference condition).
+- `thermofeel` is **not** a dependency of HeatShield. The table is vendored
+  (Apache-2.0 permits it, with attribution here) so that `pip install -r
+  requirements.txt` remains the only setup step — the same reason every other
+  constant in the pipeline is in-repo.
+- Licence text: Apache License 2.0 — <https://www.apache.org/licenses/LICENSE-2.0>.
+  The ECMWF copyright notice is retained above the table in `core/utci.py`.
+
+### ISO 7726 globe → mean radiant temperature
+
+- Standard: ISO 7726:1998, *Ergonomics of the thermal environment — Instruments
+  for measuring physical quantities* (black-globe thermometer conversion).
+- Where: `core/utci.py` → `mean_radiant_temperature()`. A standard formula, not
+  vendored code; recorded here so the provenance of the UTCI radiant input is
+  as citable as the polynomial itself.
+
 ## Runtime services (fetched, never bundled)
 
 | Service | Used for | Terms | Attribution shown in-app |
@@ -75,6 +107,7 @@ attribution control on screen; every basemap entry in
 | **Open-Meteo** | the forecast this whole platform is built on | CC-BY-4.0 (attribution + link) | cited on the dashboard and in `DATA.md` |
 | **KMC ward boundaries** (OpenCity / datameet) | the 141 ward polygons | ODbL 1.0 | globe ward legend + `DATA.md` |
 | **Census of India 2011 PCA** | populations, literacy, workers | Open Government Data | `DATA.md` |
+| **data.gov.in / api.data.gov.in** (`core/datagov.py`) | optional — the demographic gaps `DATA.md` lists as absent, and observed weather for forecast verification | Open Government Data (requires an API key) | **Optional and never on the critical path.** With no `HS_DATAGOV_API_KEY` the adapter raises `NotConfiguredError` and the pipeline is unchanged. No dataset is wired by default and no resource id is fabricated — see `core/datagov.CATALOGUE`. |
 
 Attribution is drawn, not implied: the 2D maps render the credit of the layer
 actually on screen (bottom-right), and it follows the tiles when they degrade to

@@ -9,6 +9,9 @@
 > **New here?** Read [`SETUP.md`](SETUP.md) for step-by-step install instructions, or just run
 > `./setup.sh` (macOS/Linux) / `setup.bat` (Windows).
 > Editor-specific walkthroughs: [`VSCODE.md`](VSCODE.md) · [`ANTIGRAVITY.md`](ANTIGRAVITY.md).
+> **Which external tools and datasets help, and which we refuse?**
+> [`INTEGRATIONS.md`](INTEGRATIONS.md) — data.gov.in, Streamlit, Faker, CAP/SACHET,
+> deployment hosts, and the deliberate noes.
 > Putting it on GitHub: [`GITHUB.md`](GITHUB.md).
 > **Working with an AI agent on this code?** It should read [`AGENTS.md`](AGENTS.md) first —
 > architecture, physics formulas, invariants and hard constraints in one file.
@@ -134,6 +137,39 @@ risk score → ward-level GIS map → SMS/WhatsApp alerts.
 | 7a | Unattended scheduler (self-running pipeline) | ✅ done | `scripts/schedule.py` |
 | 7b | Ward-level subscriber registry + STOP handling | ✅ done | `core/subscribers.py` |
 | 7c | Hindcast & forecast-skill harness | ✅ done | `scripts/hindcast.py` |
+| 8a | **UTCI** — the second index the problem statement names | ✅ done | `core/utci.py` |
+| 8b | **CAP 1.2 alert feed** + GeoJSON + documented SACHET hand-off | ✅ done | `core/cap.py`, `core/geo.py` |
+| 8c | **Multilingual alert copy** (English / हिन्दी / বাংলা) | ✅ done | `core/i18n.py` |
+| 8d | Open-data adapter for the demographic gaps (optional, keyless-safe) | ✅ done | `core/datagov.py` |
+
+### Phase 8 — interoperability: one warning, every channel
+
+Twilio reaches subscribers. It does not reach the district administration, and
+no aggregator can ingest an SMS. Phase 8 publishes the *same* warning in the
+formats the rest of the ecosystem reads:
+
+```bash
+curl -s localhost:8000/alerts/cap.xml     # CAP 1.2 — the format NDMA's SACHET ingests
+curl -s localhost:8000/alerts/cap         # the same document described as JSON
+curl -s localhost:8000/alerts/geojson     # RFC 7946 — drop it into QGIS
+curl -s "localhost:8000/alerts/plan?lang=bn"   # the queue, with Bengali copy
+curl -s localhost:8000/thermal/utci       # UTCI method card
+```
+
+Alongside it, **UTCI** closes the gap the SIH problem statement names: it asks
+for both WBGT and UTCI, and until Phase 8 only WBGT existed. The three indices
+now have three clearly separated jobs — WBGT drives the risk model, Heat Index
+is the public number, UTCI is the public-*health* number that sets CAP severity.
+
+[`INTEGRATIONS.md`](INTEGRATIONS.md) is the full triage: every open-data
+source, library, host and presentation tool on the shortlist, what it does for
+this project, and — just as importantly — the ones deliberately **not** used
+and why.
+
+**Streamlit, reconsidered:** Streamlit was dropped as *the* frontend (see below) but
+it has a second life as an operator console: `streamlit run ops/console.py` renders a
+read-only view over `data/processed/*.csv` — no network, no credentials, and it
+computes nothing of its own, so it cannot disagree with the dashboard.
 
 **Frontend decision:** Streamlit/Gradio dropped in favour of Vite + React + Framer Motion
 (Tailwind, react-leaflet). Streamlit re-runs the script per interaction and blocks the DOM work
@@ -198,7 +234,18 @@ dataset from source.
 
 Sources: OpenCity/datameet ward polygons (ODbL) · Census 2011 population via Wikidata ·
 OpenStreetMap green/water/buildings · Open-Meteo forecast · basemaps from Esri
-(Canvas/Imagery/Street) and OpenTopoMap (all keyless — see [Map basemaps](#map-basemaps)).
+(Canvas/Imagery/Street) and OpenTopoMap (all keyless — see [Map basemaps](#map-basemaps)) ·
+UTCI coefficient table from Bröde et al. (2012) via the Apache-2.0 reference implementation
+(`THIRD-PARTY.md`).
+
+**Three thermal indices, three jobs** — they are complementary, not
+interchangeable, and every payload keeps them separate:
+
+| Index | Standard | Audience | Drives |
+|---|---|---|---|
+| **WBGT** | ISO 7243 | occupational | the risk model: hazard score, work/rest |
+| **Heat Index** | NWS Rothfusz | public (English) | SMS copy |
+| **UTCI** | Bröde et al. (2012) | public health | CAP severity, population stress category |
 
 ## Quickstart
 
@@ -1159,18 +1206,68 @@ python scripts/warmup.py --url "$BASE"                             # heavy reads
 ### Maps are keyless — no "API key required", ever
 
 Every map (operations dashboard, Heat Risk Demo, Delhi NCR ops) renders out of the box with
-keyless CARTO/Esri/OpenTopoMap tiles. The former *optional* commercial-key upgrade was
-**removed from the shipped code entirely**: a misconfigured, expired or placeholder key could
-paint the map with the provider's *"API key required"* error tiles, and a prototype must never
-depend on a key nobody has. There is now no tile-key slot anywhere — `frontend/web/src/basemaps.js`
-contains only keyless providers plus `OSM_FALLBACK` (automatic OpenStreetMap tiles on a
-different CDN when one is blocked, with an honest on-map notice; a test enforces that no keyed
-provider can creep back in).
+keyless tiles. There is no tile-key slot anywhere in the shipped code: a misconfigured, expired
+or placeholder key could paint the map with the provider's *"API key required"* error tiles, and
+a prototype must never depend on a key nobody has.
 
-If you genuinely want commercial tiles **for your own deployment**, add an entry to the
-registry in `basemaps.js` yourself — a plain `{ id, label, hint, url, attribution, … }` object
-consumed by `<TileLayer/>` — and keep the `tileerror` fallback behaviour in
-`RiskMap.jsx`/`DemoMap.jsx` intact so a bad key can never blank the map again.
+`frontend/web/src/basemaps.js` is the single registry, and it holds only providers whose keyless
+tiles are genuinely keyless:
+
+| Entry | Provider | Deepest zoom |
+| --- | --- | --- |
+| Dark (default) | Esri Dark Gray Canvas + place labels | z16 in India |
+| Streets | Esri World Street Map | z19 |
+| Satellite | Esri World Imagery + boundaries/places | z19 |
+| Terrain | OpenTopoMap | z17 |
+| Wards only | **no tiles at all** — local ward polygons | — |
+
+**CARTO is deliberately absent and must not come back.** Around 2026-08-28 its keyless raster
+endpoints began answering HTTP 200 with a watermark PNG reading "API KEY REQUIRED" instead of
+failing. A failed request is detectable; a *successful* watermark is not — the map would have
+looked loaded while every tile shouted for a key. Google's `mt{n}.google.com/vt` is excluded for
+the same class of reason (see below).
+
+### Three stages, and the last one cannot be watermarked
+
+1. the provider you picked;
+2. OpenStreetMap on a different CDN, if that provider stops answering;
+3. **Wards only** — zero tile requests.
+
+Stage 3 is the guarantee. A watermark can only land on a pixel somebody else served, so with
+`url: null` there is no third party left in a position to stamp anything. It is fully functional
+rather than a grey shell: all 141 ward polygons, the risk choropleth, labels, hover and selection
+are local vector data, and the service worker precaches `data/kolkata_wards.geojson` on install —
+so this is also the one view that still answers on a phone with no signal. It is offered as an
+ordinary choice in the layer switcher, not held back as an emergency.
+
+The stage is measured, not guessed: a loaded tile cancels out a failed one, so the couple of 404s
+you always get at the ragged edge of a provider's coverage cannot throw away a working basemap —
+only a CDN that is genuinely not answering accumulates failures. The stage never steps back up, so
+a flapping network cannot bounce you between providers mid-shift, and an on-map notice names the
+stage you are actually in.
+
+### Two bugs worth knowing about
+
+Both made the map look fine in review and wrong on a real screen.
+
+**`detectRetina` is off everywhere.** It sets Leaflet's `zoomOffset = 1`, and Leaflet adds that
+offset *after* the `maxNativeZoom` clamp, so on any high-DPI screen every provider was asked for
+one zoom level deeper than it has — z17 from an Esri cache Esri documents as ending at z16 for
+India. Those requests 404, and each one tripped the failure counter until the map swapped itself
+for a fallback the operator never asked for. It is invisible on a 1× monitor, which is why it
+survived review. `npm test` now proves it against the real Leaflet build
+(`scripts/check-tile-zoom.mjs`). The trade is stated plainly: context tiles are mildly soft on a
+retina screen, because none of these providers publishes `@2x` tiles. The choropleth is SVG, stays
+razor sharp, and is what carries the information.
+
+**Attribution follows the layer actually drawn.** Each credit string is copied from the
+`copyrightText` of the ArcGIS service it belongs to (checked against
+`…/<service>/MapServer?f=json`); the previous version credited satellite imagery on a basemap that
+contained none, which is both wrong and a breach of the terms the tiles are used under.
+
+If you genuinely want commercial tiles **for your own deployment**, add an entry to the registry
+in `basemaps.js` yourself — a plain `{ id, label, hint, url, attribution, … }` object consumed by
+`<TileLayer/>` — and keep the staged fallback intact so a bad key can never blank the map again.
 
 ### Using Google tiles (and why there is no Google key field)
 

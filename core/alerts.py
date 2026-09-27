@@ -26,8 +26,9 @@ from pathlib import Path
 
 import pandas as pd
 
+from core import i18n
 from core.config import (ALERT_TO, ALLOW_LIVE_SEND, TWILIO_FROM, TWILIO_SID,
-                        TWILIO_TOKEN)
+                        TWILIO_TOKEN, WEB_BASE)
 
 # Where sent alerts are recorded. Overridable because the test suite (and any
 # scripted rehearsal) posts to the dispatch route: without a knob, running the
@@ -46,9 +47,6 @@ DEFAULT_MIN_LEAD_DAYS = 1      # warn at least 1 day ahead
 # every ward in Danger. Tunable per-call and via ?threshold= on /alerts/plan.
 DEFAULT_RISK_THRESHOLD = 60.0
 DEDUP_HOURS = 12               # don't re-alert the same ward+event within this window
-WEB_BASE = os.getenv("HS_WEB_BASE", "https://heatshield.app")
-
-DAYNAME = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 GUIDANCE = {
     "Caution": "Increase fluids. Schedule heavy work before 11:00.",
@@ -109,6 +107,9 @@ def find_upcoming_events(
             "risk_band": ev["risk_band"],
             "worst_band": worst,
             "wbgt_peak_c": float(ev.get("wbgt_peak_c", float("nan"))),
+            # UTCI travels with the event because the alert copy quotes it: it
+            # is the population-facing index, where WBGT is the occupational one.
+            "utci_peak_c": float(ev.get("utci_peak_c", float("nan"))),
             "tmax_ward_c": float(ev.get("tmax_adj_c", float("nan"))),
             "uhi_delta_c": float(ev.get("uhi_delta_c", float("nan"))),
             "population": int(ev.get("population", 0)),
@@ -146,44 +147,20 @@ def find_active_now(daily: pd.DataFrame, risk_threshold: float = DEFAULT_RISK_TH
 # 2. Message
 # --------------------------------------------------------------------------- #
 
-def _num(ev: dict, key: str, default=float("nan")) -> float:
-    """Read a numeric field defensively — round-trips through JSON/CSV can turn
-    these into None or strings, and an alert must never fail to compose."""
-    try:
-        v = float(ev.get(key, default))
-    except (TypeError, ValueError):
-        return float("nan")
-    return v
+def compose_message(ev: dict, lang: str = i18n.DEFAULT_LANGUAGE) -> str:
+    """
+    WhatsApp/SMS body for one event, in the requested language.
 
+    The copy itself lives in :mod:`core.i18n` — one implementation, so the SMS
+    that goes out and the CAP ``<description>`` that goes to SACHET cannot
+    drift apart. English stays the default; ``lang="hi"`` or ``lang="bn"``
+    switches the words and leaves every number and unit where it was.
 
-def compose_message(ev: dict) -> str:
-    """WhatsApp/SMS body. Short enough for one SMS segment where possible."""
-    d = ev["event_date"]
-    day = DAYNAME[d.weekday()] if isinstance(d, date) else ""
-    uhi = ev.get("uhi_delta_c")
-    try:
-        uhi = float(uhi)
-    except (TypeError, ValueError):
-        uhi = float("nan")
-    # `uhi == uhi` is False only for NaN; the float() cast above makes None and
-    # stray strings safe too (None == None is True, so the NaN trick alone
-    # would fall through to `None > 0.05` and raise).
-    uhi_txt = f" (city +{uhi:.1f}°C heat island)" if uhi == uhi and uhi > 0.05 else ""
-
-    lines = [
-        f"HeatShield {ev['risk_band'].upper()} HEAT WARNING",
-        f"{ev['ward_name']} — {day} {d.strftime('%d %b')}, in {ev['lead_days']} day(s)",
-        "",
-        f"Risk {_num(ev, 'risk_score'):.0f}/100 · peak WBGT {_num(ev, 'wbgt_peak_c'):.1f}°C",
-        f"Ward peak temp {_num(ev, 'tmax_ward_c'):.1f}°C{uhi_txt}",
-        "",
-        f"Action: {ev.get('guidance', 'Stay hydrated, avoid midday sun.')}",
-        f"About {_num(ev, 'exposed_population', 0):,.0f} residents exposed.",
-        "",
-        f"Details: {WEB_BASE}/ward/{ev['ward_id']}",
-        "Reply STOP to opt out.",
-    ]
-    return "\n".join(lines)
+    Short enough for two SMS segments in English. Devanagari and Bengali are
+    UCS-2 and cost more per segment — :func:`core.i18n.segment_count` reports
+    the real figure rather than assuming 160 characters.
+    """
+    return i18n.compose_message({**ev, "web_base": ev.get("web_base") or WEB_BASE}, lang)
 
 
 # --------------------------------------------------------------------------- #

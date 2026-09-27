@@ -51,6 +51,7 @@ from core.thermal import (
     wbgt_outdoor,
     wbgt_shade,
 )
+from core.utci import UTCI_LIMITS, classify_utci, utci_from_weather
 
 # --------------------------------------------------------------------------- #
 # 1. Quality vocabulary — the same flags everywhere, never per-route wording
@@ -105,6 +106,14 @@ ASSUMPTION_NO_WIND = (
 ASSUMPTION_NO_ANOMALY = (
     "climate-normal departure unavailable — HTSI score computed from "
     "meteorological stress only, without the acclimatisation anomaly term"
+)
+ASSUMPTION_UTCI_NO_RADIATION = (
+    "shortwave radiation unavailable — UTCI evaluated with Tmrt = Ta; this "
+    "UNDERSTATES heat stress in direct sun"
+)
+ASSUMPTION_UTCI_NO_WIND = (
+    "wind speed unavailable — UTCI evaluated at its 0.5 m/s validity floor; "
+    "this OVERSTATES heat stress in dead-calm conditions"
 )
 
 # --------------------------------------------------------------------------- #
@@ -162,12 +171,25 @@ HTSI_METADATA: dict[str, Any] = {
             "quality_best_case": QUALITY_ESTIMATED,
         },
         "utci_c": {
-            "formula": None,
-            "limitations": "NOT COMPUTED. Full UTCI needs mean radiant "
-                           "temperature and its 6th-order polynomial; rather "
-                           "than ship a mislabelled approximation, estimated "
-                           "WBGT is the radiation-aware metric of record.",
-            "quality_best_case": QUALITY_UNAVAILABLE,
+            "formula": "UTCI = Ta + Offset(Ta, Tmrt − Ta, va_10m, e) — the "
+                       "6th-order, 210-coefficient polynomial approximation of "
+                       "the Fiala multi-node model published by Bröde et al. "
+                       "(2012), doi:10.1007/s00484-011-0454-1; implementation "
+                       "core.utci.utci. Tmrt comes from the same 150 mm globe "
+                       "temperature as WBGT, converted with ISO 7726.",
+            "valid_range": "Air temperature −50…+50 °C, Tmrt − Ta −30…+70 °C, "
+                           "10 m wind 0.5–17 m/s, vapour pressure 0–5 kPa. "
+                           "Inputs are clamped to this envelope, never "
+                           "extrapolated.",
+            "limitations": "Equivalent temperature from a physiological model "
+                           "response, not a measurement. Wind is clamped at "
+                           "0.5 m/s when calm, so UTCI OVERSTATES stress in "
+                           "dead-calm conditions; without radiation it falls "
+                           "back to Tmrt = Ta and UNDERSTATES stress in sun.",
+            "quality_best_case": QUALITY_ESTIMATED,
+            # Shipped from the same constant the arithmetic clamps with, so the
+            # documented envelope cannot drift from the enforced one.
+            "validity_envelope": UTCI_LIMITS,
         },
     },
     "quality_flags": QUALITY_DEFINITIONS,
@@ -299,6 +321,7 @@ def thermal_metrics(
             "wet_bulb_c": None, "wet_bulb_quality": QUALITY_UNAVAILABLE,
             "globe_c": None, "globe_quality": QUALITY_UNAVAILABLE,
             "wbgt_est_c": None, "wbgt_quality": QUALITY_UNAVAILABLE,
+            "utci_c": None, "utci_quality": QUALITY_UNAVAILABLE,
         })
         return out
 
@@ -326,12 +349,27 @@ def thermal_metrics(
 
     wbgt_quality = QUALITY_PARTIAL if assumptions else QUALITY_ESTIMATED
 
+    # UTCI needs all four inputs. Its documented fallbacks differ from WBGT's
+    # (0.5 m/s validity floor for wind, Tmrt = Ta with no radiation), so its
+    # assumption list is tracked separately rather than reusing WBGT's.
+    utci_assumptions = list(assumptions)
+    if not has_wind:
+        utci_assumptions.append(ASSUMPTION_UTCI_NO_WIND)
+    if not has_solar:
+        utci_assumptions.append(ASSUMPTION_UTCI_NO_RADIATION)
+    utci_value = utci_from_weather(t, rh, wind_ms, solar if has_solar else 0.0)
+    utci_value = float(utci_value) if np.isfinite(utci_value) else None
+    utci_quality = QUALITY_PARTIAL if utci_assumptions else QUALITY_ESTIMATED
+
     out.update({
         "heat_index_c": round(hi, 1), "hi_quality": hi_quality,
         "wet_bulb_c": round(tw, 2), "wet_bulb_quality": QUALITY_ESTIMATED,
         "globe_c": round(tg, 2) if tg is not None else None,
         "globe_quality": QUALITY_ESTIMATED if tg is not None else QUALITY_UNAVAILABLE,
         "wbgt_est_c": round(wbgt, 2), "wbgt_quality": wbgt_quality,
+        "utci_c": round(utci_value, 2) if utci_value is not None else None,
+        "utci_quality": utci_quality,
+        "utci_band": classify_utci(utci_value)["band"] if utci_value is not None else None,
         "assumptions": assumptions,
     })
     return out
@@ -368,9 +406,19 @@ def compute_htsi_frame(df: pd.DataFrame, departure_c: pd.Series | None = None) -
     has_mandatory = np.isfinite(t.to_numpy(dtype=float)) & np.isfinite(rh.to_numpy(dtype=float))
     has_wind = np.isfinite(wind.to_numpy(dtype=float))
 
+    # UTCI over the same hour, with the same missing-input rules as
+    # thermal_metrics(): no radiation -> Tmrt = Ta, no wind -> 0.5 m/s floor.
+    utci_values = utci_from_weather(t, rh, wind_ms, np.nan_to_num(solar_arr))
+    out["utci_c"] = np.round(np.where(has_mandatory, utci_values, np.nan), 2)
+    out["utci_band"] = [
+        classify_utci(v)["band"] if np.isfinite(v) else None
+        for v in out["utci_c"].to_numpy(dtype=float)
+    ]
+
     quality = np.where(has_mandatory, QUALITY_ESTIMATED, QUALITY_UNAVAILABLE)
     quality = np.where(has_mandatory & (~has_solar | ~has_wind), QUALITY_PARTIAL, quality)
     out["wbgt_quality"] = quality
+    out["utci_quality"] = quality
     out["wbgt_inputs"] = np.where(
         has_mandatory,
         np.where(has_solar,

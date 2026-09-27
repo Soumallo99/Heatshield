@@ -106,7 +106,21 @@ EXPORTS: tuple[tuple[str, str, Callable[[], dict[str, Any]]], ...] = (
     # Kolkata citizen brief (phone contract). Offline-safe: built from the
     # committed forecast cache; empty+labelled when the cache is cold.
     ("/citizen/kolkata", "citizen-kolkata.json", api.citizen_kolkata),
+    # CAP 1.2 feed (Phase 8 interoperability). The JSON view of the document an
+    # aggregator such as NDMA's SACHET portal would ingest. Offline-safe: a run
+    # with no events produces a valid, empty CAP message rather than an error.
+    ("/alerts/cap", "alerts-cap.json", api.alerts_cap),
 ) + _demo_exports() + _ops_exports()
+
+
+# Raw-text artefacts. CAP is an XML format, so the thing an aggregator actually
+# polls cannot go through the strict-JSON path above; these are written verbatim
+# and listed separately in the manifest (`routes` stays JSON-only, because the
+# contract tests parse every entry in it).
+TEXT_EXPORTS: tuple[tuple[str, str, Callable[[], str]], ...] = (
+    ("/alerts/cap.xml", "alerts-cap.xml",
+     lambda: api.alerts_cap_xml().body.decode("utf-8")),
+)
 
 
 def _json_default(value: Any) -> Any:
@@ -136,7 +150,8 @@ def exported_route_paths() -> set[str]:
 
 
 STATIC_ROUTE_PREFIXES = ("/ncr/", "/demo/", "/warnings/")
-STATIC_ROUTE_EXACT = ("/heatwave/advance", "/notifications/preview", "/citizen/kolkata", "/risk/ranking")
+STATIC_ROUTE_EXACT = ("/heatwave/advance", "/notifications/preview", "/citizen/kolkata",
+                      "/risk/ranking", "/alerts/cap")
 
 
 def dynamic_phone_routes() -> set[str]:
@@ -232,6 +247,12 @@ def export(output: Path = OUT_DIR) -> dict[str, Any]:
             "is_synthetic": body.get("is_synthetic"),
         }
 
+    text_routes: dict[str, dict[str, Any]] = {}
+    for route, filename, fn in TEXT_EXPORTS:
+        body = fn()
+        (output / filename).write_text(body, encoding="utf-8")
+        text_routes[route] = {"file": filename, "bytes": len(body.encode("utf-8"))}
+
     citizen = _compact_citizen_payload(results)
     citizen_serialised = _strict_json(citizen)
     (output / "citizen.json").write_text(citizen_serialised)
@@ -239,6 +260,7 @@ def export(output: Path = OUT_DIR) -> dict[str, Any]:
         "schema_version": 1,
         "exported_at_utc": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
         "routes": manifest_routes,
+        "text": text_routes,
         "citizen": {"file": "citizen.json", "bytes": len(citizen_serialised.encode("utf-8"))},
     }
     (output / "manifest.json").write_text(_strict_json(manifest))

@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { AttributionControl, CircleMarker, MapContainer, Pane, TileLayer, Tooltip } from 'react-leaflet'
 import { bandColour, levelColour, levelLabel, formatNumber, formatTemp, text } from './contract.js'
-import { getBasemap, OSM_FALLBACK } from '../basemaps.js'
+import { basemapFor, degradeNotice, getBasemap, TILE_FAIL_LIMIT } from '../basemaps.js'
 
 /* Layer definitions: every value is paired with WORDS — colour is never the
    only channel (accessibility rule enforced by tests/test_demo_app.py). */
@@ -74,10 +74,23 @@ const dark = getBasemap('dark')
  */
 export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, selectedZoneId = '', showCooling = false, onSelect }) {
   const layerDef = LAYERS[layer] || LAYERS.level
-  // The dark basemap needs no API key — but if its CDN is blocked the map
-  // must say so instead of rendering silent grey behind the data markers.
-  const [tileFailures, setTileFailures] = useState(0)
-  const tilesDegraded = tileFailures > 6
+  /* The dark basemap needs no API key — but if its CDN is blocked the map must
+   * step down instead of rendering silent grey behind the data markers. Same
+   * three stages as the operations map (see ../basemaps.js): the chosen
+   * provider → OpenStreetMap → no tiles at all. The last stage matters here
+   * too: the zone markers are local data, so dropping the basemap loses
+   * context but never the answer. A loaded tile cancels a failed one so a
+   * couple of edge-of-coverage 404s cannot throw away a working map. */
+  const [tileStage, setTileStage] = useState(0)
+  const failures = useRef(0)
+  const noteTileResult = useCallback((delta) => {
+    failures.current = Math.max(0, failures.current + delta)
+    const n = failures.current
+    const next = n > TILE_FAIL_LIMIT * 2 ? 2 : n > TILE_FAIL_LIMIT ? 1 : 0
+    setTileStage((s) => (next > s ? next : s))
+  }, [])
+  const tiles = basemapFor(dark, tileStage)
+  const tilesDegraded = tileStage > 0
   const zoneById = useMemo(() => new Map(zones.map((zone) => [zone.zone_id, zone])), [zones])
 
   const markers = useMemo(
@@ -120,22 +133,27 @@ export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, sel
         {/* Dark layer comes from the shared keyless registry (../basemaps.js):
             one place decides which providers may render, and the demo cannot
             drift onto a keyed URL of its own. */}
-        <TileLayer
-          key={tilesDegraded ? 'osm' : dark.id}
-          url={tilesDegraded ? OSM_FALLBACK.url : dark.url}
-          subdomains={tilesDegraded ? OSM_FALLBACK.subdomains : dark.subdomains || 'abc'}
-          maxZoom={20}
-          maxNativeZoom={tilesDegraded ? OSM_FALLBACK.maxNativeZoom : dark.maxNativeZoom}
-          attribution={tilesDegraded ? OSM_FALLBACK.attribution : dark.attribution}
-          eventHandlers={{ tileerror: () => setTileFailures((n) => n + 1) }}
-        />
-        {!tilesDegraded && dark.labels && (
+        {tiles.url && (
+          <TileLayer
+            key={tiles.id}
+            url={tiles.url}
+            subdomains={tiles.subdomains || 'abc'}
+            maxZoom={20}
+            maxNativeZoom={tiles.maxNativeZoom}
+            attribution={tiles.attribution}
+            eventHandlers={{
+              tileerror: () => noteTileResult(1),
+              tileload: () => noteTileResult(-1),
+            }}
+          />
+        )}
+        {tiles.url && tiles.labels && (
           <Pane name="demo-dark-labels" style={{ zIndex: 450, pointerEvents: 'none' }}>
             <TileLayer
-              key={`${dark.id}-labels`}
-              url={dark.labels.url}
+              key={`${tiles.id}-labels`}
+              url={tiles.labels.url}
               maxZoom={20}
-              maxNativeZoom={dark.labels.maxNativeZoom}
+              maxNativeZoom={tiles.labels.maxNativeZoom}
             />
           </Pane>
         )}
@@ -181,9 +199,10 @@ export default function DemoMap({ rows, zones, layer = 'level', leadDay = 3, sel
       </MapContainer>
       {tilesDegraded ? (
         <p className="demo-note" role="status">
-          The dark basemap (Esri Dark Gray Canvas) is unreachable on this network — switched to
-          OpenStreetMap standard tiles (both keyless; no API key is involved anywhere). If that
-          CDN is blocked too, the coloured risk markers and the zone tables still carry the full data.
+          {degradeNotice(dark, tileStage)}{' '}
+          {tileStage === 1
+            ? 'Both are keyless — no API key is involved anywhere. If that CDN is blocked too, the map drops the basemap entirely rather than showing grey.'
+            : 'The coloured risk markers and the zone tables below still carry the full data.'}
         </p>
       ) : null}
       <ul className="demo-map-legend" aria-label={`${layerDef.label} legend`}>

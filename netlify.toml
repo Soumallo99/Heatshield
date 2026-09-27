@@ -1,0 +1,40 @@
+# HeatShield frontend on Netlify.
+#
+# The app is a Vite single-page app, so every path must fall back to
+# index.html — without the redirect a deep link such as /#/demo works from the
+# home page and 404s when someone pastes it into a chat.
+[build]
+  base = "frontend/web"
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Security headers. The app is static and needs no third-party scripts; the
+# suite enforces that (tests/test_security.py), so a tight CSP costs nothing
+# and closes the "someone injects a tile CDN" hole.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+    Permissions-Policy = "geolocation=(self), camera=(), microphone=()"
+
+# The service worker and the exported API snapshots must never be served stale:
+# a stale sw.js pins the whole app, and a stale snapshot pins the numbers.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, must-revalidate"
+
+[[headers]]
+  for = "/static-api/*"
+  [headers.values]
+    Cache-Control = "public, max-age=120"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

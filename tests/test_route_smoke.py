@@ -22,10 +22,12 @@ numbers are, only that a bad request is refused instead of crashing.
 """
 from __future__ import annotations
 
+import pandas as pd
 import pytest
 from fastapi.routing import APIRoute
 from fastapi.testclient import TestClient
 
+from app import main
 from app.main import app
 
 ADMIN = {"X-API-Key": "test-admin-token"}
@@ -209,3 +211,68 @@ def test_the_route_inventory_is_what_the_frontend_expects(client: TestClient):
     }
     present = {route.path for route in _routes()}
     assert expected <= present, f"routes disappeared: {sorted(expected - present)}"
+
+
+# ------------------------------------------------------- a stale cache, not a 500
+
+
+def _frame(end: pd.Timestamp, hours: int, wards: int = 2) -> pd.DataFrame:
+    """A minimal forecast frame ending at `end`.
+
+    Only the columns `/forecast` itself touches are populated: this is about
+    windowing, not about meteorology.
+    """
+    stamps = pd.date_range(end=end, periods=hours, freq="h")
+    rows = [
+        {
+            "ward_id": ward,
+            "timestamp_local": stamp,
+            "fetched_at": end - pd.Timedelta(minutes=10),
+            "temp_c": 34.0,
+            "rh_pct": 55.0,
+        }
+        for stamp in stamps
+        for ward in range(1, wards + 1)
+    ]
+    # Ward-major ordering on purpose: it is the ordering that made an earlier
+    # `head()`/`tail()` window collapse to a single ward.
+    return pd.DataFrame(rows).sort_values(["ward_id", "timestamp_local"]).reset_index(drop=True)
+
+
+@pytest.mark.parametrize(
+    "end,expected_stale",
+    [
+        (pd.Timestamp.now() + pd.Timedelta(hours=12), False),   # live cache
+        (pd.Timestamp.now() - pd.Timedelta(days=30), True),     # refresh cron missed
+    ],
+)
+def test_forecast_windows_a_stale_cache_instead_of_crashing_on_it(
+    client: TestClient, monkeypatch, end, expected_stale
+):
+    """`_window()` selects rows at or after now.
+
+    Once a cached run is older than its own horizon that selection is empty,
+    and `/forecast` went on to read `df["fetched_at"].iloc[0]` from it —
+    `IndexError: single positional indexer is out-of-bounds`, i.e. a 500 on the
+    route the whole dashboard is built on, every time the refresh cron missed a
+    run. Nobody noticed because the committed cache is refreshed often enough
+    that the window is never empty in practice, which is exactly when a cache
+    bug is most dangerous: it only fires when things are already going wrong.
+
+    The fix serves the most recent rows on record and says so. Silently passing
+    last month's weather off as a forecast would be worse than the crash, so
+    the flag is part of the contract, not a comment.
+    """
+    monkeypatch.setattr(main, "get_forecast", lambda *a, **k: _frame(end, hours=6))
+    main.answer_cache.clear()
+
+    response = client.get("/forecast", params={"hours": 24})
+    assert response.status_code == 200, response.text[:400]
+    body = response.json()
+
+    assert body["stale"] is expected_stale
+    assert body["rows"] == 12, "both wards must survive the window, not just the last one"
+    if expected_stale:
+        assert "refresh" in body["notice"], "an operator has to be told to refresh"
+    else:
+        assert body["notice"] == ""

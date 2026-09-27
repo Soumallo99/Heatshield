@@ -5,7 +5,9 @@ import {
   TileLayer, Tooltip, useMap, useMapEvents,
 } from 'react-leaflet'
 import { bandColour } from '../motion'
-import { BASEMAPS, DEFAULT_BASEMAP, getBasemap, OSM_FALLBACK } from '../basemaps'
+import {
+  BASEMAPS, DEFAULT_BASEMAP, basemapFor, degradeNotice, getBasemap, TILE_FAIL_LIMIT,
+} from '../basemaps'
 
 /**
  * Ward risk map.
@@ -143,16 +145,31 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
   const [pickerOpen, setPickerOpen] = useState(false)
   const [me, setMe] = useState(null)
   const [query, setQuery] = useState('')
-  const [tileFailures, setTileFailures] = useState(0)
-
   const basemap = getBasemap(basemapId)
-  // If the selected tile CDN keeps failing (blocked network, hostile proxy),
-  // degrade to OpenStreetMap tiles on a different CDN — never broken tiles.
-  const degraded = tileFailures > 6
-  const effectiveBasemap = degraded
-    ? { ...basemap, ...OSM_FALLBACK, id: `${basemap.id}-fallback`, labels: undefined }
-    : basemap
-  useEffect(() => { setTileFailures(0) }, [basemapId])
+  const [stage, setStage] = useState(0)
+  const failures = useRef(0)
+
+  /* Tile health, measured per stage, not per tile.
+   * A loaded tile cancels out a failed one, so the handful of 404s you always
+   * get at the ragged edge of a provider's coverage cannot throw away a
+   * working basemap — only a CDN that is genuinely not answering accumulates
+   * failures. The stage is monotonic (it never steps back up), so a flapping
+   * network cannot bounce the operator between two providers mid-shift.
+   * Stage 2 is the one that matters for the "no watermark" guarantee: it draws
+   * no tiles at all, so there is no third party left in a position to stamp
+   * the map. */
+  const noteTileResult = useCallback((delta) => {
+    failures.current = Math.max(0, failures.current + delta)
+    const n = failures.current
+    const next = n > TILE_FAIL_LIMIT * 2 ? 2 : n > TILE_FAIL_LIMIT ? 1 : 0
+    setStage((s) => (next > s ? next : s))
+  }, [])
+
+  const effectiveBasemap = basemapFor(basemap, stage)
+  const degraded = stage > 0
+
+  // Switching basemap is a fresh start: the new provider has not failed yet.
+  useEffect(() => { failures.current = 0; setStage(0) }, [basemapId])
 
   useEffect(() => {
     try { localStorage.setItem('hs.basemap', basemapId) } catch { /* private mode */ }
@@ -287,6 +304,20 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
       >
         {effectiveBasemap.attribution}
       </div>
+
+      {/* Degradation notice. The map used to change provider silently, which
+          is worse than changing at all: an operator comparing two days could
+          not tell why the background looked different. `role="status"` makes
+          it a polite live region, so a screen reader hears it without it
+          stealing focus. */}
+      {degraded && (
+        <div
+          className="map-degraded pointer-events-none absolute bottom-1 left-2 z-[700] max-w-[60%] rounded border border-amber-300/30 bg-amber-950/80 px-2 py-1 text-[10px] leading-tight text-amber-100"
+          role="status"
+        >
+          {degradeNotice(basemap, stage)}
+        </div>
+      )}
       <MapContainer
         center={KOLKATA_CENTER}
         zoom={11}
@@ -304,28 +335,37 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
         <MapHandle onReady={setMap} />
         <ZoomWatch onZoom={setZoom} />
 
-        {/* base tiles — keyed on id so switching does a clean swap, not a merge */}
-        <TileLayer
-          key={effectiveBasemap.id}
-          url={effectiveBasemap.url}
-          subdomains={effectiveBasemap.subdomains || 'abc'}
-          maxZoom={effectiveBasemap.maxZoom || 19}
-          maxNativeZoom={effectiveBasemap.maxNativeZoom}
-          detectRetina
-          updateWhenIdle={false}
-          keepBuffer={3}
-          attribution={effectiveBasemap.attribution}
-          eventHandlers={{ tileerror: () => setTileFailures((n) => n + 1) }}
-        />
+        {/* base tiles — keyed on id so switching does a clean swap, not a merge.
+            No `detectRetina`: see basemaps.js. It adds +1 to the requested zoom
+            *after* the maxNativeZoom clamp, so on a high-DPI screen every
+            provider in this registry 404s past ~z15.
+            Rendered conditionally because stage 2 has no url at all — that is
+            the "wards only" mode, which issues zero tile requests. */}
+        {effectiveBasemap.url && (
+          <TileLayer
+            key={effectiveBasemap.id}
+            url={effectiveBasemap.url}
+            subdomains={effectiveBasemap.subdomains || 'abc'}
+            maxZoom={effectiveBasemap.maxZoom || 19}
+            maxNativeZoom={effectiveBasemap.maxNativeZoom}
+            updateWhenIdle={false}
+            keepBuffer={3}
+            attribution={effectiveBasemap.attribution}
+            eventHandlers={{
+              tileerror: () => noteTileResult(1),
+              tileload: () => noteTileResult(-1),
+            }}
+          />
+        )}
         {/* hybrid label overlay for imagery styles */}
-        {effectiveBasemap.labels && (
+        {effectiveBasemap.url && effectiveBasemap.labels && (
           <Pane name="hs-labels" style={{ zIndex: 450, pointerEvents: 'none' }}>
             <TileLayer
               key={`${effectiveBasemap.id}-labels`}
               url={effectiveBasemap.labels.url}
               subdomains={effectiveBasemap.labels.subdomains || 'abc'}
               maxZoom={effectiveBasemap.labels.maxZoom || 19}
-              detectRetina
+              maxNativeZoom={effectiveBasemap.labels.maxNativeZoom}
             />
           </Pane>
         )}
@@ -467,10 +507,12 @@ export default function RiskMap({ geo, wards = [], selectedId, onSelect }) {
                 </button>
               ))}
               <div className="note">
-                Keyless tiles only — Esri (Canvas / Street / Imagery) and OpenTopoMap,
-                with an automatic OpenStreetMap fallback. No API key is used or required.
-                CARTO is deliberately absent: its keyless tiles now return HTTP 200
-                watermarks reading “API KEY REQUIRED”, which no client can detect.
+                Keyless tiles only — Esri (Canvas / Street / Imagery) and OpenTopoMap.
+                No API key is used or required. CARTO is deliberately absent: its
+                keyless tiles now return HTTP 200 watermarks reading “API KEY
+                REQUIRED”, which no client can detect. If tiles fail the map steps
+                down to OpenStreetMap, then to <b>Wards only</b> — no tiles at all,
+                so nothing can be watermarked and the map still works offline.
               </div>
             </div>
           )}
