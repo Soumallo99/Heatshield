@@ -230,7 +230,7 @@ def test_thermal_payload_documents_every_metric_and_quality_flag():
     assert method["metrics"]["heat_index_c"]["valid_range"]
     assert method["metrics"]["heat_index_c"]["limitations"]
     assert "ESTIMATED WBGT" in payload["wbgt_statement"]
-    assert method["metrics"]["utci_c"]["quality_best_case"] == "unavailable"
+    assert method["metrics"]["utci_c"]["quality_best_case"] == "estimated"
     for row in payload["daily"]:
         assert row["wbgt_peak_quality"] == "estimated"      # demo provides all inputs
         assert row["wbgt_peak_inputs"] == "temperature+humidity+wind+radiation"

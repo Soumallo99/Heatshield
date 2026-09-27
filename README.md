@@ -9,6 +9,9 @@
 > **New here?** Read [`SETUP.md`](SETUP.md) for step-by-step install instructions, or just run
 > `./setup.sh` (macOS/Linux) / `setup.bat` (Windows).
 > Editor-specific walkthroughs: [`VSCODE.md`](VSCODE.md) · [`ANTIGRAVITY.md`](ANTIGRAVITY.md).
+> **Which external tools and datasets help, and which we refuse?**
+> [`INTEGRATIONS.md`](INTEGRATIONS.md) — data.gov.in, Streamlit, Faker, CAP/SACHET,
+> deployment hosts, and the deliberate noes.
 > Putting it on GitHub: [`GITHUB.md`](GITHUB.md).
 > **Working with an AI agent on this code?** It should read [`AGENTS.md`](AGENTS.md) first —
 > architecture, physics formulas, invariants and hard constraints in one file.
@@ -134,6 +137,39 @@ risk score → ward-level GIS map → SMS/WhatsApp alerts.
 | 7a | Unattended scheduler (self-running pipeline) | ✅ done | `scripts/schedule.py` |
 | 7b | Ward-level subscriber registry + STOP handling | ✅ done | `core/subscribers.py` |
 | 7c | Hindcast & forecast-skill harness | ✅ done | `scripts/hindcast.py` |
+| 8a | **UTCI** — the second index the problem statement names | ✅ done | `core/utci.py` |
+| 8b | **CAP 1.2 alert feed** + GeoJSON + documented SACHET hand-off | ✅ done | `core/cap.py`, `core/geo.py` |
+| 8c | **Multilingual alert copy** (English / हिन्दी / বাংলা) | ✅ done | `core/i18n.py` |
+| 8d | Open-data adapter for the demographic gaps (optional, keyless-safe) | ✅ done | `core/datagov.py` |
+
+### Phase 8 — interoperability: one warning, every channel
+
+Twilio reaches subscribers. It does not reach the district administration, and
+no aggregator can ingest an SMS. Phase 8 publishes the *same* warning in the
+formats the rest of the ecosystem reads:
+
+```bash
+curl -s localhost:8000/alerts/cap.xml     # CAP 1.2 — the format NDMA's SACHET ingests
+curl -s localhost:8000/alerts/cap         # the same document described as JSON
+curl -s localhost:8000/alerts/geojson     # RFC 7946 — drop it into QGIS
+curl -s "localhost:8000/alerts/plan?lang=bn"   # the queue, with Bengali copy
+curl -s localhost:8000/thermal/utci       # UTCI method card
+```
+
+Alongside it, **UTCI** closes the gap the SIH problem statement names: it asks
+for both WBGT and UTCI, and until Phase 8 only WBGT existed. The three indices
+now have three clearly separated jobs — WBGT drives the risk model, Heat Index
+is the public number, UTCI is the public-*health* number that sets CAP severity.
+
+[`INTEGRATIONS.md`](INTEGRATIONS.md) is the full triage: every open-data
+source, library, host and presentation tool on the shortlist, what it does for
+this project, and — just as importantly — the ones deliberately **not** used
+and why.
+
+**Streamlit, reconsidered:** Streamlit was dropped as *the* frontend (see below) but
+it has a second life as an operator console: `streamlit run ops/console.py` renders a
+read-only view over `data/processed/*.csv` — no network, no credentials, and it
+computes nothing of its own, so it cannot disagree with the dashboard.
 
 **Frontend decision:** Streamlit/Gradio dropped in favour of Vite + React + Framer Motion
 (Tailwind, react-leaflet). Streamlit re-runs the script per interaction and blocks the DOM work
@@ -198,7 +234,18 @@ dataset from source.
 
 Sources: OpenCity/datameet ward polygons (ODbL) · Census 2011 population via Wikidata ·
 OpenStreetMap green/water/buildings · Open-Meteo forecast · basemaps from Esri
-(Canvas/Imagery/Street) and OpenTopoMap (all keyless — see [Map basemaps](#map-basemaps)).
+(Canvas/Imagery/Street) and OpenTopoMap (all keyless — see [Map basemaps](#map-basemaps)) ·
+UTCI coefficient table from Bröde et al. (2012) via the Apache-2.0 reference implementation
+(`THIRD-PARTY.md`).
+
+**Three thermal indices, three jobs** — they are complementary, not
+interchangeable, and every payload keeps them separate:
+
+| Index | Standard | Audience | Drives |
+|---|---|---|---|
+| **WBGT** | ISO 7243 | occupational | the risk model: hazard score, work/rest |
+| **Heat Index** | NWS Rothfusz | public (English) | SMS copy |
+| **UTCI** | Bröde et al. (2012) | public health | CAP severity, population stress category |
 
 ## Quickstart
 

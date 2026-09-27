@@ -53,6 +53,10 @@ TWILIO_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
 TWILIO_FROM = os.getenv("TWILIO_FROM_NUMBER", "")       # whatsapp:+14155238886
 ALERT_TO = [n.strip() for n in os.getenv("ALERT_TO_NUMBERS", "").split(",") if n.strip()]
 
+# Public base URL used in alert copy and CAP <web> links. Override it for a
+# self-hosted deployment so warnings do not point residents elsewhere.
+WEB_BASE = os.getenv("HS_WEB_BASE", "https://heatshield.app")
+
 # Sending costs money and wakes people up, so live dispatch needs TWO things to
 # be true: real credentials AND an explicit opt-in flag. Either one missing and
 # dispatch() refuses — you cannot accidentally SMS a city by forgetting an arg.

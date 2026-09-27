@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "comment": "HeatShield frontend on Vercel. Static build only — the API is a separate Python service (see render.yaml), because Vercel's serverless runtime is a poor fit for a pandas pipeline that takes ~4 s per cycle and caches in-process.",
+  "framework": "vite",
+  "buildCommand": "cd frontend/web && npm ci && npm run build",
+  "outputDirectory": "frontend/web/dist",
+  "installCommand": "cd frontend/web && npm install",
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, must-revalidate" }]
+    },
+    {
+      "source": "/static-api/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=120" }]
+    }
+  ],
+  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
+}

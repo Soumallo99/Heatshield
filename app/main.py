@@ -35,6 +35,8 @@ from core.coupled import (
     ncr_daily,
     ncr_zones,
 )
+from core import cap as cap_engine
+from core import datagov, i18n
 from core.alerts import (DEFAULT_MIN_LEAD_DAYS, DEFAULT_RISK_THRESHOLD,
                          compose_message, dispatch, filter_already_sent,
                          find_active_now, find_upcoming_events)
@@ -44,7 +46,9 @@ from core.risk import compute_risk, daily_risk, risk_band, ward_ranking
 from core.subscribers import (add_subscriber as reg_add,
                               load_registry, opt_out as reg_opt_out,
                               recipients_for_ward, registry_stats)
-from core.thermal import classify_wbgt, compute_thermal, daily_thermal, heatwave_flags, work_rest
+from core.thermal import (classify_wbgt, compute_thermal, daily_thermal,
+                          heatwave_flags, work_rest)
+from core.utci import UTCI_METADATA, classify_utci
 from core.weather import UpstreamError, daily_peak, get_forecast, load_wards
 
 # The interactive schema is a map of every route, including the administrative
@@ -118,6 +122,12 @@ _CACHEABLE_READS = {
     "/thermal": config.RESPONSE_CACHE_MAX_AGE,
     "/thermal/": config.RESPONSE_CACHE_MAX_AGE,
     "/alerts/plan": config.RESPONSE_CACHE_MAX_AGE,
+    # The CAP feed and its GeoJSON twin are built from the same scored run, so
+    # they change at most once per forecast cycle. A CAP consumer polling on a
+    # timer gets the same document back until there is something new to say.
+    "/alerts/cap": config.RESPONSE_CACHE_MAX_AGE,
+    "/alerts/cap.xml": config.RESPONSE_CACHE_MAX_AGE,
+    "/alerts/geojson": config.RESPONSE_CACHE_MAX_AGE,
     "/ncr/": config.RESPONSE_CACHE_MAX_AGE,
     # The Kolkata citizen brief is the second-largest public read in the API
     # (~365 kB raw, ~9 kB on the wire, rebuilt from the committed forecast cache
@@ -1092,6 +1102,7 @@ def thermal_ward(
             "globe_c": float(peak["globe_c"]),
             "wbgt_c": float(peak["wbgt_c"]),
             "heat_index_c": float(peak["heat_index_c"]),
+            "utci_c": float(peak["utci_c"]) if "utci_c" in peak else None,
         },
         "latest": {
             "timestamp_local": now["timestamp_local"].strftime("%Y-%m-%dT%H:%M"),
@@ -1103,6 +1114,10 @@ def thermal_ward(
         "colour": cls["colour"],
         "guidance": cls["guidance"],
         "work_rest": work_rest(peak["wbgt_c"], intensity),
+        "utci": ({
+            "value_c": float(peak["utci_c"]),
+            **classify_utci(peak["utci_c"]),
+        } if "utci_c" in peak else None),
     }
 
 
@@ -1200,6 +1215,7 @@ def alerts_plan(
     lead_days: Annotated[int, Query(ge=0, le=7)] = DEFAULT_MIN_LEAD_DAYS,
     scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
     only_unsent: bool = False,
+    lang: Annotated[str, Query(pattern="^[a-zA-Z]{2}(-[a-zA-Z]{2})?$")] = i18n.DEFAULT_LANGUAGE,
 ):
     """
     Who WOULD be warned, and with how much lead time. Sends nothing.
@@ -1207,6 +1223,9 @@ def alerts_plan(
     `lead_days=1` means "at least one full day before the event" — crossings that
     are today or in the past are excluded, because the intervention window has
     closed. `only_unsent=True` filters out anything already dispatched recently.
+
+    `lang` picks the alert copy (`en`, `hi`, `bn`; anything else falls back to
+    English). Numbers and units never change — only the words around them.
     """
     daily = daily_risk(get_forecast(), temp_offset_c=scenario_c)
     events = find_upcoming_events(daily, min_lead_days=lead_days, risk_threshold=threshold)
@@ -1218,7 +1237,9 @@ def alerts_plan(
     for r in shown.to_dict("records"):
         r = dict(r)
         # compose BEFORE stringifying: compose_message formats the date object
-        r["message"] = compose_message(r)
+        r["message"] = compose_message(r, lang)
+        r["message_language"] = i18n.language_tag(lang)
+        r["sms_segments"] = i18n.segment_count(r["message"], lang)
         r["event_date"] = str(r["event_date"])
         r["already_sent"] = r["ward_id"] not in set(pending["ward_id"]) if not pending.empty else True
         records.append(r)
@@ -1227,6 +1248,7 @@ def alerts_plan(
         "threshold": threshold,
         "min_lead_days": lead_days,
         "scenario_c": scenario_c,
+        "language": i18n.language_tag(lang),
         "total_events": int(len(events)),
         "pending_after_dedupe": int(len(pending)),
         # wards already inside the event: a nowcast, not a warning
@@ -1234,6 +1256,98 @@ def alerts_plan(
         "active_wards": [str(w) for w in active["ward_name"].head(12)] if len(active) else [],
         "data": records,
     }
+
+
+# ------------------------------------------------------- Phase 8: interop
+# One language code, or a comma-separated list of them for routes that repeat
+# a CAP <info> block per language.
+LANGUAGE_LIST_PATTERN = r"^[a-zA-Z]{2}(-[a-zA-Z]{2})?(,[a-zA-Z]{2}(-[a-zA-Z]{2})?)*$"
+
+
+# CAP 1.2 is the interchange format NDMA's SACHET portal ingests and
+# redistributes. These three routes are the same warning the SMS channel sends,
+# published in a form the national alerting infrastructure can read.
+@app.get("/alerts/cap")
+def alerts_cap(
+    threshold: Annotated[float, Query(ge=0, le=100)] = DEFAULT_RISK_THRESHOLD,
+    lead_days: Annotated[int, Query(ge=0, le=7)] = DEFAULT_MIN_LEAD_DAYS,
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+    lang: Annotated[str, Query(pattern=LANGUAGE_LIST_PATTERN)] = "en,hi,bn",
+):
+    """
+    The alert batch as a CAP 1.2 document, described in JSON.
+
+    `lang` takes a comma-separated list — CAP repeats one `<info>` block per
+    language, which is exactly the SACHET multilingual model. The XML itself is
+    at `/alerts/cap.xml`; this route exists so a dashboard can show what would
+    be published, and so a static host can serve the feed.
+    """
+    daily = daily_risk(get_forecast(), temp_offset_c=scenario_c)
+    events = find_upcoming_events(daily, min_lead_days=lead_days, risk_threshold=threshold)
+    languages = [part for part in (piece.strip() for piece in lang.split(",")) if part]
+    return cap_engine.cap_payload(events, languages=languages or list(i18n.SUPPORTED_LANGUAGES),
+                                  wards=load_wards())
+
+
+@app.get("/alerts/cap.xml")
+def alerts_cap_xml(
+    threshold: Annotated[float, Query(ge=0, le=100)] = DEFAULT_RISK_THRESHOLD,
+    lead_days: Annotated[int, Query(ge=0, le=7)] = DEFAULT_MIN_LEAD_DAYS,
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+    lang: Annotated[str, Query(pattern=LANGUAGE_LIST_PATTERN)] = "en,hi,bn",
+):
+    """The same alert batch as a CAP 1.2 XML document — the wire format.
+
+    Media type `application/cap+xml` per RFC 7801 (CAP is registered with IANA).
+    """
+    daily = daily_risk(get_forecast(), temp_offset_c=scenario_c)
+    events = find_upcoming_events(daily, min_lead_days=lead_days, risk_threshold=threshold)
+    languages = [part for part in (piece.strip() for piece in lang.split(",")) if part]
+    body = cap_engine.cap_xml(events, languages=languages or list(i18n.SUPPORTED_LANGUAGES),
+                              wards=load_wards())
+    return Response(content=body, media_type="application/cap+xml; charset=utf-8")
+
+
+@app.get("/alerts/geojson")
+def alerts_geojson(
+    threshold: Annotated[float, Query(ge=0, le=100)] = DEFAULT_RISK_THRESHOLD,
+    lead_days: Annotated[int, Query(ge=0, le=7)] = DEFAULT_MIN_LEAD_DAYS,
+    scenario_c: Annotated[float, Query(ge=SCENARIO_MIN, le=SCENARIO_MAX)] = 0.0,
+):
+    """
+    The alert batch as a GeoJSON FeatureCollection (RFC 7946).
+
+    The layer a district control room drops into QGIS. Ward outlines are the
+    real KMC polygons; if the geometry file is unavailable the feed falls back
+    to centroid points and says so in `geometry.shape`.
+    """
+    daily = daily_risk(get_forecast(), temp_offset_c=scenario_c)
+    events = find_upcoming_events(daily, min_lead_days=lead_days, risk_threshold=threshold)
+    return cap_engine.alerts_geojson(events, wards=load_wards())
+
+
+@app.get("/thermal/utci")
+def thermal_utci():
+    """
+    Method card for the UTCI layer: formula, validity envelope, provenance.
+
+    Shipped from the same constant the numbers are computed with, so the
+    documentation and the arithmetic cannot drift apart.
+    """
+    return UTCI_METADATA
+
+
+@app.get("/integrations/datagov")
+def integrations_datagov():
+    """
+    State of the optional data.gov.in adapter.
+
+    Reports whether a key is configured and lists the catalogued datasets with
+    the gap each one would close. Nothing here is on the critical path: with no
+    key the pipeline is byte-for-byte unchanged, and this route says so rather
+    than failing.
+    """
+    return datagov.status()
 
 
 class DispatchIn(BaseModel):

@@ -80,8 +80,8 @@ def test_the_service_worker_serves_navigations_network_first():
     )
     # The shell strategy changed, so the cache name must have changed with it, or
     # an installed app keeps the old worker's caches.
-    assert "heatshield-phone-v6" in worker
-    assert "heatshield-phone-v5" not in worker
+    assert "heatshield-phone-v7" in worker
+    assert "heatshield-phone-v6" not in worker
 
 
 def _shipped_assets(index_html: str) -> list[str]:

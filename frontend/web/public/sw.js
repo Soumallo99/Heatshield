@@ -24,7 +24,7 @@
  * start with the new VERSION, so an installed app reclaims storage instead of
  * accumulating a copy of every build it has ever run.
  */
-const VERSION = 'heatshield-phone-v6'
+const VERSION = 'heatshield-phone-v7'
 const SHELL_CACHE = `${VERSION}-shell`
 const DATA_CACHE = `${VERSION}-data`
 const TILE_CACHE = `${VERSION}-tiles`

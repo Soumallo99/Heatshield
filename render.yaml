@@ -1,0 +1,58 @@
+# HeatShield on Render — the API half.
+#
+# The frontend is a static build and already has a free host (GitHub Pages, via
+# .github/workflows/deploy-pages.yml). This file deploys the FastAPI service
+# that a static host cannot run. Both halves are independent on purpose: the
+# API is stateless, so it can be scaled out or replaced without touching the UI.
+#
+# Deploy: connect the repo in Render and it reads this file, or
+#   render blueprint apply
+#
+# Free tier note: a free web service sleeps after inactivity and takes ~30 s to
+# wake. That is fine for a demo and wrong for a warning system — a production
+# deployment wants an always-on instance, because a warning that arrives late
+# is not a warning.
+services:
+  - type: web
+    name: heatshield-api
+    runtime: python
+    plan: free
+    region: singapore            # closest region to India
+    branch: main
+    rootDir: .
+    buildCommand: pip install -r requirements.txt
+    # One worker: the API is stateless and CPU-bound per request (pandas), and
+    # the response cache is per-process, so more workers means more caches.
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      # The forecast is keyless (Open-Meteo). Nothing here is required to boot.
+      - key: HS_TIMEZONE
+        value: Asia/Kolkata
+      - key: HS_FORECAST_DAYS
+        value: "5"
+      - key: HS_PAST_DAYS
+        value: "1"
+      # Browser origins allowed to call the API. Empty means same-origin only,
+      # which is correct when the UI is served from this same service. Add the
+      # Pages/Netlify origin explicitly if you split the two.
+      - key: HS_ALLOWED_ORIGINS
+        sync: false              # set in the Render dashboard, not in git
+      # Trust Render's proxy so rate-limiting sees the real client address.
+      - key: HS_TRUST_PROXY
+        value: "1"
+      # Administrative routes are DISABLED without this. Generate with:
+      #   python -c "import secrets; print(secrets.token_urlsafe(32))"
+      - key: HS_ADMIN_TOKEN
+        generateValue: true
+      # Public base URL used in alert copy and CAP <web> links.
+      - key: HS_WEB_BASE
+        sync: false
+      # Optional: enables the data.gov.in adapter. The pipeline does not need it.
+      - key: HS_DATAGOV_API_KEY
+        sync: false
+      # Live SMS stays behind two locks. Leave HS_ALLOW_LIVE_SEND unset.
+      - key: HS_ALLOW_LIVE_SEND
+        value: ""

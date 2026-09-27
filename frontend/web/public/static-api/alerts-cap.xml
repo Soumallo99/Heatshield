@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>HS-KMC-20260927T165208-empty</identifier>
+  <sender>heatshield@kolkata.example</sender>
+  <sent>2026-09-27T16:52:08+05:30</sent>
+  <status>Actual</status>
+  <msgType>Alert</msgType>
+  <source>HeatShield-KMC-pilot</source>
+  <scope>Public</scope>
+  <note>Pilot heat-health early warning. Values are MODELLED from forecast weather (WBGT, UTCI, risk score) — not measured. Issued by the HeatShield KMC pilot; verify against IMD bulletins before operational use.</note>
+</alert>

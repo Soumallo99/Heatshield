@@ -121,13 +121,16 @@ export default function Dashboard({ onExit, onDemo }) {
   // only one (low-end devices, offline demos, no-WebGL browsers).
   const [mapMode, setMapMode] = useState('2d')
   const [scenario, setScenario] = useState(0)
+  // Alert copy language. Server-side: the API composes the message, so the
+  // words and the SMS segment count both come back with the payload.
+  const [lang, setLang] = useState('en')
   const [geo, setGeo] = useState(null)
   // `epoch` is the manual-refresh lever: bumping it re-calls every endpoint at
   // once. There is deliberately no interval — refresh is an explicit act.
   const [epoch, setEpoch] = useState(0)
 
   const ranking = useLive(() => fetchRanking(scenario), [scenario, epoch])
-  const alerts = useLive(() => fetchAlerts(ALERT_THRESHOLD, 1, scenario), [scenario, epoch])
+  const alerts = useLive(() => fetchAlerts(ALERT_THRESHOLD, 1, scenario, lang), [scenario, epoch, lang])
 
   const refreshAll = useCallback(() => setEpoch((e) => e + 1), [])
   useRefreshShortcut(refreshAll)
@@ -355,7 +358,7 @@ export default function Dashboard({ onExit, onDemo }) {
         />
 
         {/* -------------------------------------------------------- alerts */}
-        <AlertsPanel alerts={alerts.data} scenario={scenario} />
+        <AlertsPanel alerts={alerts.data} scenario={scenario} lang={lang} onLang={setLang} />
 
         {/* -------------------------------------------------------- grid */}
         <div className="mt-5 grid gap-5 lg:grid-cols-[1.5fr_1fr]">

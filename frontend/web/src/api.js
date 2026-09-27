@@ -142,5 +142,28 @@ export const fetchGeo = async () => {
     Threshold mirrors core.alerts.DEFAULT_RISK_THRESHOLD. */
 export const ALERT_THRESHOLD = 60
 
-export const fetchAlerts = (threshold = ALERT_THRESHOLD, lead = 1, scenario = 0) =>
-  getJSON(`/alerts/plan?threshold=${threshold}&lead_days=${lead}&scenario_c=${scenario}`)
+/** Alert plan: who would be warned, with how many days of lead time.
+    Threshold mirrors core.alerts.DEFAULT_RISK_THRESHOLD.
+
+    `lang` selects the copy the server composes ('en' | 'hi' | 'bn'). Only the
+    words change — every number and unit in the message is identical across
+    languages, by design (see core/i18n.py). */
+export const ALERT_LANGUAGES = [
+  ['en', 'EN'],
+  ['hi', 'हिन्दी'],
+  ['bn', 'বাংলা'],
+]
+
+export const fetchAlerts = (threshold = ALERT_THRESHOLD, lead = 1, scenario = 0, lang = 'en') =>
+  getJSON(
+    `/alerts/plan?threshold=${threshold}&lead_days=${lead}&scenario_c=${scenario}&lang=${lang}`,
+  )
+
+/** Where the CAP 1.2 feed lives. Static host: the exported snapshot. Otherwise
+    the live route. Both are the same document, so the link is honest either
+    way — a warning system should never point at something that 404s. */
+export const capFeedURL = () =>
+  isStaticHost() ? staticURL('alerts-cap.xml') : './api/alerts/cap.xml'
+
+/** The CAP feed as JSON — what would be published, for on-screen inspection. */
+export const fetchCapFeed = (lang = 'en,hi,bn') => getJSON(`/alerts/cap?lang=${lang}`)

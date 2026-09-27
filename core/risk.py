@@ -43,6 +43,7 @@ from core.thermal import (
     wbgt_outdoor,
     wet_bulb_stull,
 )
+from core.utci import utci_from_weather
 from core.weather import load_wards
 
 # --------------------------------------------------------------------------- #
@@ -191,6 +192,12 @@ def apply_uhi(df: pd.DataFrame, wards: pd.DataFrame) -> pd.DataFrame:
     out["wbgt_adj_c"] = np.round(
         wbgt_outdoor(out["temp_adj_c"], out["rh_adj_pct"], out["wind_ms"], solar), 2)
     out["heat_index_adj_c"] = np.round(heat_index(out["temp_adj_c"], out["rh_adj_pct"]), 2)
+    # UTCI over the same downscaled hour. It is NOT an input to the risk score —
+    # WBGT drives the hazard term and remains the model driver — but the ward-level
+    # UTCI is what the alert copy and the CAP feed quote, and it has to be the
+    # UHI-adjusted value or the message would quote the grid cell, not the ward.
+    out["utci_adj_c"] = np.round(
+        utci_from_weather(out["temp_adj_c"], out["rh_adj_pct"], out["wind_ms"], solar), 2)
     return out
 
 
@@ -324,6 +331,7 @@ def daily_risk(df: pd.DataFrame, wards: pd.DataFrame | None = None,
                 rh_mean_pct=("rh_adj_pct", "mean"),
                 wbgt_peak_c=("wbgt_adj_c", "max"),
                 hi_peak_c=("heat_index_adj_c", "max"),
+                utci_peak_c=("utci_adj_c", "max"),
                 hazard_score=("hazard_score", "max"),
                 risk_score=("risk_score", "max"),
                 uhi_delta_c=("uhi_delta_c", "first")))
@@ -372,7 +380,7 @@ def ward_ranking(daily: pd.DataFrame, wards: pd.DataFrame | None = None,
     return (d.sort_values("risk_score", ascending=False)
              .assign(rank=lambda x: range(1, len(x) + 1))
              [["rank", "ward_id", "ward_name", "lat", "lon", "risk_score", "risk_band",
-               "risk_colour", "wbgt_peak_c", "hi_peak_c", "tmax_adj_c", "uhi_delta_c",
+               "risk_colour", "wbgt_peak_c", "hi_peak_c", "utci_peak_c", "tmax_adj_c", "uhi_delta_c",
                "vulnerability", "population", "exposed_population",
                "excess_deaths_per_day", "date"]]
              .reset_index(drop=True))

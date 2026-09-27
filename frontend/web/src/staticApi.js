@@ -27,8 +27,12 @@ export const staticURL = (name) => publicURL(`static-api/${name}`)
  * to the generated snapshot there prevents deliberate 404s at every cold open.
  */
 export function isStaticHost() {
-  if (typeof window === 'undefined') return false
-  const host = window.location.hostname
+  // `window` can exist without `location` — the server-rendered screen harnesses
+  // under tests/*/render_*.mjs mount components into a stubbed document. A
+  // missing location is not a signal about the host, so the answer is "no,
+  // don't short-circuit to snapshots" rather than a crash during render.
+  if (typeof window === 'undefined' || !window.location) return false
+  const host = window.location.hostname || ''
   return (
     window.location.protocol === 'file:' ||
     host.endsWith('.github.io') ||

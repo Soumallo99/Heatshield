@@ -6,6 +6,10 @@ Turns raw weather (Phase 1) into human-relevant heat stress:
   * Heat Index (HI)      -- Rothfusz/NWS regression. The number for PUBLIC MESSAGING.
   * WBGT (outdoor)       -- 0.7*Tw + 0.2*Tg + 0.1*Ta. The number for the RISK MODEL
                             (it accounts for sun + wind, which HI ignores).
+  * UTCI                 -- Bröde et al. (2012) 6th-order polynomial (core/utci.py).
+                            The PUBLIC-HEALTH equivalent temperature named in the SIH
+                            problem statement alongside WBGT. Kept separate from WBGT
+                            on purpose: occupational index vs population index.
   * Natural wet-bulb Tw  -- Stull (2011) empirical, validated here against a
                             psychrometric inversion (max dev ~0.3 C).
   * Globe temperature Tg -- energy balance on a 150 mm black globe, Ranz-Marshall
@@ -18,6 +22,8 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+
+from core.utci import classify_utci, utci_from_weather
 
 # --------------------------------------------------------------------------- #
 # 0. Unit helpers
@@ -249,6 +255,12 @@ def compute_thermal(df: pd.DataFrame) -> pd.DataFrame:
     out["globe_c"] = np.round(globe_temperature(out["temp_c"], out["wind_ms"], solar), 2)
     out["wbgt_c"] = np.round(wbgt_outdoor(out["temp_c"], out["rh_pct"], out["wind_ms"], solar), 2)
     out["heat_index_c"] = np.round(heat_index(out["temp_c"], out["rh_pct"]), 2)
+    # UTCI is the second index the SIH problem statement names. It shares the
+    # globe temperature above, so the two radiation-aware metrics can never
+    # disagree because one was built on a different sun.
+    out["utci_c"] = np.round(utci_from_weather(out["temp_c"], out["rh_pct"],
+                                               out["wind_ms"], solar), 2)
+    out["utci_band"] = [classify_utci(v)["band"] for v in out["utci_c"]]
 
     cls = [classify_wbgt(v) for v in out["wbgt_c"]]
     out["stress_band"] = [c["band"] for c in cls]
@@ -259,7 +271,10 @@ def compute_thermal(df: pd.DataFrame) -> pd.DataFrame:
 
 def daily_thermal(df: pd.DataFrame) -> pd.DataFrame:
     """Daily worst-case thermal stress per ward — the shape Phases 3-5 consume."""
-    d = compute_thermal(df) if "wbgt_c" not in df.columns else df.copy()
+    # Both indices or neither: a frame that carries one and not the other was
+    # built by a different code path, and the two must stay comparable.
+    needed = {"wbgt_c", "utci_c"}
+    d = df.copy() if needed <= set(df.columns) else compute_thermal(df)
     d["date"] = d["timestamp_local"].dt.date
     g = (
         d.groupby(["ward_id", "ward_name", "date"], as_index=False)
@@ -270,6 +285,7 @@ def daily_thermal(df: pd.DataFrame) -> pd.DataFrame:
             wbgt_peak_c=("wbgt_c", "max"),
             wbgt_mean_c=("wbgt_c", "mean"),
             hi_peak_c=("heat_index_c", "max"),
+            utci_peak_c=("utci_c", "max"),
             solar_max_wm2=("solar_wm2", "max"),
             wind_mean_kmh=("wind_kmh", "mean"),
         )
@@ -278,6 +294,7 @@ def daily_thermal(df: pd.DataFrame) -> pd.DataFrame:
     g["stress_band"] = [c["band"] for c in cls]
     g["stress_colour"] = [c["colour"] for c in cls]
     g["work_rest"] = [work_rest(v) for v in g["wbgt_peak_c"]]
+    g["utci_band"] = [classify_utci(v)["band"] for v in g["utci_peak_c"]]
     return g.round(2).sort_values(["date", "ward_id"]).reset_index(drop=True)
 
 
